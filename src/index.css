@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.MuiPaper-root {
+    background-color: white !important;
+    opacity: 1 !important;
+  }
+.TableName{
+  width: 200px !important;
+  
+}

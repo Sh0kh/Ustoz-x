@@ -1,0 +1,65 @@
+[33mcommit d08ee55d1db1cd2bf1b567e4dfd06350181af537[m[33m ([m[1;36mHEAD -> [m[1;32mSMS[m[33m, [m[1;31morigin/SMS[m[33m)[m
+Author: Abbosbek Sanakulov <abbossana@gmail.com>
+Date:   Sun Nov 10 00:33:54 2024 +0500
+
+    Add group CRUD page for admin route(/group-service)
+
+[33mcommit aef58eb7d43c6001f07881cd44826c14018c327d[m[33m ([m[1;32mmain[m[33m)[m
+Author: Jurabek <66330187+Jurabek99899@users.noreply.github.com>
+Date:   Fri Nov 8 23:00:32 2024 +0500
+
+    Update headers.js
+
+[33mcommit 5d970e1efd2675496b0b61697f5602896a87e788[m
+Author: Jurabek <66330187+Jurabek99899@users.noreply.github.com>
+Date:   Sun Nov 3 12:12:10 2024 +0500
+
+    Update README.md
+
+[33mcommit 855b808c6f88154c575cb89775088d35ac5b8f11[m
+Author: Davronov-Alimardon <ormusorsen2024@gmail.com>
+Date:   Thu Oct 31 00:00:49 2024 +0500
+
+    ...updated api
+
+[33mcommit 51da043fed783bcdf67c47972696ae56ca5809e8[m
+Author: Davronov-Alimardon <ormusorsen2024@gmail.com>
+Date:   Tue Oct 15 03:53:26 2024 +0500
+
+    ...color changed
+
+[33mcommit 082629714a7417615c1fc2d5132e79b2a808ea85[m
+Author: Davronov-Alimardon <ormusorsen2024@gmail.com>
+Date:   Tue Oct 15 03:49:25 2024 +0500
+
+    users get: completed
+
+[33mcommit 80b302d8d18e45f3c2279e9ae8698c618e5871a4[m
+Author: Davronov-Alimardon <ormusorsen2024@gmail.com>
+Date:   Tue Oct 15 03:02:05 2024 +0500
+
+    users customized:in progress
+
+[33mcommit ca1f93baa27defea5e89eb1612b9e0366b1bdca7[m
+Author: Davronov-Alimardon <ormusorsen2024@gmail.com>
+Date:   Tue Oct 15 02:49:54 2024 +0500
+
+    updated:footer
+
+[33mcommit 650c26fd29a0b79b244159d2e5f0644df929dd5c[m
+Author: Davronov-Alimardon <ormusorsen2024@gmail.com>
+Date:   Tue Oct 15 02:41:07 2024 +0500
+
+    ajv deps fixed
+
+[33mcommit ea7b029d64e65825847a1956ea288432ddd5a124[m
+Author: Davronov-Alimardon <ormusorsen2024@gmail.com>
+Date:   Tue Oct 15 02:30:44 2024 +0500
+
+    ...
+
+[33mcommit ea645e8fa28fa12f0d58a611183624151c9fa5cd[m
+Author: Davronov-Alimardon <ormusorsen2024@gmail.com>
+Date:   Tue Oct 15 02:28:56 2024 +0500
+
+    initial
