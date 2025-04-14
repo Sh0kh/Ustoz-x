@@ -1,6 +1,8 @@
-const API_PATH = "https://ustozx.uz/japan/edu/api/";
-const API_JUST = "https://ustozx.uz/japan/edu/api/";
-// http://52.53.242.81:7088/swagger-ui.html#/
+const API_PATH = "http://194.87.151.210:2120/edu/api/";
+const API_JUST = "http://194.87.151.210:2120/edu/api/";
+
+
+// http://194.87.151.210:2120/swagger-ui.html#/
 
 const AUTH_TOKEN = "sos_token";
 const USER_HASH_ID = "sos_hashId";
@@ -22,7 +24,7 @@ const headerFile = {
 
 const headerPATCH = {
   Authorization: `Bearer ${token}`,
-  "Access-Control-Allow-Origin": "*", 
+  "Access-Control-Allow-Origin": "*",
 };
 
 export { API_PATH, headerPATCH, API_JUST, AUTH_TOKEN, USER_HASH_ID, header, headerGet, headerFile };
