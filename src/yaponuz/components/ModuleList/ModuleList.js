@@ -69,8 +69,8 @@ export default function ModuleList() {
   ];
 
 
-  const rows = Array.isArray(modules?.content)
-    ? modules?.content?.map((module) => ({
+  const rows = Array.isArray(modules)
+    ? modules?.map((module) => ({
       id: module?.id,
       name: module?.name,
       price: module?.price + " uzs",

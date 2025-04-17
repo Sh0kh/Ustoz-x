@@ -34,6 +34,7 @@ import Profile from 'yaponuz/components/account/settings/index'
 import UsersAdmins from "yaponuz/components/UsersAdmins/UsersAdmins";
 import QuizeInfo from "yaponuz/components/QuizeList/QuizeInfo";
 import QuestionCreate from "yaponuz/components/QuizeList/components/QuestionCreate";
+import Assembly from "yaponuz/components/assembly/Assembly";
 
 const routes = [
   { type: "title", title: "General", key: "general-title" },
@@ -58,70 +59,70 @@ const routes = [
     route: "/users/students",
     component: <UsersList />,
   },
-  
+
   {
-    show:false,
+    show: false,
     type: "collapse",
     name: "Teacher",
     key: "teacher",
     noCollapse: true,
     route: "/users/teacher",
-    component: <TeacherPage/>,
+    component: <TeacherPage />,
   },
-  
+
   {
-    show:false,
+    show: false,
     type: "collapse",
     name: "Support Center",
     key: "SupportCenter",
     noCollapse: true,
     route: "/users/supportCenter",
-    component: <UsersSupportCenter/>
+    component: <UsersSupportCenter />
   },
-  
+
   {
-    show:false,
+    show: false,
     type: "collapse",
     name: "Quiz",
     key: "Quiz",
     noCollapse: true,
     route: "/quizes/:ID",
-    component: <QuizeInfo/>
+    component: <QuizeInfo />
   },
-  
+
   {
-    show:false,
+    show: false,
     type: "collapse",
     name: "QustionCreate",
     key: "QustionCreate",
     noCollapse: true,
     route: "/quizes/question/create/:ID",
-    component: <QuestionCreate/>
+    component: <QuestionCreate />
   },
-  
+
   {
-    show:false,
+    show: false,
     type: "collapse",
     name: "Support Center",
     key: "SupportCenter",
     noCollapse: true,
     route: "/users/profile/:ID",
-    component: <Profile/>
+    component: <Profile />
   },
-  
-  
+
+
   {
-    show:false,
+    show: false,
     type: "collapse",
     name: "Support Center",
     key: "SupportCenter",
     noCollapse: true,
     route: "/users/admins",
-    component: <UsersAdmins/>
+    component: <UsersAdmins />
   },
-  
 
-  
+
+
 
   {
     type: "collapse",
@@ -209,6 +210,15 @@ const routes = [
     noCollapse: true,
     route: "/group",
     component: <GroupList />,
+  },
+  {
+    type: "collapse",
+    name: "Assembly",
+    key: "assembly",
+    icon: <CustomerSupport size="12px" />,
+    noCollapse: true,
+    route: "/assembly",
+    component: <Assembly />,
   },
 
   {

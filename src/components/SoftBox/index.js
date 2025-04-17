@@ -23,7 +23,7 @@ import SoftBoxRoot from "components/SoftBox/SoftBoxRoot";
 
 const SoftBox = forwardRef(
   ({ variant, bgColor, color, opacity, borderRadius, shadow, ...rest }, ref) => (
-    <SoftBoxRoot
+<SoftBoxRoot
       {...rest}
       ref={ref}
       ownerState={{ variant, bgColor, color, opacity, borderRadius, shadow }}

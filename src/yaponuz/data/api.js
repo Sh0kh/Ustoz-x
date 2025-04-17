@@ -22,11 +22,15 @@ import { Referral } from "./controllers/referral"
 import { Module } from "./controllers/module"
 import { Theme } from "./controllers/theme"
 import { Quiz } from "./controllers/quiz"
-import {SupportCenter} from "./controllers/supportCenter"
+import { SupportCenter } from "./controllers/supportCenter"
 import { UserAdmin } from "./controllers/userAdmin";
 import { Dashboard } from "./controllers/dashboard";
+import { Assembly } from "./controllers/assembly";
+import { report } from "./controllers/report";
 
 export {
+  report,
+  Assembly,
   Quiz,
   Theme,
   Module,
@@ -51,7 +55,7 @@ export {
   Comment,
   Logs,
   Version,
-  Teacher ,
+  Teacher,
   SupportCenter,
   UserAdmin,
   Dashboard

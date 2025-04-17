@@ -24,7 +24,6 @@ export default function ActionCell({ id, item, refetch }) {
         },
         buttonsStyling: false,
       });
-
       newSwal
         .fire({
           title: "Are you sure?",

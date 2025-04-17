@@ -12,6 +12,7 @@ import ArticleList from "yaponuz/components/Articles/Articles";
 import Logo from "yaponuz/data/img/logo.png";
 import NewLesson from "yaponuz/components/LessonList/pages/NewLesson";
 import { GetAuth } from "yaponuz/data/api";
+import MainPage from "yaponuz/components/MainPage";
 
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
@@ -39,11 +40,15 @@ export default function App() {
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
 
-  // Check token expiration on component mount and route change
+  // Check token expiration only on protected routes
   useEffect(() => {
+    // Skip token check for public routes
+    if (pathname === "/" || pathname === "/login/web") {
+      return;
+    }
+
     const checkTokenExpiration = () => {
       if (GetAuth.isTokenExpired()) {
-        // Token is expired, redirect to login page
         navigate("/login/web");
       }
     };
@@ -64,15 +69,17 @@ export default function App() {
       return null;
     });
 
-
   // Check if user is authenticated
   const isAuthenticated = !GetAuth.isTokenExpired();
 
+  // Don't show sidenav on MainPage
+  const shouldShowSidenav = layout === "dashboard" && isAuthenticated && pathname !== "/";
+
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {layout === "dashboard" && isAuthenticated && (
+      {shouldShowSidenav && (
         <>
+          <CssBaseline />
           <Sidenav
             color={sidenavColor}
             brand={Logo}
@@ -83,17 +90,26 @@ export default function App() {
           />
         </>
       )}
+
       <Routes>
-        {isAuthenticated && getRoutes(routes)}
-        <Route
-          path="*"
-          element={isAuthenticated ? <Navigate to="/dashboards" /> : <Navigate to="/login/web" />}
-        />
+        {/* MainPage is accessible without authentication */}
+        <Route path="/" element={<MainPage />} />
         <Route path="/login/web" element={<Login />} />
-        <Route path="/articles/categories/:id" element={<SubCategories />} />
-        <Route path="/articles/article/:article" element={<ArticleList />} />
-        <Route path="/lessons/new" element={<NewLesson />} />
-        <Route path="/lessons/edit/:id" element={<NewLesson />} />
+
+        {/* Protected routes */}
+        {isAuthenticated ? (
+          <>
+            {getRoutes(routes)}
+            <Route path="/articles/categories/:id" element={<SubCategories />} />
+            <Route path="/articles/article/:article" element={<ArticleList />} />
+            <Route path="/lessons/new" element={<NewLesson />} />
+            <Route path="/lessons/edit/:id" element={<NewLesson />} />
+            <Route path="*" element={<Navigate to="/dashboards" />} />
+          </>
+        ) : (
+          // Redirect to login except for MainPage
+          <Route path="*" element={pathname === "/" ? <MainPage /> : <Navigate to="/login/web" />} />
+        )}
       </Routes>
     </ThemeProvider>
   );

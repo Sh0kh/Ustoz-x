@@ -70,7 +70,7 @@ Header.propTypes = {
     firstName: PropTypes.string,
     lastName: PropTypes.string,
     accountType: PropTypes.string,
-  }), // Описание структуры объекта `data`
+  }), 
 };
 
 

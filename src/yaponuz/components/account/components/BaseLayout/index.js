@@ -18,6 +18,8 @@ import { Frown, Loader } from "lucide-react";
 import Sessions from "../../settings/components/Sessions";
 import Notification from "../../settings/components/Notifications";
 import DeleteAccount from "../../settings/components/DeleteAccount";
+import Report from "../../settings/components/Report";
+import TestResult from "../../settings/components/TestResult";
 
 
 
@@ -75,10 +77,11 @@ function BaseLayout({ stickyNavbar, children }) {
       ) : (
         <SoftBox mt={stickyNavbar ? 3 : 10}>
           <Grid container>
-            <Grid item xs={12} sm={8} lg={4}>
+            <Grid item xs={12} sm={8} lg={8}>
               <AppBar position="static">
                 <Tabs orientation={tabsOrientation} value={tabValue} onChange={handleSetTabValue}>
                   <Tab label="Basic Info" />
+
                   {role === 'STUDENT' && (
                     <Tab label="Files" />
                   )}
@@ -90,6 +93,12 @@ function BaseLayout({ stickyNavbar, children }) {
                   )}
                   {role === 'STUDENT' && (
                     <Tab label="Education" />
+                  )}
+                  {role === 'STUDENT' && (
+                    <Tab label="Report" />
+                  )}
+                  {role === 'STUDENT' && (
+                    <Tab label="Test result" />
                   )}
                 </Tabs>
               </AppBar>
@@ -105,6 +114,8 @@ function BaseLayout({ stickyNavbar, children }) {
             {tabValue === 2 && <Sessions />}
             {tabValue === 3 && <Notification />}
             {tabValue === 4 && <DeleteAccount />}
+            {tabValue === 5  && <Report />}
+            {tabValue === 6  && <TestResult />}
 
 
           </SoftBox>

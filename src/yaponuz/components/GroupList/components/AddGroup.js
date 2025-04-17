@@ -109,7 +109,6 @@ export default function AddGroup({ refetch }) {
   };
 
 
-  console.log(teachers)
 
   // return the JSX code
   return (
