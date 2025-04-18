@@ -89,11 +89,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     : userLinks;
 
   const filteredRoutes = ['SAFASOFJQWEDWT', 'QWPFOQWOFQWFWS'].includes(role)
-    ? routes?.filter(({ name }) => ['Group', 'SMS', 'Chats', 'Users'].includes(name))
+    ? routes?.filter(({ name }) => ['Group', 'SMS', 'Chats', 'Users', 'Attendance'].includes(name))
     : routes;
 
   const renderRoutes = filteredRoutes
-    ?.filter(({ show }) => show !== false) 
+    ?.filter(({ show }) => show !== false)
     .map(({ type, name, icon, title, collapse, noCollapse, key, href, route }) => {
       let returnValue;
 
@@ -247,7 +247,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           right={0}
           p={1.625}
           onClick={closeSidenav}
-          sx={{ cursor: "pointer" }}  
+          sx={{ cursor: "pointer" }}
         >
           <SoftTypography variant="h6" color="secondary">
             <Icon sx={{ fontWeight: "bold" }}>close</Icon>
