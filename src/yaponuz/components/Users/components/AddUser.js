@@ -16,13 +16,14 @@ import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftSelect from "components/SoftSelect";
 import { Group } from "yaponuz/data/controllers/group";
+import SoftDatePicker from "components/SoftDatePicker";
 
 
 export default function addUser({ refetch }) {
   const [open, setOpen] = useState(false);
 
   // variables
-  const [dateBirth, setDateBirth] = useState("");
+  const [dateBirth, setDateBirth] = useState("2025-01-02");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -163,12 +164,9 @@ export default function addUser({ refetch }) {
                 style={{ marginTop: "16px", width: "100%" }}
                 onChange={(e) => {
                   const input = e.target.value;
-
-                  // Проверяем, чтобы значение всегда начиналось с "+998"
                   if (input.startsWith("+998")) {
                     setPhoneNumber(input);
                   } else {
-                    // Если пользователь пытается удалить "+998", восстанавливаем его
                     setPhoneNumber("+998");
                   }
                 }}
@@ -213,21 +211,23 @@ export default function addUser({ refetch }) {
             </Grid>
           </Grid>
           <div style={{ display: "flex", gap: "16px", marginTop: "20px" }}>
-            {/* Email */}
             <SoftInput
               placeholder="Email"
               value={email}
               style={{ flex: 1 }}
               onChange={(e) => setEmail(e.target.value)}
             />
-            {/* Date of Birth */}
-            <SoftInput
-              placeholder="Date of Birth"
-              value={dateBirth}
-              style={{ flex: 1 }}
-              onChange={(e) => setDateBirth(e.target.value)}
-            />
+
+            <div style={{ flex: 1 }}>
+              <SoftDatePicker
+              placeholder={'Date birdth'}
+                value={dateBirth}
+                onChange={(newDate) => setDateBirth(newDate)}
+              />
+            </div>
           </div>
+
+
         </DialogContent>
 
 
