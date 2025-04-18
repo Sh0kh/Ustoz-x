@@ -40,9 +40,7 @@ export default function App() {
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
 
-  // Check token expiration only on protected routes
   useEffect(() => {
-    // Skip token check for public routes
     if (pathname === "/" || pathname === "/login/web") {
       return;
     }
@@ -107,7 +105,6 @@ export default function App() {
             <Route path="*" element={<Navigate to="/dashboards" />} />
           </>
         ) : (
-          // Redirect to login except for MainPage
           <Route path="*" element={pathname === "/" ? <MainPage /> : <Navigate to="/login/web" />} />
         )}
       </Routes>

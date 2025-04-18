@@ -1,5 +1,5 @@
-const API_PATH = "http://194.87.151.210:2120/edu/api/";
-const API_JUST = "http://194.87.151.210:2120/edu/api/";
+const API_PATH = "https://ustozx.uz/edu/api/";
+const API_JUST = "https://ustozx.uz/edu/api/";
 
 
 // http://194.87.151.210:2120/swagger-ui.html#/

@@ -88,14 +88,12 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     ? userLinks.filter(({ label }) => label === 'Student')
     : userLinks;
 
-  // Фильтруем маршруты на основе роли
   const filteredRoutes = ['SAFASOFJQWEDWT', 'QWPFOQWOFQWFWS'].includes(role)
     ? routes?.filter(({ name }) => ['Group', 'SMS', 'Chats', 'Users'].includes(name))
     : routes;
 
-  // Генерация отфильтрованных маршрутов
   const renderRoutes = filteredRoutes
-    ?.filter(({ show }) => show !== false) // Фильтруем элементы, где show равно false
+    ?.filter(({ show }) => show !== false) 
     .map(({ type, name, icon, title, collapse, noCollapse, key, href, route }) => {
       let returnValue;
 
