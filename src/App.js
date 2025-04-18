@@ -90,8 +90,6 @@ export default function App() {
       )}
 
       <Routes>
-        {/* MainPage is accessible without authentication */}
-        <Route path="/" element={<MainPage />} />
         <Route path="/login/web" element={<Login />} />
 
         {/* Protected routes */}
