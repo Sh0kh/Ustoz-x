@@ -13,6 +13,7 @@ import Logo from "yaponuz/data/img/logo.png";
 import NewLesson from "yaponuz/components/LessonList/pages/NewLesson";
 import { GetAuth } from "yaponuz/data/api";
 import MainPage from "yaponuz/components/MainPage";
+import Default from "layouts/dashboards/default";
 
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
@@ -103,7 +104,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/dashboards" />} />
           </>
         ) : (
-          <Route path="*" element={pathname === "/" ? <MainPage /> : <Navigate to="/login/web" />} />
+          <Route path="*" element={pathname === "/dashboards" ? <Default /> : <Navigate to="/login/web" />} />
         )}
       </Routes>
     </ThemeProvider>
