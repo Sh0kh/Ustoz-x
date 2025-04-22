@@ -43,6 +43,47 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
+  // Helper function to check if a route is active
+  const isRouteActive = (key, route) => {
+    // Check if the key matches collapseName OR if the route matches the current path
+    // Special case for "My groups" which has a route of "/teacher/group"
+    return key === collapseName ||
+      (route && pathname.includes(route)) ||
+      (key === "My groups" && pathname.includes("/teacher/group"));
+  };
+
+  const renderNestedCollapse = (collapses) => {
+    return collapses.map(({ name, collapse, route, href, key }) => {
+      let returnValue;
+
+      if (collapse) {
+        returnValue = (
+          <SidenavItem
+            key={key}
+            name={name}
+            active={key === itemName}
+            open={openCollapse === key}
+            onClick={() => (openCollapse === key ? setOpenCollapse(false) : setOpenCollapse(key))}
+          >
+            {renderNestedCollapse(collapse)}
+          </SidenavItem>
+        );
+      } else {
+        returnValue = href ? (
+          <Link href={href} key={key} target="_blank" rel="noreferrer" sx={{ textDecoration: "none" }}>
+            <SidenavItem name={name} active={key === itemName} />
+          </Link>
+        ) : (
+          <NavLink to={route} key={key} sx={{ textDecoration: "none" }}>
+            <SidenavItem name={name} active={key === itemName} />
+          </NavLink>
+        );
+      }
+
+      return <SidenavList key={key}>{returnValue}</SidenavList>;
+    });
+  };
+
   const renderCollapse = (collapses) => {
     return collapses.map(({ name, collapse, route, href, key }) => {
       let returnValue;
@@ -73,9 +114,9 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
       return <SidenavList key={key}>{returnValue}</SidenavList>;
     });
-  }
-  const role = localStorage.getItem('user');
+  };
 
+  const role = localStorage.getItem('user');
 
   const userLinks = [
     { to: '/users/students', label: 'Student' },
@@ -88,13 +129,32 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     ? userLinks.filter(({ label }) => label === 'Student')
     : userLinks;
 
-  const filteredRoutes = ['SAFASOFJQWEDWT', 'QWPFOQWOFQWFWS'].includes(role)
-    ? routes?.filter(({ name }) => ['Group', 'SMS', 'Chats', 'Users', 'Attendance'].includes(name))
-    : routes;
+  // Define teacher role code
+  const STUDENT_ROLE = 'QWPFOQWOFQWFWS';
+const TEACHER_ROLE = 'SAFASOFJQWEDWT';
+
+  // Filter routes based on user role
+  // For teachers: Show SMS, Chats, Users, Attendance, and My groups
+  // For students: Show SMS, Chats, Users, Attendance (no My groups)
+  // For others: Show all routes
+  const filteredRoutes = routes?.filter(({ name, key }) => {
+    if (role === TEACHER_ROLE) {
+      return ['SMS', 'Chats', 'Users', 'Attendance', 'My groups'].includes(name);
+    } else if (role === STUDENT_ROLE) {
+      return ['SMS', 'Chats', 'Users', 'Attendance'].includes(name);
+    } else {
+      return true; // For other roles, show all routes except those with show=false
+    }
+  });
 
   const renderRoutes = filteredRoutes
     ?.filter(({ show }) => show !== false)
     .map(({ type, name, icon, title, collapse, noCollapse, key, href, route }) => {
+      // Skip "My groups" if the user is not a teacher
+      if (name === "My groups" && role !== TEACHER_ROLE) {
+        return null;
+      }
+
       let returnValue;
 
       if (key === "users") {
@@ -135,6 +195,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
                 name={name}
                 icon={icon}
                 noCollapse={noCollapse}
+                active={isRouteActive(key, route)}
               />
               <Icon
                 sx={{
@@ -179,28 +240,61 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         if (href) {
           returnValue = (
             <Link href={href} key={key} target="_blank" rel="noreferrer" sx={{ textDecoration: "none" }}>
-              <SidenavCollapse name={name} icon={icon} active={key === collapseName} noCollapse={noCollapse} />
+              <SidenavCollapse
+                name={name}
+                icon={icon}
+                active={isRouteActive(key, route)}
+                noCollapse={noCollapse}
+              />
             </Link>
           );
         } else if (noCollapse && route) {
           returnValue = (
             <NavLink to={route} key={key}>
-              <SidenavCollapse name={name} icon={icon} noCollapse={noCollapse} active={key === collapseName}>
+              <SidenavCollapse
+                name={name}
+                icon={icon}
+                noCollapse={noCollapse}
+                active={isRouteActive(key, route)}
+              >
                 {collapse ? renderCollapse(collapse) : null}
               </SidenavCollapse>
             </NavLink>
           );
         } else {
           returnValue = (
-            <Accordion key={key} expanded={openCollapse === key} onChange={() => (openCollapse === key ? setOpenCollapse(false) : setOpenCollapse(key))}>
+            <Accordion
+              key={key}
+              expanded={openCollapse === key}
+              onChange={() => (openCollapse === key ? setOpenCollapse(false) : setOpenCollapse(key))}
+              sx={{
+                width: '100%',
+                margin: 0,
+                boxShadow: "none",
+                backgroundColor: "#F7F9FB",
+                "&:before": { display: "none" },
+              }}
+            >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
+                sx={{
+                  padding: "0 1px",
+                  margin: 0,
+                  "& .MuiAccordionSummary-content": {
+                    margin: 0,
+                    padding: 0,
+                  },
+                }}
               >
-                <SidenavCollapse name={name} icon={icon} active={key === collapseName} />
+                <SidenavCollapse
+                  name={name}
+                  icon={icon}
+                  active={isRouteActive(key, route)}
+                />
               </AccordionSummary>
-              <AccordionDetails>
+              <AccordionDetails sx={{ padding: "0 8px", margin: 0 }}>
                 {collapse ? renderCollapse(collapse) : null}
               </AccordionDetails>
             </Accordion>
@@ -228,10 +322,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       }
 
       return returnValue;
-    });
-
-
-
+    })
+    .filter(Boolean); // Filter out null values (items that should not be shown)
 
   return (
     <SidenavRoot

@@ -4,38 +4,36 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import Grid from "@mui/material/Grid"; // Grid komponentini import qilamiz
+import Grid from "@mui/material/Grid";
 import SoftButton from "components/SoftButton";
 import { useState } from "react";
+import PropTypes from "prop-types";
 import SoftInput from "components/SoftInput";
 import Swal from "sweetalert2";
-
 import { Users } from "yaponuz/data/api";
-
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftSelect from "components/SoftSelect";
-import { Group } from "yaponuz/data/controllers/group";
 import SoftDatePicker from "components/SoftDatePicker";
+import { Group } from "yaponuz/data/controllers/group";
 
-
-export default function addUser({ refetch }) {
+export default function AddUser({ refetch }) {
   const [open, setOpen] = useState(false);
 
-  // variables
+  // State variables
   const [dateBirth, setDateBirth] = useState("2025-01-02");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("+998");
   const [password, setPassword] = useState("");
   const [genderType, setGenderType] = useState("ERKAK");
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState("");
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(100);
-  const [GroupOptions, setGroupOptions] = useState([]);
+  const [groupOptions, setGroupOptions] = useState([]);
   const [selectedGroupValue, setSelectedGroupValue] = useState("");
 
-  // modal functions
+  // Modal functions
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -44,10 +42,7 @@ export default function addUser({ refetch }) {
     setOpen(false);
   };
 
-  // css variables
-  const my = { margin: "5px 0px" };
-
-  // save the data add new user function
+  // Save the data and add new user function
   const handleSave = async () => {
     const data = {
       dateOfBirth: new Date(dateBirth).toISOString(),
@@ -55,15 +50,13 @@ export default function addUser({ refetch }) {
       lastName,
       phoneNumber,
       password,
-      genderType,
+      genderType: genderType?.value || null,
       accountType: "STUDENT",
       creatorId: localStorage.getItem("userId"),
       confirmPassword: password,
-      email: email,
-      groupId: selectedGroupValue.value || null
+      email,
+      groupId: selectedGroupValue.value || null,
     };
-
-
 
     try {
       const response = await Users.createUser(data);
@@ -73,71 +66,90 @@ export default function addUser({ refetch }) {
     }
   };
 
-  // then add new user function
+  // Show alert after adding a new user
   const showAlert = (response) => {
     function reload() {
       refetch();
       handleClose();
 
-      // clear data
-      setDateBirth("");
+      // Clear data
+      setDateBirth("2025-01-02");
       setFirstName("");
       setLastName("");
-      setPhoneNumber("");
+      setPhoneNumber("+998");
       setPassword("");
-      setGenderType("");
-      setEmail('')
+      setGenderType("ERKAK");
+      setEmail("");
+      setSelectedGroupValue("");
     }
+
     if (response.success) {
-      Swal.fire("new user added", response.message, "success").then(() => reload());
+      Swal.fire("New user added", response.message, "success").then(() => reload());
     } else {
-      Swal.fire("error", response.message || response.error, "error").then(() => reload());
+      Swal.fire("Error", response.message || response.error, "error").then(() => reload());
     }
   };
 
+  // Fetch all groups
   const getAllGroups = async (page, size) => {
     try {
       const response = await Group.getAllGroup(page, size);
-      const groups = response.object || []; // Assuming response.object.data holds the array of groups
+      const groups = response.object || [];
 
       // Map the fetched data to match the expected format of SoftSelect options
-      const formattedOptions = groups?.map((group) => ({
-        label: group.name, // Replace 'name' with the actual property for group label
-        value: group.id,   // Replace 'id' with the actual property for group value
+      const formattedOptions = groups.map((group) => ({
+        label: group.name,
+        value: group.id,
       }));
 
       setGroupOptions(formattedOptions);
-      console.log(formattedOptions)
     } catch (err) {
-      console.error("Error from groups list GET: ", err);
+      console.error("Error fetching groups list: ", err);
     }
   };
 
-  // mounting
+  const handleChange = (e) => {
+    const { value } = e.target;
+
+    // Проверяем, что значение соответствует формату +998 и содержит только цифры
+    if (/^\+998\d*$/.test(value)) {
+      // Ограничиваем длину номера до 13 символов (+998 и 9 цифр)
+      if (value.length <= 13) {
+        setPhoneNumber(value);
+      }
+    } else if (value === "") {
+      // Если поле очищено, возвращаем значение по умолчанию "+998"
+      setPhoneNumber("+998");
+    }
+  };
+  // Fetch groups on component mount
   React.useEffect(() => {
     getAllGroups(page, size);
   }, [page, size]);
 
 
 
-
-  // jsx html code
   return (
     <>
       <SoftButton variant="gradient" onClick={handleClickOpen} color="info" size="small">
-        + add new student
+        + Add New Student
       </SoftButton>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add New Student</DialogTitle>
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <DialogTitle sx={{ fontSize: "1.5rem", fontWeight: "bold", textAlign: "center" }}>
+          Add New Student
+        </DialogTitle>
         <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              {/* Group Select */}
+          <Grid container spacing={1}>
+            {/* Group Select */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                Group
+              </SoftTypography>
               <SoftSelect
                 placeholder="Select Group"
                 value={selectedGroupValue}
                 onChange={(selectedOption) => setSelectedGroupValue(selectedOption)}
-                options={GroupOptions}
+                options={groupOptions}
                 styles={{
                   menu: (provided) => ({
                     ...provided,
@@ -150,34 +162,83 @@ export default function addUser({ refetch }) {
                   }),
                 }}
               />
-              {/* First Name */}
+            </Grid>
+
+            {/* First Name */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                First Name
+              </SoftTypography>
               <SoftInput
                 placeholder="First Name"
                 value={firstName}
-                style={{ marginTop: "16px", width: "100%" }}
+                fullWidth
                 onChange={(e) => setFirstName(e.target.value)}
               />
-              {/* Phone Number */}
-              <SoftInput
-                placeholder="Phone Number"
-                value={phoneNumber}
-                style={{ marginTop: "16px", width: "100%" }}
-                onChange={(e) => {
-                  const input = e.target.value;
-                  if (input.startsWith("+998")) {
-                    setPhoneNumber(input);
-                  } else {
-                    setPhoneNumber("+998");
-                  }
-                }}
-              />
-
             </Grid>
-            <Grid item xs={6}>
-              {/* Gender Type */}
+
+            {/* Last Name */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                Last Name
+              </SoftTypography>
+              <SoftInput
+                placeholder="Last Name"
+                value={lastName}
+                fullWidth
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </Grid>
+
+            {/* Phone Number */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                Phone Number
+              </SoftTypography>
+              <SoftInput
+                // placeholder="Phone Number"
+                value={phoneNumber}
+                fullWidth
+                onChange={handleChange}
+              />
+            </Grid>
+
+            {/* Email */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                Email
+              </SoftTypography>
+              <SoftInput
+                placeholder="Email"
+                value={email}
+                fullWidth
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Grid>
+
+            {/* Password */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                Password
+              </SoftTypography>
+              <SoftInput
+                placeholder="Password"
+                value={password}
+                type="password"
+                fullWidth
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </Grid>
+
+            {/* Gender Type */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                Gender Type
+              </SoftTypography>
               <SoftSelect
                 placeholder="Select Gender Type"
-                onChange={(selectedOption) => setGenderType(selectedOption.value)}
+                value={genderType}
+                onChange={(selectedOption) => setGenderType(selectedOption)}
                 options={[
                   { value: "ERKAK", label: "ERKAK" },
                   { value: "AYOL", label: "AYOL" },
@@ -194,48 +255,34 @@ export default function addUser({ refetch }) {
                   }),
                 }}
               />
-              {/* Last Name */}
-              <SoftInput
-                placeholder="Last Name"
-                value={lastName}
-                style={{ marginTop: "16px", width: "100%" }}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-              {/* Password */}
-              <SoftInput
-                placeholder="Password"
-                value={password}
-                style={{ marginTop: "16px", width: "100%" }}
-                onChange={(e) => setPassword(e.target.value)}
+            </Grid>
+
+            {/* Date of Birth */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                Date of Birth
+              </SoftTypography>
+              <SoftDatePicker
+                placeholder="Date of Birth"
+                value={dateBirth}
+                fullWidth
+                onChange={(newDate) => setDateBirth(newDate)}
               />
             </Grid>
           </Grid>
-          <div style={{ display: "flex", gap: "16px", marginTop: "20px" }}>
-            <SoftInput
-              placeholder="Email"
-              value={email}
-              style={{ flex: 1 }}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <div style={{ flex: 1 }}>
-              <SoftDatePicker
-              placeholder={'Date birdth'}
-                value={dateBirth}
-                onChange={(newDate) => setDateBirth(newDate)}
-              />
-            </div>
-          </div>
-
-
         </DialogContent>
-
-
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSave}>Add Student</Button>
+        <DialogActions sx={{ padding: "16px 24px" }}>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} variant="contained" color="white" >
+            Add Student
+          </Button>
         </DialogActions>
-      </Dialog >
+      </Dialog>
     </>
   );
 }
+AddUser.propTypes = {
+  refetch: PropTypes.func.isRequired,
+};

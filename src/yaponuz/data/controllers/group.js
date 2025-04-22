@@ -18,6 +18,14 @@ class Group {
     });
     return response.json();
   };
+  static getMyGroups = async () => {
+    const url = `${API_PATH}group/get/all/${localStorage.getItem('userId')}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headerGet,
+    });
+    return response.json();
+  };
 
   // create new group
   static createGroup = async (data) => {
@@ -25,6 +33,7 @@ class Group {
 
     const body = {
       creatorId: userId,
+      courserId:data?.courseId,
       endDate: formatDate(data.endDate),
       name: data.groupName,
       startDate: formatDate(data.startDate),

@@ -24,6 +24,7 @@ import SoftBadge from "components/SoftBadge";
 
 import AddGroup from "./components/AddGroup";
 import { Group } from "yaponuz/data/controllers/group";
+import { Frown, Loader } from "lucide-react";
 
 const theFalse = (
   <SoftBadge variant="contained" color="error" size="xs" badgeContent="false" container />
@@ -38,15 +39,19 @@ export default function GroupList() {
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(20);
+  const [loading, setLoading] = useState(true)
 
   // fetching data function
   const getAllGroups = async (page, size) => {
+    setLoading(true)
     try {
       const response = await Group.getAllGroup(page, size);
       setGroups(response.object);
       setTotalPages(response?.object?.totalPages);
     } catch (err) {
       console.log("Error from groups list GET: ", err);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -64,7 +69,7 @@ export default function GroupList() {
     { Header: "createdAt", accessor: "createdAt" },
     { Header: "action", accessor: "action" },
   ];
-  
+
   const rows = groups?.map((group) => {
     const createdAt = group.createdAt
       ? new Date(group.createdAt).toISOString().replace(/T/, " ").replace(/\..+/, "")
@@ -102,14 +107,31 @@ export default function GroupList() {
               <AddGroup refetch={() => getAllGroups(page, size)} />
             </Stack>
           </SoftBox>
-          <DataTable
-            table={tabledata}
-            entriesPerPage={{
-              defaultValue: 20,
-              entries: [5, 7, 10, 15, 20],
-            }}
-            canSearch
-          />
+          {loading ? (
+            <div className="flex items-center gap-y-4 justify-center flex-col h-[400px]">
+              <Loader className="animate-spin ml-2 size-10" />
+              <p className="text-sm uppercase font-medium">Yuklanmoqda, Iltimos kuting</p>
+            </div>
+          ) : tabledata?.rows?.length !== 0 ? (
+            <DataTable
+              table={tabledata}
+              entriesPerPage={{
+                defaultValue: 20,
+                entries: [5, 7, 10, 15, 20],
+              }}
+              canSearch
+            />
+          ) : (
+            <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
+              <Frown className="size-20" />
+              <div className="text-center">
+                <p className="uppercase font-semibold">Afuski, hech narsa topilmadi</p>
+                <p className="text-sm text-gray-700">
+                  balki, filtrlarni tozalab ko`rish kerakdir
+                </p>
+              </div>
+            </div>
+          )}
         </Card>
 
       </SoftBox>

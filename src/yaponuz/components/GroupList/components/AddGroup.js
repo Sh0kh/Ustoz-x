@@ -16,6 +16,7 @@ import SoftTypography from "components/SoftTypography";
 import SoftSelect from "components/SoftSelect";
 import { Group } from "yaponuz/data/controllers/group";
 import { Teacher } from "yaponuz/data/api";
+import { Course } from "yaponuz/data/controllers/course";
 
 export default function AddGroup({ refetch }) {
   const [open, setOpen] = useState(false);
@@ -32,6 +33,8 @@ export default function AddGroup({ refetch }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [courseId, setCourseId] = useState('')
+  const [courses, setCourses] = useState([])
 
   const handleSetStartDate = (newDate) => setStartDate(newDate);
   const handleSetEndDate = (newDate) => setEndDate(newDate);
@@ -40,15 +43,23 @@ export default function AddGroup({ refetch }) {
     try {
       const response = await Teacher.getUsers(page, size, firstName, lastName, phoneNumber);
       setTeachers(response.object.content);
-      console.log(response, "all users");
-      console.log("all users");
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
 
+  const getAllCourses = async () => {
+    try {
+      const response = await Course.getAllCourses(page, size);
+      setCourses(response.object);
+    } catch (err) {
+      console.log("Error from courses list GET: ", err);
+    }
+  };
+
   useEffect(() => {
     getAllUsers();
+    getAllCourses()
   }, [page, size, firstName, lastName, phoneNumber]);
 
 
@@ -89,12 +100,12 @@ export default function AddGroup({ refetch }) {
           Swal.showLoading();
         },
       });
-      const data = { groupName, startDate, endDate, teacherId };
+      const data = { groupName, startDate, endDate, teacherId, courseId };
       const response = await Group?.createGroup(data);
       loadingSwal.close();
 
       showAlert(response);
-
+      setCourseId('')
       // clear the data
       setGroupName("");
       setStartDate(null);
@@ -149,6 +160,24 @@ export default function AddGroup({ refetch }) {
                   }))
                   .find((option) => option.value === teacherId)} // Находим выбранный элемент
                 onChange={(selectedOption) => setTeacherId(selectedOption?.value)}
+              />
+              {/* Teacher Select */}
+              <SoftTypography component="label" variant="caption" fontWeight="bold">
+                Select Group
+              </SoftTypography>
+              <SoftSelect
+                options={courses?.map((cr) => ({
+                  value: cr.id,
+                  label: `${cr.name} `,
+                }))}
+                placeholder="Choose a courses"
+                value={teachers
+                  ?.map((cr) => ({
+                    value: cr.id,
+                    label: `${cr.name} `,
+                  }))
+                  .find((option) => option.value === courseId)} // Находим выбранный элемент
+                onChange={(selectedOption) => setCourseId(selectedOption?.value)}
               />
 
 

@@ -14,6 +14,8 @@ import NewLesson from "yaponuz/components/LessonList/pages/NewLesson";
 import { GetAuth } from "yaponuz/data/api";
 import MainPage from "yaponuz/components/MainPage";
 import Default from "layouts/dashboards/default";
+import Error404 from "layouts/authentication/error/404";
+import ErrorPage from "yaponuz/components/ErrorPage";
 
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
@@ -71,8 +73,12 @@ export default function App() {
   // Check if user is authenticated
   const isAuthenticated = !GetAuth.isTokenExpired();
 
-  // Don't show sidenav on MainPage
-  const shouldShowSidenav = layout === "dashboard" && isAuthenticated && pathname !== "/";
+  // Don't show sidenav on MainPage or ErrorPage
+  const shouldShowSidenav =
+    layout === "dashboard" &&
+    isAuthenticated &&
+    pathname !== "/" &&
+    pathname !== "/error"; // Добавляем проверку для /error
 
   return (
     <ThemeProvider theme={theme}>
@@ -92,6 +98,7 @@ export default function App() {
 
       <Routes>
         <Route path="/login/web" element={<Login />} />
+        <Route path="/error" element={<ErrorPage />} /> {/* Убедитесь, что путь правильный */}
 
         {/* Protected routes */}
         {isAuthenticated ? (
@@ -101,7 +108,7 @@ export default function App() {
             <Route path="/articles/article/:article" element={<ArticleList />} />
             <Route path="/lessons/new" element={<NewLesson />} />
             <Route path="/lessons/edit/:id" element={<NewLesson />} />
-            <Route path="*" element={<Navigate to="/dashboards" />} />
+            <Route path="*" element={<Navigate to="/error" />} />
           </>
         ) : (
           <Route path="*" element={pathname === "/dashboards" ? <Default /> : <Navigate to="/login/web" />} />
