@@ -36,6 +36,7 @@ import QuizeInfo from "yaponuz/components/QuizeList/QuizeInfo";
 import QuestionCreate from "yaponuz/components/QuizeList/components/QuestionCreate";
 import Assembly from "yaponuz/components/assembly/Assembly";
 import TeacherGroup from "yaponuz/components/TeacherGroup";
+import StudentByGroup from "yaponuz/components/StundetByGroup";
 
 const routes = [
   { type: "title", title: "General", key: "general-title" },
@@ -121,6 +122,15 @@ const routes = [
     noCollapse: true,
     route: "/users/admins",
     component: <UsersAdmins />
+  },
+  {
+    show: false,
+    type: "collapse",
+    name: "Group Student",
+    key: "GroupStudent",
+    noCollapse: true,
+    route: "/mygroup/:ID",
+    component: <StudentByGroup />
   },
 
 

@@ -1,88 +1,72 @@
-// @mui material components
-import Card from "@mui/material/Card";
-
-// Soft UI Dashboard PRO React components
+import { Card, Stack } from "@mui/material";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
-
-// Soft UI Dashboard PRO React example components
+import Footer from "examples/Footer";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
-import SoftButton from "components/SoftButton";
 import DataTable from "examples/Tables/DataTable";
-
-import SoftPagination from "components/SoftPagination";
-import Icon from "@mui/material/Icon";
-import SoftInput from "components/SoftInput";
-import Stack from "@mui/material/Stack";
-
-// Data
+import { Assembly } from "yaponuz/data/api";
 import { useEffect, useState } from "react";
-import SoftBadge from "components/SoftBadge";
-
-import { Group } from "yaponuz/data/controllers/group";
 import { Frown, Loader } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import SoftButton from "components/SoftButton";
+import { Users } from "yaponuz/data/api";
+import { useParams } from "react-router-dom";
 
 
-export default function TeacherGroup() {
-    // variables
-    const [groups, setGroups] = useState([]);
+
+export default function StundetByGroup() {
+    const { ID } = useParams()
+    const [assembly, setAssembly] = useState([])
+    const [totalPages, setTotalPages] = useState(0);
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(20);
     const [loading, setLoading] = useState(true)
 
 
-    // fetching data function
-    const getAllGroups = async () => {
-        setLoading(true)
+    const getAseembly = async (page, size) => {
+        setLoading(true);
         try {
-            const response = await Group.getMyGroups();
-            setGroups(response.object);
+            const response = await Users.getUsersAttendance(page, size, "", "", "", ID);
+            setAssembly(response.object?.content);
+            setTotalPages(response?.object?.totalPages);
         } catch (err) {
             console.log("Error from groups list GET: ", err);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     };
 
-    // mounting
-    useEffect(() => {
-        getAllGroups();
-    }, []);
 
-    // table elements
-    const columns = [
-        { Header: "id", accessor: "id" },
-        { Header: "name", accessor: "name" },
-        { Header: "startDate", accessor: "startDate" },
-        { Header: "endDate", accessor: "endDate" },
-        { Header: "createdAt", accessor: "createdAt" },
-    ];
-
-    const rows = groups?.map((group) => {
-        const createdAt = group.createdAt
-            ? new Date(group.createdAt).toISOString().replace(/T/, " ").replace(/\..+/, "")
-            : "null";
+    const rows = assembly?.map((item) => {
         return {
-            id: group.id,
-            name: (
-                <NavLink className={'text-blue-400'} to={`/mygroup/${group?.id}`}>
-                    {group.name}
-                </NavLink>
-            ),
-            startDate: group.startDate,
-            endDate: group.endDate,
-            createdAt,
+            id: item.id,
+            Title: item.title,
+            Date: item.date,
+            Time: item.time,
+            Group: item?.group?.name,
         };
     });
 
+
+    // mounting
+    useEffect(() => {
+        getAseembly(page, size);
+    }, [page, size, ID]);
+
+
+    const columns = [
+        { Header: "id", accessor: "id" },
+        { Header: "Title", accessor: "Title" },
+        { Header: "Date", accessor: "Date" },
+        { Header: "Time", accessor: "Time" },
+        { Header: "Group", accessor: "Group" },
+        { Header: "action", accessor: "action" },
+    ];
 
     const tabledata = {
         columns,
         rows,
     };
-
-    const myx = { margin: "0px 30px" };
 
     return (
         <DashboardLayout>
@@ -92,11 +76,10 @@ export default function TeacherGroup() {
                     <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
                         <SoftBox lineHeight={1}>
                             <SoftTypography variant="h5" fontWeight="medium">
-                                All Groups
+                                Student
                             </SoftTypography>
                         </SoftBox>
                     </SoftBox>
-
                     {loading ? (
                         <div className="flex items-center gap-y-4 justify-center flex-col h-[400px]">
                             <Loader className="animate-spin ml-2 size-10" />
@@ -126,5 +109,5 @@ export default function TeacherGroup() {
             </SoftBox>
             <Footer />
         </DashboardLayout>
-    );
+    )
 }

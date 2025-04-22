@@ -139,7 +139,7 @@ const TEACHER_ROLE = 'SAFASOFJQWEDWT';
   // For others: Show all routes
   const filteredRoutes = routes?.filter(({ name, key }) => {
     if (role === TEACHER_ROLE) {
-      return ['SMS', 'Chats', 'Users', 'Attendance', 'My groups'].includes(name);
+      return ['SMS', 'Chats',  'Attendance', 'My groups'].includes(name);
     } else if (role === STUDENT_ROLE) {
       return ['SMS', 'Chats', 'Users', 'Attendance'].includes(name);
     } else {
