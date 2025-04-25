@@ -46,7 +46,7 @@ export default function TestResult() {
             action: (
                 <SoftBox display="flex" alignItems="center" gap="10px">
                     <SoftBox>
-                        <EditResult item={item} refetch={getAllTestResult}/>
+                        <EditResult item={item} refetch={getAllTestResult} />
                     </SoftBox>
                     <SoftBox>
                         <DeleteResult id={item?.id} refetch={getAllTestResult} />
@@ -81,11 +81,11 @@ export default function TestResult() {
                             Test result
                         </SoftTypography>
                     </SoftBox>
-                    <SoftBox display="flex" justifyContent="space-between" gap='10px'>
+                    {/* <SoftBox display="flex" justifyContent="space-between" gap='10px'>
                         <Stack spacing={1} direction="row">
                             <AddResult refetch={getAllTestResult} />
                         </Stack>
-                    </SoftBox>
+                    </SoftBox> */}
                 </SoftBox>
                 {loading ? (
                     <div className="flex items-center gap-y-4 justify-center flex-col h-[400px]">

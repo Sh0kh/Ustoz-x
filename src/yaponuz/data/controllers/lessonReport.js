@@ -1,16 +1,17 @@
-import { item } from "examples/Sidenav/styles/sidenavItem";
 import { API_PATH, headerGet, header } from "../headers";
 
-class testResult {
+class lessonReport {
 
-    static createTestResult = async (data) => {
+    static createLessonReport = async (data) => {
+        // The body format matches exactly what the API expects
         const body = {
-            date: data?.date,
-            studentScore: data?.studentScore, 
-            title: data?.title
+            studentId: data.studentId,
+            groupId: data.groupId,
+            reportDate: data.reportDate,
+            scores: data.scores
         };
 
-        const url = `${API_PATH}quiz/test/result/create`;
+        const url = `${API_PATH}lesson/student/daily/report/create`;
         const response = await fetch(url, {
             method: "POST",
             headers: header,
@@ -18,8 +19,9 @@ class testResult {
         });
         return response.json();
     }
-    static getTestResult = async (data) => {
-        const url = `${API_PATH}quiz/test/result/getAll/${data?.studentId}`;
+
+    static getLessonReport = async (data) => {
+        const url = `${API_PATH}lesson/student/daily/report/getAllByStudentId?page=${data?.page}&size=${data?.size}&studentId=${data?.studentId}`;
         const response = await fetch(url, {
             method: "GET",
             headers: headerGet,
@@ -27,8 +29,8 @@ class testResult {
         return response.json();
     }
 
-    static deleteTestResult = async (id) => {
-        const url = `${API_PATH}quiz/test/result/delete/${id}`;
+    static deleteLessonReport = async (id) => {
+        const url = `${API_PATH}lesson/student/daily/report/delete?id=${id}`;
         const response = await fetch(url, {
             method: 'DELETE',
             headers: headerGet,
@@ -36,14 +38,13 @@ class testResult {
         return response.json();
     }
 
-    static EditResult = async (data) => {
-        const url = `${API_PATH}quiz/test/result/update`;
-
+    static EditReport = async (data) => {
+        const url = `${API_PATH}quiz/report/update`;
         const body = {
             id: data?.id,
-            date: data?.date,
-            score: data?.score,
-            studentId: data?.studentId,
+            context: data?.info,
+            fileId: data?.fileId,
+            reportType: data?.selectType?.value,
             studentId: data?.studentId,
             title: data?.title
         }
@@ -54,6 +55,6 @@ class testResult {
         });
         return response.json();
     }
-
 }
-export { testResult }
+
+export { lessonReport }

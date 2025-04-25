@@ -52,7 +52,7 @@ export default function AttendanceList() {
   // fetching data function
   const getAllGroups = async (page, size) => {
     try {
-      const response = await Group.getAllGroup(page, size);
+      const response = await Group.getMyGroups(page, size);
       const groups = response.object || [];
 
       const formattedOptions = groups?.map((group) => ({

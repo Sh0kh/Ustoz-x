@@ -131,17 +131,14 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
   // Define teacher role code
   const STUDENT_ROLE = 'QWPFOQWOFQWFWS';
-const TEACHER_ROLE = 'SAFASOFJQWEDWT';
+  const TEACHER_ROLE = 'SAFASOFJQWEDWT';
 
-  // Filter routes based on user role
-  // For teachers: Show SMS, Chats, Users, Attendance, and My groups
-  // For students: Show SMS, Chats, Users, Attendance (no My groups)
-  // For others: Show all routes
+
   const filteredRoutes = routes?.filter(({ name, key }) => {
     if (role === TEACHER_ROLE) {
-      return ['SMS', 'Chats',  'Attendance', 'My groups'].includes(name);
+      return ['SMS', 'Chats', 'Attendance', 'My groups', 'Test result', 'Report', 'Personality', 'Lesson report'].includes(name);
     } else if (role === STUDENT_ROLE) {
-      return ['SMS', 'Chats', 'Users', 'Attendance'].includes(name);
+      return ['SMS', 'Chats', 'Users', 'Attendance',].includes(name);
     } else {
       return true; // For other roles, show all routes except those with show=false
     }
@@ -151,9 +148,10 @@ const TEACHER_ROLE = 'SAFASOFJQWEDWT';
     ?.filter(({ show }) => show !== false)
     .map(({ type, name, icon, title, collapse, noCollapse, key, href, route }) => {
       // Skip "My groups" if the user is not a teacher
-      if (name === "My groups" && role !== TEACHER_ROLE) {
+      if ((name === 'Test result' || name === "My groups" || name === "Report" || name === 'Personality' || name === 'Lesson report') && role !== TEACHER_ROLE) {
         return null;
       }
+
 
       let returnValue;
 

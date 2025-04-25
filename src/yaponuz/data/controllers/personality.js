@@ -1,16 +1,16 @@
-import { item } from "examples/Sidenav/styles/sidenavItem";
 import { API_PATH, headerGet, header } from "../headers";
 
-class testResult {
+class personality {
 
-    static createTestResult = async (data) => {
+    static createPersonality = async (data) => {
         const body = {
+            score: data?.score,
+            lessonId: data?.lessonId,
             date: data?.date,
-            studentScore: data?.studentScore, 
-            title: data?.title
-        };
-
-        const url = `${API_PATH}quiz/test/result/create`;
+            studentId: data?.studentId,
+            comment: data?.info
+        }
+        const url = `${API_PATH}personality/create`;
         const response = await fetch(url, {
             method: "POST",
             headers: header,
@@ -18,8 +18,9 @@ class testResult {
         });
         return response.json();
     }
-    static getTestResult = async (data) => {
-        const url = `${API_PATH}quiz/test/result/getAll/${data?.studentId}`;
+
+    static getPersonality = async (data) => {
+        const url = `${API_PATH}personality/admin/getAll?studentId=${data?.studentId}`;
         const response = await fetch(url, {
             method: "GET",
             headers: headerGet,
@@ -27,8 +28,8 @@ class testResult {
         return response.json();
     }
 
-    static deleteTestResult = async (id) => {
-        const url = `${API_PATH}quiz/test/result/delete/${id}`;
+    static deletePersonality = async (id) => {
+        const url = `${API_PATH}personality/delete?id=${id}`;
         const response = await fetch(url, {
             method: 'DELETE',
             headers: headerGet,
@@ -36,14 +37,13 @@ class testResult {
         return response.json();
     }
 
-    static EditResult = async (data) => {
-        const url = `${API_PATH}quiz/test/result/update`;
-
+    static EditReport = async (data) => {
+        const url = `${API_PATH}quiz/report/update`;
         const body = {
             id: data?.id,
-            date: data?.date,
-            score: data?.score,
-            studentId: data?.studentId,
+            context: data?.info,
+            fileId: data?.fileId,
+            reportType: data?.selectType?.value,
             studentId: data?.studentId,
             title: data?.title
         }
@@ -54,6 +54,6 @@ class testResult {
         });
         return response.json();
     }
-
 }
-export { testResult }
+
+export { personality }

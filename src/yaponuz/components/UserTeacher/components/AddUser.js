@@ -15,12 +15,13 @@ import { Teacher } from "yaponuz/data/api";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftSelect from "components/SoftSelect";
+import SoftDatePicker from "components/SoftDatePicker";
 
 export default function AddUser({ refetch }) {
   const [open, setOpen] = useState(false);
 
   // State variables
-  const [dateBirth, setDateBirth] = useState("");
+  const [dateBirth, setDateBirth] = useState("2007-01-01");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("+998");
@@ -103,7 +104,7 @@ export default function AddUser({ refetch }) {
           Add New Teacher
         </DialogTitle>
         <DialogContent>
-          <Grid container spacing={3}>
+          <Grid container spacing={1}>
             {/* First Name */}
             <Grid item xs={12}>
               <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
@@ -184,16 +185,16 @@ export default function AddUser({ refetch }) {
               />
             </Grid>
 
-            {/* Date of Birth */}
+
             <Grid item xs={12}>
               <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
                 Date of Birth
               </SoftTypography>
-              <SoftInput
-                placeholder="YYYY-MM-DD"
+              <SoftDatePicker
+                placeholder="Date of Birth"
                 value={dateBirth}
                 fullWidth
-                onChange={(e) => setDateBirth(e.target.value)}
+                onChange={(newDate) => setDateBirth(newDate)}
               />
             </Grid>
           </Grid>

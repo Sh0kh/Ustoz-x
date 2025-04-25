@@ -15,31 +15,49 @@ export default function AttendanceModal({ isOpen, onClose, studentId, selectedDa
     const [comment, setComment] = React.useState("");
 
 
-    useEffect(()=>{
-        if(attendanceData){
+    useEffect(() => {
+        if (attendanceData) {
             setAttendanceStatus(attendanceData?.status || '')
             setTimeOfLate(attendanceData?.timeOfLate || '')
             setComment(attendanceData?.comment || '')
         }
-    },[attendanceData])
+    }, [attendanceData])
 
+    // Функция для получения даты в формате ISO с временем Узбекистана
+    const getDateWithUzbekistanTime = (dateString) => {
+        // Получаем текущее время
+        const now = new Date();
 
+        // Создаем дату из переданной строки даты
+        const date = new Date(dateString);
+
+        // Устанавливаем часы, минуты, секунды и миллисекунды из текущего времени
+        date.setHours(now.getHours());
+        date.setMinutes(now.getMinutes());
+        date.setSeconds(now.getSeconds());
+        date.setMilliseconds(now.getMilliseconds());
+
+        // Преобразуем в ISO строку
+        return date.toISOString();
+    };
 
     const handleSave = async () => {
+        // Используем выбранную дату и добавляем к ней текущее время
+        const dateWithTime = getDateWithUzbekistanTime(selectedDate);
+
         const data = [{
             status: attendanceStatus,
-            // timeOfLate: "10:00",  
             timeOfLate: Number(timeOfLate) || 0,
             comment: comment,
+            startTime: dateWithTime, // Используем дату с текущим временем
             day: selectedDate,
             studentId: studentId,
-            creatorId: Number(localStorage.getItem("userId"))  // Ensure creatorId is a number
+            creatorId: Number(localStorage.getItem("userId"))
         }];
 
         try {
             const response = await Attendance.createAttendance(data);
-            // Handle success (e.g., show a success message or close the modal)
-            onClose(); // Close the modal after saving
+            onClose();
             refresh()
             setComment('')
             setTimeOfLate('')

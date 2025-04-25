@@ -44,34 +44,32 @@ export default function AttendanceTable({ data, month, year, refresh }) {
         }
     };
 
-
-
-
     const getAttendanceStatus = (student, day) => {
         const attendanceForDay = student.attendance.find(
             (attendance) => dayjs(attendance.day).date() === day
         );
         return attendanceForDay ? attendanceForDay.status : ''; // Return status or empty string if no attendance
     };
+
     const getStatusIcon = (status) => {
         const statusIcons = {
             CAME: (
-                <svg className="w-[20px] h-[20px] text-green-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 12V3m0 0L9 6m3-3l3 3M6 12h12M6 12l3 3m9-3l-3 3" />
+                <svg className="w-5 h-5 text-green-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
             ),
             EXCUSED: (
-                <svg className="w-8 h-8 text-yellow-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-yellow-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12H8m4-4v8" />
                 </svg>
             ),
             LATE_CAME: (
-                <svg className="w-8 h-8 text-orange-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-orange-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6l4 2M6 12a6 6 0 1 1 12 0 6 6 0 0 1-12 0" />
                 </svg>
             ),
             NOT_CAME: (
-                <svg className="w-8 h-8 text-red-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-red-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             ),
@@ -79,146 +77,192 @@ export default function AttendanceTable({ data, month, year, refresh }) {
         return statusIcons[status] || null;
     };
 
-    // const getStatusLabel = (status) => {
-    //     const statusLabels = {
-    //         CAME: 'Came',
-    //         EXCUSED: 'Excused',
-    //         LATE_CAME: 'Late Came',
-    //         NOT_CAME: 'Not Came',
-    //     };
-    //     return statusLabels[status] || ''; // Return label or empty string
-    // };
-
     const getStatusBgColor = (status) => {
         const statusColors = {
-            CAME: 'bg-green-500',
-            EXCUSED: 'bg-yellow-500',
-            LATE_CAME: 'bg-orange-500',
-            NOT_CAME: 'bg-red-500',
+            CAME: 'bg-green-100 border-green-300',
+            EXCUSED: 'bg-yellow-100 border-yellow-300',
+            LATE_CAME: 'bg-orange-100 border-orange-300',
+            NOT_CAME: 'bg-red-100 border-red-300',
         };
-        return statusColors[status] || ''; // Default background color if status doesn't match
+        return statusColors[status] || '';
     };
 
-    return (<>
-        <div className="p-4 pl-[10px] bg-white shadow-lg rounded-lg mb-[20px] overflow-x-auto flex items-center justify-between gap-[10px]">
-            <div className='w-full cursor-pointer bg-green-500 p-[5px] text-[white] text-[15px] rounded-[10px] flex items-center justify-center'>
-                <span>
-                    Came
-                </span>
+    const getLegendColor = (status) => {
+        const statusColors = {
+            CAME: 'from-green-400 to-green-500',
+            EXCUSED: 'from-yellow-400 to-yellow-500',
+            LATE_CAME: 'from-orange-400 to-orange-500',
+            NOT_CAME: 'from-red-400 to-red-500',
+        };
+        return statusColors[status] || '';
+    };
+
+    const getStatusTextColor = (status) => {
+        const statusColors = {
+            CAME: 'text-green-800',
+            EXCUSED: 'text-yellow-800',
+            LATE_CAME: 'text-orange-800',
+            NOT_CAME: 'text-red-800',
+        };
+        return statusColors[status] || '';
+    };
+
+    return (
+        <>
+            {/* Status Legend with SoftBox Design */}
+            <div className="p-5 bg-white shadow-lg rounded-lg mb-6 overflow-x-auto">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">Attendance Status Legend</h3>
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    {[
+                        { status: 'CAME', label: 'Came' },
+                        { status: 'EXCUSED', label: 'Excused' },
+                        { status: 'LATE_CAME', label: 'Late came' },
+                        { status: 'NOT_CAME', label: 'Not came' }
+                    ].map((item) => (
+                        <div key={item.status} className="flex-1 min-w-[120px]">
+                            <div className={`cursor-pointer rounded-xl shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg transform hover:-translate-y-1`}>
+                                <div className={`bg-gradient-to-r ${getLegendColor(item.status)} p-1`}></div>
+                                <div className="p-3 bg-white flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getStatusBgColor(item.status)}`}>
+                                            {getStatusIcon(item.status)}
+                                        </div>
+                                        <span className={`ml-2 font-medium ${getStatusTextColor(item.status)}`}>
+                                            {item.label}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
-            <div className='w-full cursor-pointer bg-yellow-500 p-[5px] text-[white] text-[15px] rounded-[10px] flex items-center justify-center'>
-                <span>
-                    Excused
-                </span>
-            </div>
-            <div className='w-full cursor-pointer bg-orange-500 p-[5px] text-[white] text-[15px] rounded-[10px] flex items-center justify-center'>
-                <span>
-                    Late came
-                </span>
-            </div>
-            <div className='w-full cursor-pointer bg-red-500 p-[5px] text-[white] text-[15px] rounded-[10px] flex items-center justify-center'>
-                <span>
-                    Not came
-                </span>
-            </div>
-        </div>
-        <div className="p-4 pl-[0px] bg-white shadow-lg rounded-lg mb-[50px] overflow-x-auto">
-            <table className="w-full border-collapse">
-                <thead>
-                    <tr>
-                        <th className="sticky left-0 bg-white border-b-[1px] pl-[19px] border-[#c3c3c3a0] text-left font-semibold text-black p-4">
-                            <span className="text-[20px]">Name</span>
-                        </th>
-                        <th className="bg-white border-b-[1px] border-[#c3c3c3a0] text-black">
-                            <span className="text-[15px] w-[80px] block">Came day</span>
-                        </th>
-                        <th className="bg-white border-b-[1px] border-[#c3c3c3a0] font-semibold text-black p-4">
-                            <span className="text-[15px] w-[80px] block">Not came day</span>
-                        </th>
-                        <th className="bg-white border-b-[1px] border-[#c3c3c3a0] font-semibold text-black p-4">
-                            <span className="text-[15px] w-[80px] block">Excused day</span>
-                        </th>
-                        <th className="bg-white border-b-[1px] border-[#c3c3c3a0] font-semibold text-black p-4">
-                            <span className="text-[15px] w-[80px] block">Late came time</span>
-                        </th>
-                        {daysArray.map((day) => (
-                            <th
-                                key={day}
-                                className="p-[5px] text-center border-b-[1px] border-[#c3c3c3a0] font-mono font-semibold text-black"
-                            >
-                                {day.toString().padStart(2, '0')}
+
+            {/* Attendance Table */}
+            <div className="p-4 pl-0 bg-white shadow-lg rounded-lg mb-12 overflow-x-auto">
+                <table className="w-full border-collapse">
+                    <thead>
+                        <tr>
+                            <th className="sticky left-0 bg-white border-b border-gray-200 text-left font-semibold text-gray-700 p-4">
+                                <span className="text-lg">Name</span>
                             </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((student, index) => {
-                        const cameDays = daysArray.filter(
-                            (day) => getAttendanceStatus(student, day) === 'CAME'
-                        ).length;
-                        const lateDays = daysArray.filter(
-                            (day) => getAttendanceStatus(student, day) === 'LATE_CAME'
-                        ).length;
-                        const absentDays = daysArray.filter(
-                            (day) => getAttendanceStatus(student, day) === 'EXCUSED'
-                        ).length;
-                        const notCame = daysArray.filter(
-                            (day) => getAttendanceStatus(student, day) === 'NOT_CAME'
-                        ).length;
-                        const totalLateTime = student.attendance
-                            .filter((record) => record.status === 'LATE_CAME')
-                            .reduce((sum, record) => sum + record.timeOfLate, 0);
-                        return (
-                            <tr key={index}>
-                                <td className="sticky left-0 bg-white p-4 text-left text-black max-w-[200px] truncate">
-                                    <span className="text-[20px] opacity-[0.7] mr-[4px]">
-                                        {index + 1}.
-                                    </span>
-                                    <span className="text-[18px] opacity-[0.7]">
-                                        {student.user.firstName}
-                                    </span>
-                                </td>
-                                <td className="cursor-pointer px-[5px] py-2 text-center font-mono text-black max-w-[200px] truncate">
-                                    {cameDays}
-                                </td>
-                                <td className="cursor-pointer px-[5px] py-2 text-center font-mono text-black max-w-[200px] truncate">
-                                    {notCame}
-                                </td>
-                                <td className="cursor-pointer px-[5px] py-2 text-center font-mono text-black max-w-[200px] truncate">
-                                    {absentDays}
-                                </td>
-                                <td className="cursor-pointer px-[5px] py-2 text-center font-mono text-black max-w-[200px] truncate">
-                                    {totalLateTime}
-                                </td>
-                                {daysArray.map((day) => (
-                                    <td
-                                        key={day}
-                                        className="cursor-pointer px-[5px] py-2 text-center font-mono text-black max-w-[200px] truncate"
-                                    >
-                                        <div
-                                            onClick={() => handleDayClick(day, student.user.id)}
-                                            className={`border-[1px] rounded-[5px] border-[black] w-[50px] h-[40px] hover:bg-[#4d4c4c] transition-colors duration-200 flex flex-col items-center justify-center p-[5px] ${getStatusBgColor(getAttendanceStatus(student, day))}`}
-                                        >
-                                            {getStatusIcon(getAttendanceStatus(student, day))}
+                            <th className="bg-white border-b border-gray-200 text-gray-700 p-3">
+                                <span className="text-sm w-20 block">Came day</span>
+                            </th>
+                            <th className="bg-white border-b border-gray-200 text-gray-700 p-3">
+                                <span className="text-sm w-20 block">Not came day</span>
+                            </th>
+                            <th className="bg-white border-b border-gray-200 text-gray-700 p-3">
+                                <span className="text-sm w-20 block">Excused day</span>
+                            </th>
+                            <th className="bg-white border-b border-gray-200 text-gray-700 p-3">
+                                <span className="text-sm w-20 block">Late came time</span>
+                            </th>
+                            {daysArray.map((day) => (
+                                <th
+                                    key={day}
+                                    className="p-2 text-center border-b border-gray-200 font-mono font-medium text-gray-600"
+                                >
+                                    {day.toString().padStart(2, '0')}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.map((student, index) => {
+                            const cameDays = daysArray.filter(
+                                (day) => getAttendanceStatus(student, day) === 'CAME'
+                            ).length;
+                            const lateDays = daysArray.filter(
+                                (day) => getAttendanceStatus(student, day) === 'LATE_CAME'
+                            ).length;
+                            const absentDays = daysArray.filter(
+                                (day) => getAttendanceStatus(student, day) === 'EXCUSED'
+                            ).length;
+                            const notCame = daysArray.filter(
+                                (day) => getAttendanceStatus(student, day) === 'NOT_CAME'
+                            ).length;
+                            const totalLateTime = student.attendance
+                                .filter((record) => record.status === 'LATE_CAME')
+                                .reduce((sum, record) => sum + record.timeOfLate, 0);
+                            return (
+                                <tr key={index} className="hover:bg-gray-50">
+                                    <td className="sticky z-50 left-0 bg-white p-4 text-left text-gray-800 max-w-[200px] truncate">
+                                        <span className="text-lg text-gray-500 mr-2">
+                                            {index + 1}.
+                                        </span>
+                                        <span className="text-base font-medium">
+                                            {student.user.firstName}
+                                        </span>
+                                    </td>
+                                    <td className="p-3 text-center font-mono text-gray-700">
+                                        <div className="flex justify-center">
+                                            <div className="bg-green-100 text-green-800 w-10 h-10 rounded-full flex items-center justify-center font-semibold shadow-sm">
+                                                {cameDays}
+                                            </div>
                                         </div>
                                     </td>
-                                ))}
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-            <AttendanceModal
-                refresh={refresh}
-                isOpen={AtModal}
-                onClose={() => setAtModal(false)}
-                selectedDate={selectedDate}
-                studentId={studentId}
-                attendanceData={selectedAttendance}
-            />
-        </div>
-
-    </>
+                                    <td className="p-3 text-center font-mono text-gray-700">
+                                        <div className="flex justify-center">
+                                            <div className="bg-red-100 text-red-800 w-10 h-10 rounded-full flex items-center justify-center font-semibold shadow-sm">
+                                                {notCame}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="p-3 text-center font-mono text-gray-700">
+                                        <div className="flex justify-center">
+                                            <div className="bg-yellow-100 text-yellow-800 w-10 h-10 rounded-full flex items-center justify-center font-semibold shadow-sm">
+                                                {absentDays}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="p-3 text-center font-mono text-gray-700">
+                                        <div className="flex justify-center">
+                                            <div className="bg-orange-100 text-orange-800 w-10 h-10 rounded-full flex items-center justify-center font-semibold shadow-sm">
+                                                {totalLateTime}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {daysArray.map((day) => {
+                                        const status = getAttendanceStatus(student, day);
+                                        return (
+                                            <td
+                                                key={day}
+                                                className="p-2 text-center"
+                                            >
+                                                <div
+                                                    onClick={() => handleDayClick(day, student.user.id)}
+                                                    className={`
+                                                        cursor-pointer 
+                                                        rounded-lg 
+                                                        w-12 h-12 
+                                                        flex items-center justify-center 
+                                                        transition-all duration-200 
+                                                        hover:shadow-md 
+                                                        transform hover:scale-105
+                                                        ${status ? `${getStatusBgColor(status)} shadow-sm` : 'border border-gray-300'}
+                                                    `}
+                                                >
+                                                    {getStatusIcon(status)}
+                                                </div>
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+                <AttendanceModal
+                    refresh={refresh}
+                    isOpen={AtModal}
+                    onClose={() => setAtModal(false)}
+                    selectedDate={selectedDate}
+                    studentId={studentId}
+                    attendanceData={selectedAttendance}
+                />
+            </div>
+        </>
     );
 }
 
@@ -227,18 +271,18 @@ AttendanceTable.propTypes = {
         PropTypes.shape({
             user: PropTypes.shape({
                 firstName: PropTypes.string.isRequired,
-                id: PropTypes.string.isRequired, // Ensure student has an ID
+                id: PropTypes.string.isRequired,
             }).isRequired,
             attendance: PropTypes.arrayOf(
                 PropTypes.shape({
                     day: PropTypes.string.isRequired,
-                    status: PropTypes.string, // Attendance status like 'EXCUSED', etc.
+                    status: PropTypes.string,
+                    timeOfLate: PropTypes.number,
                 })
-            ), // Attendance records for each student
+            ),
         })
     ).isRequired,
     month: PropTypes.string.isRequired,
     year: PropTypes.string.isRequired,
-    refresh: PropTypes.func, // Add this line for the 'refresh' prop
-
+    refresh: PropTypes.func,
 };

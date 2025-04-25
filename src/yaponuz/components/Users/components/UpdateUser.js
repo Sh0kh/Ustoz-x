@@ -9,8 +9,7 @@ import Icon from "@mui/material/Icon";
 import Tooltip from "@mui/material/Tooltip";
 import PropTypes from "prop-types"; // Import PropTypes
 import SoftInput from "components/SoftInput";
-import Grid from "@mui/material/Grid"; // Grid komponentini import qilamiz
-import { Users, GetAuth } from "yaponuz/data/api";
+import { Users } from "yaponuz/data/api";
 import Swal from "sweetalert2";
 import SoftBox from "components/SoftBox";
 import Switch from "@mui/material/Switch";
@@ -18,10 +17,8 @@ import SoftTypography from "components/SoftTypography";
 import SoftSelect from "components/SoftSelect";
 import { Group } from "yaponuz/data/controllers/group";
 
-
 export default function UpdateUser({ item, refetch }) {
   const [open, setOpen] = React.useState(false);
-
 
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
@@ -35,7 +32,7 @@ export default function UpdateUser({ item, refetch }) {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(100);
   const [GroupOptions, setGroupOptions] = useState([]);
-  const [selectedGroupValue, setSelectedGroupValue] = useState("");
+  const [selectedGroupValue, setSelectedGroupValue] = useState(null); // Изменено на null
 
   useEffect(() => {
     setFirstName(item.firstName);
@@ -45,7 +42,10 @@ export default function UpdateUser({ item, refetch }) {
     setPhoneNumber(item.phoneNumber);
     setVerification(item.verification);
     setEmail(item.email);
-    setSelectedGroupValue({ value: item?.groupId, label: item?.groupName });
+    console.log(item)
+    if (item.groupId && item.groupName) {
+      setSelectedGroupValue({ value: item.groupId, label: item.groupName }); // Устанавливаем начальное значение
+    }
     setDateOfBirth(
       new Date(item.dateBirth).toISOString().replace(/T/, " ").replace(/\..+/, "") ?? "null"
     );
@@ -60,10 +60,12 @@ export default function UpdateUser({ item, refetch }) {
       // Если группа найдена, устанавливаем ее как выбранную
       if (selectedGroup) {
         setSelectedGroupValue(selectedGroup);
+      } else {
+        // Если группа не найдена, очищаем значение
+        setSelectedGroupValue(null);
       }
     }
   }, [item, GroupOptions]); // Срабатывает, когда item или GroupOptions изменяются
-
 
   const showAlert = (response) => {
     if (response.success) {
@@ -77,12 +79,12 @@ export default function UpdateUser({ item, refetch }) {
     const data = {
       firstName,
       lastName,
-      genderType: genderType.value,
+      genderType: genderType?.value,
       creatorId: localStorage.getItem("userId"),
       verification,
       email,
       id,
-      groupId: selectedGroupValue.value
+      groupId: selectedGroupValue?.value, // Добавлено безопасное обращение к value
     };
     try {
       const response = await Users.updateUser(data);
@@ -100,7 +102,6 @@ export default function UpdateUser({ item, refetch }) {
     setOpen(false);
   };
 
-
   const getAllGroups = async (page, size) => {
     try {
       const response = await Group.getAllGroup(page, size);
@@ -113,7 +114,6 @@ export default function UpdateUser({ item, refetch }) {
       }));
 
       setGroupOptions(formattedOptions);
-      console.log(formattedOptions)
     } catch (err) {
       console.error("Error from groups list GET: ", err);
     }
@@ -124,7 +124,6 @@ export default function UpdateUser({ item, refetch }) {
     getAllGroups(page, size);
   }, [page, size]);
 
-
   const my = { margin: "5px 0px" };
 
   return (
@@ -132,98 +131,116 @@ export default function UpdateUser({ item, refetch }) {
       <Tooltip title="Edit" onClick={handleClickOpen} placement="top">
         <Icon>edit</Icon>
       </Tooltip>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        fullWidth
+        maxWidth="sm"
+        PaperProps={{
+          style: { minHeight: "600px" }, // Увеличиваем высоту модального окна
+        }}
+      >
         <DialogTitle>Update User</DialogTitle>
         <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <SoftBox style={my}>
-                <SoftSelect
-                  placeholder="Select Group"
-                  value={selectedGroupValue}
-                  onChange={(value) => setSelectedGroupValue(value)}
-                  options={GroupOptions}
-                  styles={{
-                    menu: (provided) => ({
-                      ...provided,
-                      position: "absolute",
-                      zIndex: 9999,
-                    }),
-                    container: (provided) => ({
-                      ...provided,
-                      position: "relative",
-                    }),
-                  }}
-                />
-                {/* <SoftSelect
-                  placeholder="Select a Country"
-                  onChange={(selectedOption) => setCountry(selectedOption.value)} // Adjusted onChange function
-                  options={[
-                    { value: "JAPAN", label: "JAPAN" },
-                    { value: "UZBEKISTAN", label: "UZBEKISTAN" },
-                  ]}
-                /> */}
-              </SoftBox>
-              <SoftInput
-                placeholder="FirstName"
-                value={firstName}
-                style={my}
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-              <SoftInput
-                placeholder="LastName"
-                value={lastName}
-                style={my}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-
-              <SoftInput
-                placeholder="phoneNumber"
-                value={phoneNumber}
-                style={my}
-                disabled
-                onChange={(e) => setPhoneNumber(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <SoftBox style={my}>
-                <SoftSelect
-                  placeholder="Select a Gender"
-                  onChange={(selectedOption) => setGenderType(selectedOption)}
-                  value={genderType}
-                  options={[
-                    { value: "ERKAK", label: "ERKAK" },
-                    { value: "AYOL", label: "AYOL" },
-                  ]}
-                />
-              </SoftBox>
-              <SoftInput
-                placeholder="birhtday"
-                value={dateOfBirth}
-                style={my}
-                disabled
-                onChange={(e) => setDateOfBirth(e.target.value)}
-              />
-
-              <SoftInput
-                placeholder="email"
-                value={email}
-                style={my}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <SoftBox display="flex" style={{ marginTop: "10px" }} alignItems="center">
-                <Switch checked={verification} onChange={() => setVerification(!verification)} />
-                <SoftTypography
-                  variant="button"
-                  fontWeight="regular"
-                  onChange={() => setVerification(!verification)}
-                  sx={{ cursor: "pointer", userSelect: "none" }}
-                >
-                  &nbsp;&nbsp;{verification ? "VERIFICATION TRUE" : "VERIFICATION FALSE"}
-                </SoftTypography>
-              </SoftBox>
-            </Grid>
-          </Grid>
+          {/* Each input is placed in its own row with labels */}
+          <SoftBox style={my}>
+            <SoftTypography variant="caption" fontWeight="bold">
+              Select Group
+            </SoftTypography>
+            <SoftSelect
+              placeholder="Select Group"
+              value={selectedGroupValue} // Используем selectedGroupValue
+              onChange={(value) => setSelectedGroupValue(value)}
+              options={GroupOptions}
+              styles={{
+                menu: (provided) => ({
+                  ...provided,
+                  position: "absolute",
+                  zIndex: 9999,
+                }),
+                container: (provided) => ({
+                  ...provided,
+                  position: "relative",
+                }),
+              }}
+            />
+          </SoftBox>
+          <SoftBox style={my}>
+            <SoftTypography variant="caption" fontWeight="bold">
+              First Name
+            </SoftTypography>
+            <SoftInput
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+          </SoftBox>
+          <SoftBox style={my}>
+            <SoftTypography variant="caption" fontWeight="bold">
+              Last Name
+            </SoftTypography>
+            <SoftInput
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+          </SoftBox>
+          <SoftBox style={my}>
+            <SoftTypography variant="caption" fontWeight="bold">
+              Phone Number
+            </SoftTypography>
+            <SoftInput
+              placeholder="Phone Number"
+              value={phoneNumber}
+              disabled
+              onChange={(e) => setPhoneNumber(e.target.value)}
+            />
+          </SoftBox>
+          <SoftBox style={my}>
+            <SoftTypography variant="caption" fontWeight="bold">
+              Gender
+            </SoftTypography>
+            <SoftSelect
+              placeholder="Select a Gender"
+              onChange={(selectedOption) => setGenderType(selectedOption)}
+              value={genderType}
+              options={[
+                { value: "ERKAK", label: "ERKAK" },
+                { value: "AYOL", label: "AYOL" },
+              ]}
+            />
+          </SoftBox>
+          <SoftBox style={my}>
+            <SoftTypography variant="caption" fontWeight="bold">
+              Birthday
+            </SoftTypography>
+            <SoftInput
+              placeholder="Birthday"
+              value={dateOfBirth}
+              disabled
+              onChange={(e) => setDateOfBirth(e.target.value)}
+            />
+          </SoftBox>
+          <SoftBox style={my}>
+            <SoftTypography variant="caption" fontWeight="bold">
+              Email
+            </SoftTypography>
+            <SoftInput
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </SoftBox>
+          <SoftBox display="flex" alignItems="center" style={{ marginTop: "10px" }}>
+            <Switch checked={verification} onChange={() => setVerification(!verification)} />
+            <SoftTypography
+              variant="button"
+              fontWeight="regular"
+              sx={{ cursor: "pointer", userSelect: "none" }}
+            >
+              &nbsp;&nbsp;{verification ? "VERIFICATION TRUE" : "VERIFICATION FALSE"}
+            </SoftTypography>
+          </SoftBox>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
@@ -235,7 +252,6 @@ export default function UpdateUser({ item, refetch }) {
 }
 
 UpdateUser.propTypes = {
-  // myid: PropTypes.number.isRequired,
   item: PropTypes.object,
   refetch: PropTypes.func,
 };

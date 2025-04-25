@@ -82,18 +82,18 @@ function BaseLayout({ stickyNavbar, children }) {
                 <Tabs orientation={tabsOrientation} value={tabValue} onChange={handleSetTabValue}>
                   <Tab label="Basic Info" />
 
-                  {role === 'STUDENT' && (
+                  {/* {role === 'STUDENT' && (
                     <Tab label="Files" />
-                  )}
-                  {role === 'STUDENT' && (
+                  )} */}
+                  {/* {role === 'STUDENT' && (
                     <Tab label="Referal" />
-                  )}
-                  {role === 'STUDENT' && (
+                  )} */}
+                  {/* {role === 'STUDENT' && (
                     <Tab label="Adress" />
-                  )}
-                  {role === 'STUDENT' && (
+                  )} */}
+                  {/* {role === 'STUDENT' && (
                     <Tab label="Education" />
-                  )}
+                  )} */}
                   {role === 'STUDENT' && (
                     <Tab label="Report" />
                   )}
@@ -110,12 +110,12 @@ function BaseLayout({ stickyNavbar, children }) {
           <SoftBox mt={3} mb={3}>
             {tabValue === 0 && <BasicInfo data={userData} />}
 
-            {tabValue === 1 && <Accounts />}
-            {tabValue === 2 && <Sessions />}
-            {tabValue === 3 && <Notification />}
-            {tabValue === 4 && <DeleteAccount />}
-            {tabValue === 5  && <Report />}
-            {tabValue === 6  && <TestResult />}
+            {/* {tabValue === 1 && <Accounts />} */}
+            {/* {tabValue === 2 && <Sessions />} */}
+            {/* {tabValue === 3 && <Notification />} */}
+            {/* {tabValue === 4 && <DeleteAccount />} */}
+            {tabValue === 1  && <Report />}
+            {tabValue === 2  && <TestResult />}
 
 
           </SoftBox>

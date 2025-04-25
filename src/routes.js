@@ -37,6 +37,14 @@ import QuestionCreate from "yaponuz/components/QuizeList/components/QuestionCrea
 import Assembly from "yaponuz/components/assembly/Assembly";
 import TeacherGroup from "yaponuz/components/TeacherGroup";
 import StudentByGroup from "yaponuz/components/StundetByGroup";
+import TestResult from "yaponuz/components/TestResult";
+import StudentResult from "yaponuz/components/TestResult/StudentResult";
+import Report from "yaponuz/components/Report";
+import StudentReport from "yaponuz/components/Report/StundetReport";
+import Personality from "yaponuz/components/Personality/Index";
+import StudentPersonality from "yaponuz/components/Personality/StudentPersonality";
+import LessonReport from "yaponuz/components/LessonReport";
+import StudentLessonReport from "yaponuz/components/LessonReport/StudentLessonReport";
 
 const routes = [
   { type: "title", title: "General", key: "general-title" },
@@ -61,6 +69,7 @@ const routes = [
     route: "/users/students",
     component: <UsersList />,
   },
+
 
 
   {
@@ -132,9 +141,33 @@ const routes = [
     route: "/mygroup/:ID",
     component: <StudentByGroup />
   },
-
-
-
+  {
+    show: false,
+    type: "collapse",
+    name: "Stundent Report",
+    key: "StudentReport",
+    noCollapse: true,
+    route: "/student-report/:ID",
+    component: <StudentReport />
+  },
+  {
+    show: false,
+    type: "collapse",
+    name: "Stundent Personality",
+    key: "StudentPersonality",
+    noCollapse: true,
+    route: "/student-Personality/:ID",
+    component: <StudentPersonality />
+  },
+  {
+    show: false,
+    type: "collapse",
+    name: "Student Lesson Report",
+    key: "StudentLessonReport",
+    noCollapse: true,
+    route: "/student-lesson-report/:groupID/:studentID",
+    component: <StudentLessonReport />
+  },
 
   {
     type: "collapse",
@@ -254,6 +287,43 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "Test result",
+    key: "TestResult",
+    icon: <Document size="12px" />,
+    noCollapse: true,
+    route: "/test-result",
+    component: <TestResult />
+  },
+  {
+    type: "collapse",
+    name: "Lesson report",
+    key: "LessonReport",
+    icon: <Document size="12px" />,
+    noCollapse: true,
+    route: "/lesson-report",
+    component: <LessonReport />
+  },
+  {
+    type: "collapse",
+    name: "Report",
+    key: "Report",
+    icon: <Document size="12px" />,
+    noCollapse: true,
+    route: "/report",
+    component: <Report />
+  },
+  {
+    show: false,
+    type: "collapse",
+    name: "Stundet test result",
+    key: "Stundet test result",
+    noCollapse: true,
+    route: "/student/test-result/:ID",
+    component: <StudentResult />
+  },
+
+  {
+    type: "collapse",
     name: "Notification",
     key: "notificatin",
     icon: <SettingsIcon size="12px" />,
@@ -269,6 +339,15 @@ const routes = [
     noCollapse: true,
     route: "/referral",
     component: <Referral />,
+  },
+  {
+    type: "collapse",
+    name: "Personality",
+    key: "Personality",
+    icon: <SpaceShip size="12px" />,
+    noCollapse: true,
+    route: "/personality",
+    component: <Personality />,
   },
   {
     type: "collapse",

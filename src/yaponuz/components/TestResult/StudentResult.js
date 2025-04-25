@@ -1,73 +1,77 @@
 import { Card, Stack } from "@mui/material";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
-import Footer from "examples/Footer";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import DataTable from "examples/Tables/DataTable";
+import { Frown, Loader } from "lucide-react";
+import { testResult } from "yaponuz/data/controllers/testResult";
+import EditResult from "./component/EditResult";
+import DeleteResult from "./component/DeleteResult";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import DataTable from "examples/Tables/DataTable";
-import { Assembly } from "yaponuz/data/api";
-import { useEffect, useState } from "react";
-import { Frown, Loader } from "lucide-react";
-import SoftButton from "components/SoftButton";
-import { Users } from "yaponuz/data/api";
-import { useParams } from "react-router-dom";
 
 
+export default function StudentResult() {
 
-export default function StundetByGroup() {
     const { ID } = useParams()
-    const [assembly, setAssembly] = useState([])
-    const [totalPages, setTotalPages] = useState(0);
-    const [page, setPage] = useState(0);
-    const [size, setSize] = useState(20);
     const [loading, setLoading] = useState(true)
+    const [reportData, setReportData] = useState([])
 
-
-    const getStudent = async (page, size) => {
-        setLoading(true);
+    const getAllTestResult = async () => {
+        setLoading(true)
         try {
-            const response = await Users.getUsersAttendance(page, size, "", "", "", ID);
-            setAssembly(response.object?.content);
-            setTotalPages(response?.object?.totalPages);
+            const data = {
+                studentId: ID,
+            }
+            const response = await testResult.getTestResult(data);
+            setReportData(response.object);
         } catch (err) {
             console.log("Error from groups list GET: ", err);
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     };
 
+    useEffect(() => {
+        getAllTestResult()
+    }, [ID])
 
-    const rows = assembly?.map((item) => {
+
+    const rows = reportData?.map((item) => {
         return {
-            id: item.id ?? "null",
-            firstName: item.firstName,
-            lastName: item.lastName ?? "null",
-            phoneNumber: item.phoneNumber ?? "null",
-            currentCountry: item.currentCountry ? item.currentCountry : "no country",
-            dateBirth: new Date(item.dateBirth).toLocaleDateString(),
+            id: item.id,
+            Title: item.title,
+            Score: item.score,
+            Date: item.date,
+            action: (
+                <SoftBox display="flex" alignItems="center" gap="10px">
+                    <SoftBox>
+                        <EditResult item={item} refetch={getAllTestResult} />
+                    </SoftBox>
+                    <SoftBox>
+                        <DeleteResult id={item?.id} refetch={getAllTestResult} />
+                    </SoftBox>
+                </SoftBox>
+            )
         };
     });
 
 
-    // mounting
-    useEffect(() => {
-        getStudent(page, size);
-    }, [page, size, ID]);
-
-
     const columns = [
         { Header: "id", accessor: "id" },
-        { Header: "First Name", accessor: "firstName" },
-        { Header: "Last Name", accessor: "lastName" },
-        { Header: "Phone Number", accessor: "phoneNumber" },
-        { Header: "Country", accessor: "currentCountry" },
-        { Header: "BirthDay", accessor: "dateBirth" },
+        { Header: "Title", accessor: "Title" },
+        { Header: "Score", accessor: "Score" },
+        { Header: "Date", accessor: "Date" },
+        { Header: "action", accessor: "action" },
     ];
 
     const tabledata = {
         columns,
         rows,
     };
+
+
 
     return (
         <DashboardLayout>
@@ -77,7 +81,7 @@ export default function StundetByGroup() {
                     <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
                         <SoftBox lineHeight={1}>
                             <SoftTypography variant="h5" fontWeight="medium">
-                                Student
+                                Test result
                             </SoftTypography>
                         </SoftBox>
                     </SoftBox>
@@ -108,7 +112,6 @@ export default function StundetByGroup() {
                     )}
                 </Card>
             </SoftBox>
-            <Footer />
         </DashboardLayout>
     )
 }

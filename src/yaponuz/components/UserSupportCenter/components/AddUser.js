@@ -4,30 +4,31 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import Grid from "@mui/material/Grid"; // Grid komponentini import qilamiz
+import Grid from "@mui/material/Grid";
 import SoftButton from "components/SoftButton";
 import { useState } from "react";
 import SoftInput from "components/SoftInput";
 import Swal from "sweetalert2";
-
-import { SupportCenter } from "yaponuz/data/api";
+import PropTypes from "prop-types";
 
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftSelect from "components/SoftSelect";
+import { SupportCenter } from "yaponuz/data/api";
+import SoftDatePicker from "components/SoftDatePicker";
 
-export default function addUser({ refetch }) {
+export default function AddUser({ refetch }) {
   const [open, setOpen] = useState(false);
 
-  // variables
-  const [dateBirth, setDateBirth] = useState("");
+  // State variables
+  const [dateBirth, setDateBirth] = useState("2007-01-01");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("+998");
   const [password, setPassword] = useState("");
   const [genderType, setGenderType] = useState("ERKAK");
 
-  // modal functions
+  // Modal functions
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -36,10 +37,20 @@ export default function addUser({ refetch }) {
     setOpen(false);
   };
 
-  // css variables
-  const my = { margin: "5px 0px" };
+  // Handle phone number input
+  const handlePhoneChange = (e) => {
+    const { value } = e.target;
 
-  // save the data add new user function
+    if (/^\+998\d*$/.test(value)) {
+      if (value.length <= 13) {
+        setPhoneNumber(value);
+      }
+    } else if (value === "") {
+      setPhoneNumber("+998");
+    }
+  };
+
+  // Save the data and add new user function
   const handleSave = async () => {
     const data = {
       dateOfBirth: new Date(dateBirth).toISOString(),
@@ -53,7 +64,6 @@ export default function addUser({ refetch }) {
       confirmPassword: password,
     };
 
-
     try {
       const response = await SupportCenter.createUser(data);
       showAlert(response);
@@ -62,94 +72,146 @@ export default function addUser({ refetch }) {
     }
   };
 
-  // then add new user function
+  // Show alert after adding a new user
   const showAlert = (response) => {
     function reload() {
       refetch();
       handleClose();
 
-      // clear data
+      // Clear data
       setDateBirth("");
       setFirstName("");
       setLastName("");
-      setPhoneNumber("");
+      setPhoneNumber("+998");
       setPassword("");
-      setGenderType("");
+      setGenderType("ERKAK");
     }
+
     if (response.success) {
-      Swal.fire("new user added", response.message, "success").then(() => reload());
+      Swal.fire("New Support center added", response.message, "success").then(() => reload());
     } else {
-      Swal.fire("error", response.message || response.error, "error").then(() => reload());
+      Swal.fire("Error", response.message || response.error, "error").then(() => reload());
     }
   };
 
-  // jsx html code
   return (
     <>
       <SoftButton variant="gradient" onClick={handleClickOpen} color="info" size="small">
-        + add new support center
+        + Add New Support center
       </SoftButton>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add New Support Center</DialogTitle>
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <DialogTitle sx={{ fontSize: "1.5rem", fontWeight: "bold", textAlign: "center" }}>
+          Add New Support center
+        </DialogTitle>
         <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              {/* dateBirth */}
+          <Grid container spacing={1}>
+            {/* First Name */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                First Name
+              </SoftTypography>
               <SoftInput
-                placeholder="dateBirth"
-                value={dateBirth}
-                style={my}
-                onChange={(e) => setDateBirth(e.target.value)}
-              />
-              {/* firstName */}
-              <SoftInput
-                placeholder="firstName"
+                placeholder="Enter first name"
                 value={firstName}
-                style={my}
+                fullWidth
                 onChange={(e) => setFirstName(e.target.value)}
               />
-              {/* phoneNumber */}
-              <SoftInput
-                placeholder="phoneNumber"
-                value={phoneNumber}
-                style={my}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-              />
             </Grid>
-            <Grid item xs={6}>
-              {/* genderType */}
-              <SoftBox style={my}>
-                <SoftSelect
-                  placeholder="Select Gender Type"
-                  onChange={(selectedOption) => setGenderType(selectedOption.value)} // Adjusted onChange function
-                  options={[
-                    { value: "ERKAK", label: "ERKAK" },
-                    { value: "AYOL", label: "AYOL" },
-                  ]}
-                />
-              </SoftBox>
-              {/* lastName */}
+
+            {/* Last Name */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                Last Name
+              </SoftTypography>
               <SoftInput
-                placeholder="lastName"
+                placeholder="Enter last name"
                 value={lastName}
-                style={my}
+                fullWidth
                 onChange={(e) => setLastName(e.target.value)}
               />
-              {/* password */}
+            </Grid>
+
+            {/* Phone Number */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                Phone Number
+              </SoftTypography>
               <SoftInput
-                placeholder="password"
+                placeholder="+998"
+                value={phoneNumber}
+                fullWidth
+                onChange={handlePhoneChange}
+              />
+            </Grid>
+
+            {/* Password */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                Password
+              </SoftTypography>
+              <SoftInput
+                placeholder="Enter password"
+                type="password"
                 value={password}
-                style={my}
+                fullWidth
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </Grid>
+
+            {/* Gender Type */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                Gender Type
+              </SoftTypography>
+              <SoftSelect
+                placeholder="Select Gender Type"
+                value={genderType}
+                onChange={(selectedOption) => setGenderType(selectedOption.value)}
+                options={[
+                  { value: "ERKAK", label: "ERKAK" },
+                  { value: "AYOL", label: "AYOL" },
+                ]}
+                styles={{
+                  menu: (provided) => ({
+                    ...provided,
+                    position: "absolute",
+                    zIndex: 9999,
+                  }),
+                  container: (provided) => ({
+                    ...provided,
+                    position: "relative",
+                  }),
+                }}
+              />
+            </Grid>
+
+            {/* Date of Birth */}
+            <Grid item xs={12}>
+              <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                Date of Birth
+              </SoftTypography>
+              <SoftDatePicker
+                placeholder="Date of Birth"
+                value={dateBirth}
+                fullWidth
+                onChange={(newDate) => setDateBirth(newDate)}
               />
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSave}>Add Suppurt center</Button>
+        <DialogActions sx={{ padding: "16px 24px" }}>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} variant="contained" color="primary">
+            Add Support center
+          </Button>
         </DialogActions>
       </Dialog>
     </>
   );
+
 }
+AddUser.propTypes = {
+  refetch: PropTypes.func.isRequired,
+};
