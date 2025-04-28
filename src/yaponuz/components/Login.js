@@ -38,7 +38,12 @@ function Login() {
   const handleLogin = async () => {
     const loginResponse = await AuthLogin.login(login);
     if (loginResponse.status) {
-      navigate("/dashboards");
+      if (loginResponse?.object?.accountType === "TEACHER") {
+        navigate("/teacher/group");
+      } else {
+        navigate("/dashboards");
+      }
+
     } else {
       Swal.fire({
         title: 'Xatolik!',
