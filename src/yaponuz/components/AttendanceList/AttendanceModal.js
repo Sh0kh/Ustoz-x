@@ -9,7 +9,7 @@ import React, { useEffect } from "react";
 import Swal from "sweetalert2";
 
 
-export default function AttendanceModal({ isOpen, onClose, studentId, selectedDate, refresh, attendanceData }) {
+export default function AttendanceModal({ isOpen, onClose, studentId, selectedDate, refresh, attendanceData, lessonID }) {
     const [attendanceStatus, setAttendanceStatus] = React.useState("");
     const [timeOfLate, setTimeOfLate] = React.useState("");
     const [comment, setComment] = React.useState("");
@@ -52,6 +52,7 @@ export default function AttendanceModal({ isOpen, onClose, studentId, selectedDa
             startTime: dateWithTime, // Используем дату с текущим временем
             day: selectedDate,
             studentId: studentId,
+            lessonId: lessonID,
             creatorId: Number(localStorage.getItem("userId"))
         }];
 
@@ -178,6 +179,7 @@ export default function AttendanceModal({ isOpen, onClose, studentId, selectedDa
 AttendanceModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
+    lessonID: PropTypes.number.isRequired,
     studentId: PropTypes.string.isRequired, // Prop validation for studentId
     selectedDate: PropTypes.string.isRequired, // Prop validation for selectedDate
     refresh: PropTypes.func, // Add this line for the 'refresh' prop

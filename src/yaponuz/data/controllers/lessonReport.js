@@ -8,7 +8,8 @@ class lessonReport {
             studentId: data.studentId,
             groupId: data.groupId,
             reportDate: data.reportDate,
-            scores: data.scores
+            scores: data.scores,
+            lessonId: data?.lessonId
         };
 
         const url = `${API_PATH}lesson/student/daily/report/create`;

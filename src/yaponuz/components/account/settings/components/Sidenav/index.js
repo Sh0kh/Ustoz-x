@@ -19,8 +19,6 @@ import Card from "@mui/material/Card";
 // Soft UI Dashboard PRO React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
-
-// Soft UI Dashboard PRO React icons
 import SpaceShip from "examples/Icons/SpaceShip";
 import Document from "examples/Icons/Document";
 import Cube from "examples/Icons/Cube";
@@ -35,9 +33,9 @@ function Sidenav() {
     { icon: <SpaceShip />, label: "profile", href: "profile" },
     { icon: <Document />, label: "basic info", href: "basic-info" },
     { icon: <Cube />, label: "change password", href: "change-password" },
-    { icon: <Shop />, label: "2FA", href: "2fa" },
-    { icon: <Office />, label: "accounts", href: "accounts" },
-    { icon: <CustomerSupport />, label: "notifications", href: "notifications" },
+    // { icon: <Shop />, label: "2FA", href: "2fa" },
+    // { icon: <Office />, label: "accounts", href: "accounts" },
+    // { icon: <CustomerSupport />, label: "notifications", href: "notifications" },
     { icon: <Settings />, label: "sessions", href: "sessions" },
     { icon: <CreditCard />, label: "delete account", href: "delete-account" },
   ];
@@ -89,6 +87,7 @@ function Sidenav() {
         borderRadius: ({ borders: { borderRadius } }) => borderRadius.lg,
         position: "sticky",
         top: "1%",
+        width:'25%'
       }}
     >
       <SoftBox

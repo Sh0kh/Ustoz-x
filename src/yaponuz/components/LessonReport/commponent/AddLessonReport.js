@@ -12,6 +12,11 @@ import SoftDatePicker from "components/SoftDatePicker";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { lessonReport } from "yaponuz/data/controllers/lessonReport";
+import { Course } from "yaponuz/data/controllers/course";
+import SoftSelect from "components/SoftSelect";
+import { useEffect } from "react";
+import { Module } from "yaponuz/data/api";
+import { Lesson } from "yaponuz/data/controllers/lesson";
 
 export default function AddLessonReport({ refetch }) {
     const { groupID, studentID } = useParams()
@@ -19,7 +24,59 @@ export default function AddLessonReport({ refetch }) {
     const [info, setInfo] = useState('');
     const [error, setError] = useState('');
     const [date, setDate] = useState('');
-    const [scores, setScores] = useState([{ description: '', score: '' }]);
+    const [scores, setScores] = useState([
+        { description: 'Darsda qatnashish uchun', score: '' },
+        { description: 'Uyga vazifa bajargani uchun', score: '' },
+        { description: 'Activlik uchun', score: '' }
+    ]);
+
+
+    // Course selection states
+    const [courses, setCourses] = useState([]);
+    const [selectedCourse, setSelectedCourse] = useState(null);
+
+    // Module selection states
+    const [modules, setModules] = useState([]);
+    const [selectedModule, setSelectedModule] = useState(null);
+
+    // Lesson selection states
+    const [lessons, setLessons] = useState([]);
+    const [selectedLesson, setSelectedLesson] = useState(null);
+
+    // Pagination params for API calls
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(100);
+    const [lessonID, setLessonID] = useState(null);
+
+
+
+    useEffect(() => {
+        if (open) {
+            getAllCourses(page, size);
+        }
+    }, [open]);
+
+    // Load modules when course is selected
+    useEffect(() => {
+        if (selectedCourse) {
+            getModules(selectedCourse);
+            // Reset dependent selections
+            setSelectedModule(null);
+            setSelectedLesson(null);
+            setModules([]);
+            setLessons([]);
+        }
+    }, [selectedCourse]);
+
+    // Load lessons when module is selected
+    useEffect(() => {
+        if (selectedModule) {
+            getModuleLessons(selectedModule);
+            // Reset lesson selection
+            setSelectedLesson(null);
+            setLessons([]);
+        }
+    }, [selectedModule]);
 
     const addScoreField = () => {
         setScores([...scores, { description: '', score: '' }]);
@@ -34,6 +91,57 @@ export default function AddLessonReport({ refetch }) {
         const newScores = [...scores];
         newScores[index][field] = value;
         setScores(newScores);
+    };
+
+    const getAllCourses = async (page, size) => {
+        try {
+            const response = await Course.getAllCourses(page, size);
+
+            const formattedCourses = response.object?.map(course => ({
+                value: course.id,
+                label: course.name || course.title
+            })) || [];
+
+            setCourses(formattedCourses);
+        } catch (err) {
+            console.error("Error from courses list GET: ", err);
+            setError("Failed to fetch courses. Please try again later.");
+        }
+    };
+
+    const getModules = async (courseId) => {
+        try {
+            const response = await Module.getModuleById(courseId.value);
+
+            // Transform data to match SoftSelect format
+            const formattedModules = response.object?.map(module => ({
+                value: module.id,
+                label: module.name || module.title
+            })) || [];
+
+            setModules(formattedModules);
+        } catch (err) {
+            console.error("Error from module list GET: ", err);
+            setError("Failed to fetch modules. Please try again later.");
+        }
+    };
+
+    const getModuleLessons = async (moduleId) => {
+        try {
+            const response = await Lesson.getAllLessons(page, size, moduleId.value);
+
+            // Transform data to match SoftSelect format
+            const formattedLessons = (response.object?.content || []).map(lesson => ({
+                value: lesson.id,
+                label: lesson.name || lesson.title
+            }));
+
+            setLessons(formattedLessons);
+            setLessonID(moduleId);
+        } catch (err) {
+            console.error("Error from lesson list GET:", err);
+            setError("Failed to fetch lessons. Please try again later.");
+        }
     };
 
     const showAlert = (response) => {
@@ -104,7 +212,8 @@ export default function AddLessonReport({ refetch }) {
                 studentId: Number(studentID),
                 groupId: Number(groupID), // You might need to adjust this
                 reportDate: formattedDate,
-                scores: formattedScores
+                scores: formattedScores,
+                lessonId: selectedLesson.value
             };
 
             const response = await lessonReport.createLessonReport(data);
@@ -124,7 +233,11 @@ export default function AddLessonReport({ refetch }) {
     };
 
     const resetForm = () => {
-        setScores([{ description: '', score: '' }]);
+        setScores([
+            { description: 'Darsda qatnashish uchun', score: '' },
+            { description: 'Uyga vazifa bajargani uchun', score: '' },
+            { description: 'Activlik uchun', score: '' }
+        ]);
         setInfo('');
         setDate('');
         setError('');
@@ -152,6 +265,47 @@ export default function AddLessonReport({ refetch }) {
                 <DialogContent>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
+                            <SoftBox style={my}>
+                                <SoftTypography component="label" variant="caption" fontWeight="bold">
+                                    Course
+                                </SoftTypography>
+                                <SoftSelect
+                                    placeholder="Select a course"
+                                    options={courses}
+                                    value={selectedCourse}
+                                    onChange={(value) => setSelectedCourse(value)}
+                                />
+                            </SoftBox>
+
+                            {selectedCourse && (
+                                <SoftBox style={my}>
+                                    <SoftTypography component="label" variant="caption" fontWeight="bold">
+                                        Module
+                                    </SoftTypography>
+                                    <SoftSelect
+                                        placeholder="Select a module"
+                                        options={modules}
+                                        value={selectedModule}
+                                        onChange={(value) => setSelectedModule(value)}
+                                        isDisabled={!selectedCourse}
+                                    />
+                                </SoftBox>
+                            )}
+
+                            {selectedModule && (
+                                <SoftBox style={my}>
+                                    <SoftTypography component="label" variant="caption" fontWeight="bold">
+                                        Lesson
+                                    </SoftTypography>
+                                    <SoftSelect
+                                        placeholder="Select a lesson"
+                                        options={lessons}
+                                        value={selectedLesson}
+                                        onChange={(value) => setSelectedLesson(value)}
+                                        isDisabled={!selectedModule}
+                                    />
+                                </SoftBox>
+                            )}
                             <Grid item xs={12} sx={{ mt: 2 }}>
                                 <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
                                     Date

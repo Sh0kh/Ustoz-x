@@ -1,10 +1,24 @@
 import { API_PATH, header, headerGet } from "../headers";
 
 class Lesson {
+
+
+  static getStundetLesson = async (data) => {
+    let url = `${API_PATH}lesson/get/byStudent?studentId=${data?.id}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headerGet,
+    });
+    return response.json();
+  };
+
+
+
   static getAllLessons = async (page = 0, size = 30, moduleId = 0, name = "") => {
     let url = `${API_PATH}lesson/get/admin?page=${page}&size=${size}`;
 
-    if (moduleId  !== 0) {
+    if (moduleId !== 0) {
       url += `&moduleId=${moduleId}`;
     }
 
@@ -42,7 +56,6 @@ class Lesson {
   // update lesson
   static updateLesson = async (data) => {
     const url = `${API_PATH}lesson/update`;
-
     const response = await fetch(url, {
       method: "PUT",
       headers: header,

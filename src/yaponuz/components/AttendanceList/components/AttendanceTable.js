@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import AttendanceModal from '../AttendanceModal';
 
-export default function AttendanceTable({ data, month, year, refresh }) {
+export default function AttendanceTable({ data, month, year, refresh, lessonID }) {
     const [AtModal, setAtModal] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [studentId, setStudentId] = useState(null);
@@ -260,6 +260,7 @@ export default function AttendanceTable({ data, month, year, refresh }) {
                     selectedDate={selectedDate}
                     studentId={studentId}
                     attendanceData={selectedAttendance}
+                    lessonID={lessonID}
                 />
             </div>
         </>
@@ -284,5 +285,6 @@ AttendanceTable.propTypes = {
     ).isRequired,
     month: PropTypes.string.isRequired,
     year: PropTypes.string.isRequired,
+    lessonID: PropTypes.number.isRequired,
     refresh: PropTypes.func,
 };

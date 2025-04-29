@@ -31,7 +31,7 @@ import Settings from "examples/Icons/Settings";
 import CreditCard from "examples/Icons/CreditCard";
 
 function Sidenav() {
-  const sidenavItems = [
+  const sidenavItems = [  
     { icon: <SpaceShip />, label: "profile", href: "profile" },
     { icon: <Document />, label: "basic info", href: "basic-info" },
     { icon: <Cube />, label: "change password", href: "change-password" },
@@ -46,7 +46,7 @@ function Sidenav() {
     const itemKey = `item-${key}`;
 
     return (
-      <SoftBox key={itemKey} component="li" pt={key === 0 ? 0 : 1}>
+      <SoftBox  key={itemKey} component="li" pt={key === 0 ? 0 : 1}>
         <SoftTypography
           component="a"
           href={`#${href}`}

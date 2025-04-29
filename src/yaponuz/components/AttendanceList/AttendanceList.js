@@ -27,6 +27,8 @@ import { actions } from "react-table";
 import { Group } from "yaponuz/data/controllers/group";
 import { Users } from "yaponuz/data/api";
 import AttendanceTable from "./components/AttendanceTable";
+import { Lesson } from "yaponuz/data/controllers/lesson";
+import { Module } from "yaponuz/data/api";
 
 export default function AttendanceList() {
   const [studentList, setStudentList] = useState([]);
@@ -41,6 +43,19 @@ export default function AttendanceList() {
   const [user, setUsers] = useState([]);
   const [groupID, setGroupID] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const [courses, setCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+
+  // Module selection states
+  const [modules, setModules] = useState([]);
+  const [selectedModule, setSelectedModule] = useState(null);
+
+  // Lesson selection states
+  const [lessons, setLessons] = useState([]);
+  const [selectedLesson, setSelectedLesson] = useState(null);
+
+  const [lessonID, setLessonID] = useState(null);
 
   const options = [
     { value: "CAME", label: "CAME" },
@@ -58,7 +73,9 @@ export default function AttendanceList() {
       const formattedOptions = groups?.map((group) => ({
         label: group.name,
         value: group.id,
+        courseId: group.courseId, // добавляем courseId
       }));
+
 
       setGroupOptions(formattedOptions);
     } catch (err) {
@@ -97,6 +114,66 @@ export default function AttendanceList() {
     }
   };
 
+
+  // Load modules when course is selected
+  useEffect(() => {
+    if (selectedCourse) {
+      getModules(selectedCourse);
+      // Reset dependent selections
+      setSelectedModule(null);
+      setSelectedLesson(null);
+      setModules([]);
+      setLessons([]);
+    }
+  }, [selectedCourse]);
+
+  // Load lessons when module is selected
+  useEffect(() => {
+    if (selectedModule) {
+      getModuleLessons(selectedModule);
+      // Reset lesson selection
+      setSelectedLesson(null);
+      setLessons([]);
+    }
+  }, [selectedModule]);
+
+
+  const getModules = async () => {
+    try {
+      const response = await Module.getModuleById(selectedCourse);
+      console.log(selectedCourse)
+
+      // Transform data to match SoftSelect format
+      const formattedModules = response.object?.map(module => ({
+        value: module.id,
+        label: module.name || module.title
+      })) || [];
+
+      setModules(formattedModules);
+    } catch (err) {
+      console.error("Error from module list GET: ", err);
+      setError("Failed to fetch modules. Please try again later.");
+    }
+  };
+
+  const getModuleLessons = async (moduleId) => {
+    try {
+      const response = await Lesson.getAllLessons(page, size, moduleId.value);
+
+      // Transform data to match SoftSelect format
+      const formattedLessons = (response.object?.content || []).map(lesson => ({
+        value: lesson.id,
+        label: lesson.name || lesson.title
+      }));
+
+      setLessons(formattedLessons);
+      setLessonID(moduleId);
+    } catch (err) {
+      console.error("Error from lesson list GET:", err);
+      setError("Failed to fetch lessons. Please try again later.");
+    }
+  };
+
   useEffect(() => {
     getAllUsers(page, size);
     getAllGroups(page, size);
@@ -118,14 +195,43 @@ export default function AttendanceList() {
               <SoftSelect
                 style={{ flex: 1, minWidth: "150px" }}
                 options={GroupOptions}
-                onChange={(e) => setGroupID(e.value)}
+                onChange={(e) => {
+                  setGroupID(e.value);
+                  setSelectedCourse(e.courseId); // устанавливаем courseId
+                }}
               />
-              <SoftInput
+
+              {/* <SoftInput
                 style={{ flex: 1, minWidth: "150px" }}
                 placeholder="Year"
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
-              />
+              /> */}
+              {selectedCourse && (
+                <SoftBox>
+                  <SoftSelect
+                    style={{ flex: 1, minWidth: "150px" }}
+                    placeholder="Select a module"
+                    options={modules}
+                    value={selectedModule}
+                    onChange={(value) => setSelectedModule(value)}
+                    isDisabled={!selectedCourse}
+                  />
+                </SoftBox>
+              )}
+
+              {selectedModule && (
+                <SoftBox >
+                  <SoftSelect
+                    style={{ flex: 1, minWidth: "150px" }}
+                    placeholder="Select a lesson"
+                    options={lessons}
+                    value={selectedLesson}
+                    onChange={(value) => setSelectedLesson(value)}
+                    isDisabled={!selectedModule}
+                  />
+                </SoftBox>
+              )}
               <SoftSelect
                 style={{ flex: 1, minWidth: "150px" }}
                 options={[
@@ -166,7 +272,7 @@ export default function AttendanceList() {
           <p className="text-sm font-medium text-gray-500">No attendance data available</p>
         </div>
       ) : (
-        <AttendanceTable refresh={getAttendance} data={attendance} month={month} year={year} />
+        <AttendanceTable lessonID={selectedLesson.value} refresh={getAttendance} data={attendance} month={month} year={year} />
       )}
 
       <Footer />
