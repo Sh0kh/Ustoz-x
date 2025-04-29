@@ -9,7 +9,7 @@ import { useSoftUIController, setMiniSidenav } from "context";
 import Login from "yaponuz/components/Login";
 import SubCategories from "yaponuz/components/Categories/SubCategories";
 import ArticleList from "yaponuz/components/Articles/Articles";
-import Logo from "yaponuz/data/img/logo.png";
+import Logo from "./assets/images/MainPageLogo.png";
 import NewLesson from "yaponuz/components/LessonList/pages/NewLesson";
 import { GetAuth } from "yaponuz/data/api";
 import MainPage from "yaponuz/components/MainPage";

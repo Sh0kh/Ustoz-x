@@ -248,7 +248,7 @@ export default function AddLessonReport({ refetch }) {
     return (
         <>
             <SoftButton onClick={() => setOpen(true)} variant="gradient" color='dark'>
-                + Add New Personality Report
+                + Add New Lesson Report
             </SoftButton>
             <Dialog open={open} onClose={() => setOpen(false)} fullWidth
                 maxWidth={false}

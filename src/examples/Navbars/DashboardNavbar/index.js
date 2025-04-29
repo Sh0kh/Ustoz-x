@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect } from "react";
 
 // react-router components
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -58,6 +58,7 @@ import {
 // Images
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
+import SoftButton from "components/SoftButton";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -96,6 +97,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
   const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
+  const navigate = useNavigate()
 
   // Render the notifications menu
   const renderMenu = () => (
@@ -150,12 +152,31 @@ function DashboardNavbar({ absolute, light, isMini }) {
           </Icon>
         </SoftBox>
         {isMini ? null : (
+          // <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
+          //   <SoftBox pr={1}>
+          //     <SoftInput
+          //       placeholder="Type here..."
+          //       icon={{ component: "search", direction: "left" }}
+          //     />
+          //   </SoftBox>
+          // </SoftBox>
           <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
             <SoftBox pr={1}>
-              <SoftInput
-                placeholder="Type here..."
-                icon={{ component: "search", direction: "left" }}
-              />
+              <SoftButton
+                variant="gradient"
+                onClick={() => navigate(-1)}
+                sx={{
+                
+                  backgroundColor: "#344767",
+                  
+                  color: "#fff", // чтобы текст был виден
+                  '&:hover': {
+                    backgroundColor: "#2c3a56", // чуть темнее при наведении
+                  },
+                }}
+              >
+                Back
+              </SoftButton>
             </SoftBox>
           </SoftBox>
         )}

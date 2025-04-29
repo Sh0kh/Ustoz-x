@@ -13,12 +13,15 @@ import DetailPersonality from "./commponent/DetailPersonality";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { personality } from "yaponuz/data/controllers/personality";
+import Header from "../account/settings/components/Header";
+import { Users } from "yaponuz/data/api";
 
 export default function StudentPersonality() {
 
     const { ID } = useParams()
     const [loading, setLoading] = useState(true)
     const [reportData, setReportData] = useState([])
+    const [userData, setUserData] = useState([])
 
 
     const getPersonality = async () => {
@@ -39,8 +42,20 @@ export default function StudentPersonality() {
         }
     };
 
+
+
+    const getOneUser = async () => {
+        try {
+            const response = await Users.getOneUser(ID);
+            setUserData(response?.object)
+        } catch (err) {
+            console.log("Error from groups list GET: ", err);
+        }
+    };
+
     useEffect(() => {
         getPersonality()
+        getOneUser()
     }, [ID])
 
 
@@ -84,6 +99,7 @@ export default function StudentPersonality() {
         <DashboardLayout>
             <DashboardNavbar />
             <SoftBox my={3}>
+                <Header data={userData} />
                 <Card style={{ margin: "10px 0px" }}>
                     <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
                         <SoftBox lineHeight={1}>

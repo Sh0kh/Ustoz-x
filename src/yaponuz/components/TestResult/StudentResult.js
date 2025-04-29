@@ -10,6 +10,8 @@ import EditResult from "./component/EditResult";
 import DeleteResult from "./component/DeleteResult";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import { Users } from "yaponuz/data/api";
+import Header from "../account/settings/components/Header";
 
 
 export default function StudentResult() {
@@ -17,6 +19,17 @@ export default function StudentResult() {
     const { ID } = useParams()
     const [loading, setLoading] = useState(true)
     const [reportData, setReportData] = useState([])
+    const [userData, setUserData] = useState([])
+
+    const getOneUser = async () => {
+        console.log('wtf')
+        try {
+            const response = await Users.getOneUser(ID);
+            setUserData(response?.object)
+        } catch (err) {
+            console.log("Error from groups list GET: ", err);
+        }
+    };
 
     const getAllTestResult = async () => {
         setLoading(true)
@@ -34,6 +47,7 @@ export default function StudentResult() {
     };
 
     useEffect(() => {
+        getOneUser()
         getAllTestResult()
     }, [ID])
 
@@ -77,6 +91,7 @@ export default function StudentResult() {
         <DashboardLayout>
             <DashboardNavbar />
             <SoftBox my={3}>
+                <Header data={userData} />
                 <Card style={{ margin: "10px 0px" }}>
                     <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
                         <SoftBox lineHeight={1}>

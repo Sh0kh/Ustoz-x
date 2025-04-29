@@ -9,11 +9,14 @@ import DeleteLessonReport from "./commponent/DeleteLessonReport";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { lessonReport } from "yaponuz/data/controllers/lessonReport";
+import Header from "../account/settings/components/Header";
+import { Users } from "yaponuz/data/api";
 
 export default function StudentLessonReport() {
     const { studentID } = useParams();
     const [loading, setLoading] = useState(true);
     const [reportData, setReportData] = useState([]);
+    const [userData, setUserData] = useState([])
     const [pagination, setPagination] = useState({
         page: 0,
         size: 10,
@@ -22,6 +25,16 @@ export default function StudentLessonReport() {
     });
 
     // Функция для получения данных с сервера
+
+    const getOneUser = async () => {
+        try {
+            const response = await Users.getOneUser(studentID);
+            setUserData(response?.object)
+        } catch (err) {
+            console.log("Error from groups list GET: ", err);
+        }
+    };
+
     const getLessonReport = async () => {
         setLoading(true);
         try {
@@ -50,6 +63,7 @@ export default function StudentLessonReport() {
 
     useEffect(() => {
         getLessonReport();
+        getOneUser()
     }, [studentID, pagination.page]);
 
     // Форматируем строки для карточек
@@ -92,6 +106,7 @@ export default function StudentLessonReport() {
         <DashboardLayout>
             <DashboardNavbar />
             <SoftBox my={3}>
+                <Header data={userData} />
                 <Card style={{ margin: "10px 0px", padding: "16px" }}>
                     <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start">
                         <SoftTypography variant="h5" fontWeight="medium">
