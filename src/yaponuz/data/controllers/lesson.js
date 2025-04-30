@@ -3,8 +3,8 @@ import { API_PATH, header, headerGet } from "../headers";
 class Lesson {
 
 
-  static getStundetLesson = async (data) => {
-    let url = `${API_PATH}lesson/get/byStudent?studentId=${data?.id}`;
+  static getStundetLesson = async (studentID) => {
+    let url = `${API_PATH}lesson/get/byStudent?studentId=${studentID}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -12,6 +12,8 @@ class Lesson {
     });
     return response.json();
   };
+
+
 
 
 
