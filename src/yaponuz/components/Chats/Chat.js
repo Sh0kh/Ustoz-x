@@ -1,5 +1,5 @@
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -9,6 +9,7 @@ import Stack from "@mui/material/Stack";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftButton from "components/SoftButton";
+import ChatIcon from '@mui/icons-material/Chat'; // или MessageIcon, ForumIcon и т.д.
 
 // Soft UI Dashboard PRO React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -25,6 +26,7 @@ import { Chat } from "yaponuz/data/api";
 import ActionCell from "./components/ActionCell";
 // import AddOther from "./components/AddChat";
 import SoftBadge from "components/SoftBadge";
+import { IconButton, Tooltip } from "@mui/material";
 
 const theFalse = (
   <SoftBadge variant="contained" color="error" size="xs" badgeContent="false" container />
@@ -37,37 +39,50 @@ export default function ChatList() {
   const [chats, setChats] = useState([]);
   const [page, setPage] = useState(1)
   const [size, SetSize] = useState(10)
+  const [totalPages, setTotalPages] = useState([])
+  const navigate = useNavigate()
 
   const columns = [
     { Header: "id", accessor: "id" },
-    { Header: "createdBy", accessor: "createdBy" },
-    { Header: "UserOne", accessor: "userOne" },
-    { Header: "UserTwo", accessor: "userTwo" },
-
+    { Header: "Stundet name", accessor: "firstName" },
+    { Header: "Phone number", accessor: "phoneNumber" },
+    { Header: "Message", accessor: "message" },
     { Header: "action", accessor: "action" },
   ];
 
   const getAirs = async () => {
     try {
       const response = await Chat.getAllChatAdmin(page, size);
-      console.log(response);
-      setChats(response.object);
+      setChats(response.object?.content || []);
+      setTotalPages(response?.object?.pageable?.totalPages)
     } catch (error) {
       console.error("Error fetching chats:", error);
+      setChats([]); // fallback to empty array if error
     }
   };
 
+
   const rows = Array.isArray(chats) && chats.length > 0
     ? chats.map((other) => ({
-        id: other.id,
-        createdBy: other.createdBy,
-        userOne: `${other.userOne}`,
-        userTwo: `${other.userTwo}`,
-        action: (
-          <ActionCell myid={other.id} chatid={other.userOne} itemme={other} refetch={getAirs} />
-        ),
-      }))
+      id: other.id,
+      firstName: `${other?.student?.firstName} ${other?.student?.lastName}`,
+      message: other?.content?.length > 20
+        ? other.content.slice(0, 20) + '...'
+        : other.content,
+      phoneNumber: other?.student?.phoneNumber,
+      action: (
+        <Tooltip title="Go to chat" key={other.id}>
+          <IconButton
+            color="#8392AB"
+            onClick={() => navigate(`/chat/${other?.student?.id}/${other?.recipient?.id}`)} 
+          >
+            <ChatIcon />
+          </IconButton>
+        </Tooltip>
+      ),
+    }))
     : [];
+
 
 
   const mytabledata = {
@@ -103,7 +118,7 @@ export default function ChatList() {
             canSearch
           />
         </Card>
-        {/* <SoftBox style={{ margin: "20px 0px" }}>
+        <SoftBox style={{ margin: "20px 0px" }}>
           <SoftPagination size="default">
             <SoftPagination item onClick={() => setPage(page - 1)} disabled={page === 0}>
               <Icon>keyboard_arrow_left</Icon>
@@ -126,7 +141,7 @@ export default function ChatList() {
               <Icon>keyboard_arrow_right</Icon>
             </SoftPagination>
           </SoftPagination>
-        </SoftBox> */}
+        </SoftBox>
       </SoftBox>
       <Footer />
     </DashboardLayout>

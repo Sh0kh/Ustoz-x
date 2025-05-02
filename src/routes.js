@@ -45,6 +45,7 @@ import Personality from "yaponuz/components/Personality/Index";
 import StudentPersonality from "yaponuz/components/Personality/StudentPersonality";
 import LessonReport from "yaponuz/components/LessonReport";
 import StudentLessonReport from "yaponuz/components/LessonReport/StudentLessonReport";
+import ChatInfo from "yaponuz/components/Chats/ChatInfo";
 
 const routes = [
   { type: "title", title: "General", key: "general-title" },
@@ -167,6 +168,15 @@ const routes = [
     noCollapse: true,
     route: "/student-lesson-report/:groupID/:studentID",
     component: <StudentLessonReport />
+  },
+  {
+    show: false,
+    type: "collapse",
+    name: "Chat",
+    key: "Chat",
+    noCollapse: true,
+    route: "/chat/:StundetID/:CreatorID",
+    component: <ChatInfo />
   },
 
   {

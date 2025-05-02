@@ -9,7 +9,7 @@ class Chat {
     });
     return response.json();
   };
-  
+
   static getAllChat = async (page, size, userId) => {
     const response = await fetch(
       `${API_PATH}chat/all/chat/admin?page=${page}&size=${size}&userId=${userId}`,
@@ -20,6 +20,19 @@ class Chat {
     );
     return response.json();
   };
+
+  static getChatInfo = async (page, size, StundetID, CreatorID) => {
+    const response = await fetch(
+      `${API_PATH}chat/get/chat/direct?page=${page}&recipientId=${CreatorID}&size=${size}&studentId=${StundetID}`,
+      {
+        method: "GET",
+        headers: headerGet,
+      }
+    );
+    return response.json();
+  };
+
+
 
   //
   static getAllMessages = async (page, size, chatId) => {
@@ -41,6 +54,17 @@ class Chat {
     );
     return response.json();
   };
+
+  static SentMessage = async (data) => {
+    const response = await fetch(`${API_PATH}chat/sent`, {
+      method: "POST",
+      headers: header,
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  };
+
+
 
   static addMessage = async (data) => {
     const response = await fetch(`${API_PATH}chat/add`, {
