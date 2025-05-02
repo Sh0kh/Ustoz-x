@@ -1,30 +1,37 @@
 const API_PATH = "https://ustozx.uz/edu/api/";
 const API_JUST = "https://ustozx.uz/edu/api/";
 
-
-// http://194.87.151.210:2120/swagger-ui.html#/
-
 const AUTH_TOKEN = "sos_token";
 const USER_HASH_ID = "sos_hashId";
-const token = localStorage.getItem(AUTH_TOKEN);
 
-const header = {
-  Authorization: `Bearer ${token}`,
+const getToken = () => localStorage.getItem(AUTH_TOKEN);
+
+const header = () => ({
+  Authorization: `Bearer ${getToken()}`,
   "Content-Type": "application/json",
-};
+});
 
-const headerGet = {
-  Authorization: `Bearer ${token}`,
-};
+const headerGet = () => ({
+  Authorization: `Bearer ${getToken()}`,
+});
 
-const headerFile = {
-  Authorization: `Bearer ${token}`,
+const headerFile = () => ({
+  Authorization: `Bearer ${getToken()}`,
   "Content-Type": "multipart/form-data",
-};
+});
 
-const headerPATCH = {
-  Authorization: `Bearer ${token}`,
+const headerPATCH = () => ({
+  Authorization: `Bearer ${getToken()}`,
   "Access-Control-Allow-Origin": "*",
-};
+});
 
-export { API_PATH, headerPATCH, API_JUST, AUTH_TOKEN, USER_HASH_ID, header, headerGet, headerFile };
+export {
+  API_PATH,
+  API_JUST,
+  AUTH_TOKEN,
+  USER_HASH_ID,
+  header ,
+  headerGet ,
+  headerFile ,
+  headerPATCH,
+};

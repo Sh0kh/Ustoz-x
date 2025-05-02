@@ -48,9 +48,10 @@ function UsersList() {
     setLoading(true);
     try {
       const response = await Users.getUsers(page, size, firstName, lastName, phoneNumber, groupID);
-      setTotalPages(response.object.totalPages);
+      setTotalPages(response.object?.totalPages);
       setUsers(response.object.content);
-      console.log(response, "all users");
+
+      console.log(totalPages)
 
     } catch (error) {
       if (error?.request && error?.message.includes("401")) {
@@ -147,14 +148,28 @@ function UsersList() {
                 <p className="text-sm uppercase font-medium">Yuklanmoqda, Iltimos kuting</p>
               </div>
             ) : mytabledata?.rows.length !== 0 ? (
-              <DataTable
-                table={mytabledata}
-                entriesPerPage={{
-                  defaultValue: 20,
-                  entries: [5, 7, 10, 15, 20],
-                }}
-                canSearch
-              />
+              <>
+                <DataTable
+                  table={mytabledata}
+                  entriesPerPage={{
+                    defaultValue: 20,
+                    entries: [5, 7, 10, 15, 20],
+                  }}
+                  canSearch
+                />
+
+                <SoftBox sx={{ overflowX: "auto", px: 3 }}>
+                </SoftBox>
+                <SoftBox display="flex" justifyContent="center" mt={3}>
+                  <SoftPagination
+                    page={page + 1}
+                    count={totalPages}
+                    onChange={(event, value) => setPage(value - 1)}
+                    color="info"
+                    size="large"
+                  />
+                </SoftBox>
+              </>
             ) : (
               <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
                 <Frown className="size-20" />
