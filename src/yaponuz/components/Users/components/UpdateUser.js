@@ -121,8 +121,10 @@ export default function UpdateUser({ item, refetch }) {
 
   // mounting
   React.useEffect(() => {
-    getAllGroups(page, size);
-  }, [page, size]);
+    if(open){
+      getAllGroups(page, size);
+    }
+  }, [page, size, open]);
 
   const my = { margin: "5px 0px" };
 

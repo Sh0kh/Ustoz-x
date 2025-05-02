@@ -16,8 +16,6 @@ import { Users } from "yaponuz/data/api";
 import SoftBadge from "components/SoftBadge";
 import { useNavigate } from "react-router-dom";
 
-
-
 // Lazy load components
 const DataTable = lazy(() => import("examples/Tables/DataTable"));
 const ActionCell = lazy(() => import("./components/ActionCell"));
@@ -42,17 +40,21 @@ function UsersList() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [groupID, setGroupID] = useState(null)
+  const [groupID, setGroupID] = useState(null);
 
-  const getAllUsers = async () => {
+  const getAllUsers = async (customPage = null) => {
     setLoading(true);
+    // Use provided customPage if available, otherwise use the state value
+    const currentPage = customPage !== null ? customPage : page;
+
+
     try {
-      const response = await Users.getUsers(page, size, firstName, lastName, phoneNumber, groupID);
-      setTotalPages(response.object?.totalPages);
-      setUsers(response.object.content);
-
-      console.log(totalPages)
-
+      const response = await Users.getUsers(currentPage, size, firstName, lastName, phoneNumber, groupID);
+      if (response && response.object) {
+        setTotalPages(response.object.totalPages || 0);
+        setUsers(response.object.content || []);
+        console.log("API response:", response.object);
+      }
     } catch (error) {
       if (error?.request && error?.message.includes("401")) {
         localStorage.clear();
@@ -64,16 +66,16 @@ function UsersList() {
         window.location.href = "/login/web";
         return;
       }
-      console.error("Error fetching users:", error?.request);
+      console.error("Error fetching users:", error);
     } finally {
       setLoading(false);
     }
   };
 
-
+  // This useEffect will run whenever these dependencies change
   useEffect(() => {
     getAllUsers();
-  }, [page, size, firstName, lastName, phoneNumber]);
+  }, [page, size, firstName, lastName, phoneNumber, groupID]);
 
   const columns = useMemo(
     () => [
@@ -104,13 +106,12 @@ function UsersList() {
         lastName: user.lastName ?? "null",
         phoneNumber: user.phoneNumber ?? "null",
         currentCountry: user.currentCountry ? user.currentCountry : "no country",
-        dateBirth: new Date(user.dateBirth).toLocaleDateString(),
+        dateBirth: user.dateBirth ? new Date(user.dateBirth).toLocaleDateString() : "N/A",
         verification: user.verification ? theTrue : theFalse,
-        action: <ActionCell id={user.id} item={user} refetch={() => getAllUsers(page, size)} />,
+        action: <ActionCell id={user.id} item={user} refetch={getAllUsers} />,
       })),
     [users]
   );
-
 
   const mytabledata = useMemo(
     () => ({
@@ -120,14 +121,19 @@ function UsersList() {
     [columns, rows]
   );
 
-  const myx = { margin: "0px 30px" };
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage - 1); // API expects zero-based index
+  };
 
+  const handleEntriesPerPageChange = (newSize) => {
+    setSize(newSize);
+    setPage(0); // Reset to first page when changing entries per page
+  };
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <SoftBox my={3}>
-
         <Card style={{ margin: "10px 0px" }}>
           <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
             <SoftBox lineHeight={1}>
@@ -137,7 +143,7 @@ function UsersList() {
             </SoftBox>
             <Stack spacing={1} direction="row">
               <Suspense fallback={<div>Loading...</div>}>
-                <AddUser refetch={() => getAllUsers(page, size)} />
+                <AddUser refetch={getAllUsers} />
               </Suspense>
             </Stack>
           </SoftBox>
@@ -152,19 +158,21 @@ function UsersList() {
                 <DataTable
                   table={mytabledata}
                   entriesPerPage={{
-                    defaultValue: 20,
+                    defaultValue: size,
                     entries: [5, 7, 10, 15, 20],
+                    canChange: true,
+                    onEntriesChange: handleEntriesPerPageChange
                   }}
                   canSearch
                 />
 
                 <SoftBox sx={{ overflowX: "auto", px: 3 }}>
                 </SoftBox>
-                <SoftBox display="flex" justifyContent="center" mt={3}>
+                <SoftBox display="flex" justifyContent="center" mt={3} pb={3}>
                   <SoftPagination
                     page={page + 1}
                     count={totalPages}
-                    onChange={(event, value) => setPage(value - 1)}
+                    onChange={handlePageChange}
                     color="info"
                     size="large"
                   />
