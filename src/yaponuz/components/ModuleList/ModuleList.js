@@ -64,6 +64,8 @@ export default function ModuleList() {
     { Header: "Lesson Minutes", accessor: "lessonMinutes" },
     { Header: "Video Count", accessor: "videoCount" },
     { Header: "Question Count", accessor: "questionCount" },
+    { Header: "Block", accessor: "block" },
+    { Header: "Hidden", accessor: "hidden" },
     { Header: "createdAt", accessor: "createdAt" },
     { Header: "action", accessor: "action" },
   ];
@@ -77,6 +79,8 @@ export default function ModuleList() {
       discountedPrice: module?.discountedPrice + " uzs",
       lessonMinutes: module?.lessonMinutes + " min",
       videoCount: module?.videoCount,
+      block: `${module.block === true ? 'Locked' : 'Open'}`,
+      hidden: `${module.hidden === true ? 'Hidden' : 'Open'}`,
       questionCount: module?.questionCount,
       createdAt:
         new Date(module?.createdAt).toISOString().replace(/T/, " ").replace(/\..+/, "") ?? "null",

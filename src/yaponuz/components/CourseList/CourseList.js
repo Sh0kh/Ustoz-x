@@ -62,6 +62,7 @@ export default function CourseList() {
     { Header: "Teacher Name", accessor: "teacherName" },
     { Header: "createdAt", accessor: "createdAt" },
     { Header: "Block", accessor: "block" },
+    { Header: "Hidden", accessor: "hidden" },
     { Header: "action", accessor: "action" },
   ];
 
@@ -71,7 +72,8 @@ export default function CourseList() {
     teacherName: course.teacherName,
     createdAt:
       new Date(course.createdAt).toISOString().replace(/T/, " ").replace(/\..+/, "") ?? "null",
-    block: `${course.block}`,
+    block: `${course.block === true ? 'Locked' : 'Open'}`,
+    hidden: `${course.hidden === true ? 'Hidden' : 'Open'}`,
     action: <ActionCell id={course.id} item={course} refetch={() => getAllCourses(page, size)} />,
   }));
 

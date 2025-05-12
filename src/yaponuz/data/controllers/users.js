@@ -1,9 +1,9 @@
 import { API_PATH, header, headerGet } from "../headers";
 
 class Users {
-  static async getUsers(page, size, firstName, lastName, phoneNumber,) {
-    let url = `${API_PATH}users?page=${page}&size=${size}&firstName=${firstName}&lastName=${lastName}&accountType=STUDENT`;
+  static async getUsers(page, size, firstName, lastName, phoneNumber, groupId) {
     // let url = `${API_PATH}users?page=${page}&size=${size}&firstName=${firstName}&lastName=${lastName}&accountType=STUDENT&groupId=${groupId}`;
+    let url = `${API_PATH}users?page=${page}&size=${size}&firstName=${firstName}&lastName=${lastName}&accountType=STUDENT&groupId=${groupId || ''}`;
     if (phoneNumber !== "") {
       url += `&phoneNumber=${phoneNumber.replace("+", "")}`;
     }

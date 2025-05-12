@@ -200,11 +200,8 @@ export default function ChatInfo() {
                 recipientId: parseInt(CreatorID),
                 studentId: parseInt(StundetID),
                 status: "DELIVERED",
-                files: fileData ? [fileData] : []
+                filesId:[fileInfo.id] 
             };
-
-            console.log("Sending message with file data:", fileData);
-            console.log("Complete message object:", newMessageObj);
 
             const response = await Chat.SentMessage(newMessageObj);
 
@@ -239,6 +236,8 @@ export default function ChatInfo() {
     useEffect(() => {
         scrollToBottom();
     }, [chats]);
+
+
 
     const getFileExtensionIcon = (extension) => {
         switch (extension?.toLowerCase()) {
@@ -348,8 +347,8 @@ export default function ChatInfo() {
                                         }}
                                     >
                                         <img
-                                            src={`/api/files/${file.id}`}
-                                            alt={file.name}
+                                            src={`https://ustozx.uz/edu/api/file/view/one/photo?id=${file.id}`}
+                                            alt={file.id}
                                             style={{
                                                 width: '100%',
                                                 height: 'auto',

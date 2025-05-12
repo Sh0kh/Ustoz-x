@@ -55,7 +55,6 @@ export default function QuizeList() {
     try {
       const response = await Lesson.getAllLessons(page, size, moduleId);
       setLesson(response.object?.content || []);
-      setLessonID(moduleId)
     } catch (err) {
       console.error("Error from lesson list GET:", err);
       setError("Failed to fetch lessons. Please try again later.");
@@ -67,6 +66,8 @@ export default function QuizeList() {
     try {
       const response = await Quiz.getAllModuleByLessonId(lessonID);
       setQuizModule(response.object);
+      setLessonID(lessonID)
+
     } catch (err) {
       console.error("Error from quiz list GET:", err);
       setError("Failed to fetch quizzes. Please try again later.");
@@ -78,6 +79,8 @@ export default function QuizeList() {
   useEffect(() => {
     getAllCourses(page, size);
   }, [page, size]);
+
+  console.log(quizModule)
 
   return (
     <DashboardLayout>
@@ -137,7 +140,7 @@ export default function QuizeList() {
           <Card>
             <SoftBox display="flex" justifyContent="space-between" p={3}>
               <SoftTypography variant="h6">All Quizzes Modules</SoftTypography>
-              {quizModule && quizModule?.length > 0 && (
+              {lesson && lesson.length > 0 && (
                 <AddModule refresh={() => getQuizModule(lessonID)}
                   lessonID={lessonID} />
               )}

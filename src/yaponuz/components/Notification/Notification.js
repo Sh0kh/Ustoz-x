@@ -30,8 +30,9 @@ export default function Notification() {
     setLoading(true);
     try {
       const response = await NotificationApi.getAllNotification(page, size, studentId);
-      setNotifications(response.object.content);
+      setNotifications(response);
       setTotalPages(response.object.totalPages);
+      console.log("hello")
     } catch (err) {
       console.log("Error from versions list GET: ", err);
     } finally {
@@ -67,6 +68,8 @@ export default function Notification() {
       />
     ),
   }));
+
+  console.log(notifications)
 
   const tabledata = {
     columns,
@@ -109,7 +112,7 @@ export default function Notification() {
             >
               <div>Loading data...</div>
             </div>
-          ) : notifications.length !== 0 ? (
+          ) : notifications.length > 0 ? (
             <DataTable
               table={tabledata}
               entriesPerPage={{

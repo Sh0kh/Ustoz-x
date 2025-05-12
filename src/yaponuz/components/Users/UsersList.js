@@ -15,6 +15,8 @@ import Stack from "@mui/material/Stack";
 import { Users } from "yaponuz/data/api";
 import SoftBadge from "components/SoftBadge";
 import { useNavigate } from "react-router-dom";
+import { Group } from "yaponuz/data/controllers/group";
+import SoftSelect from "components/SoftSelect";
 
 // Lazy load components
 const DataTable = lazy(() => import("examples/Tables/DataTable"));
@@ -40,7 +42,9 @@ function UsersList() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [groupID, setGroupID] = useState(null);
+  const [groupID, setGroupID] = useState("");
+  const [groupOptions, setGroupOptions] = useState([]);
+
 
   const getAllUsers = async (customPage = null) => {
     setLoading(true);
@@ -49,7 +53,7 @@ function UsersList() {
 
 
     try {
-      const response = await Users.getUsers(currentPage, size, firstName, lastName, phoneNumber, groupID);
+      const response = await Users.getUsers(currentPage, size, firstName, lastName, phoneNumber, groupID?.value);
       if (response && response.object) {
         setTotalPages(response.object.totalPages || 0);
         setUsers(response.object.content || []);
@@ -72,6 +76,28 @@ function UsersList() {
     }
   };
 
+  const getAllGroups = async (page, size) => {
+    try {
+      const response = await Group.getAllGroup(page, size);
+      const groups = response.object || [];
+
+      // Map the fetched data to match the expected format of SoftSelect options
+      const formattedOptions = groups.map((group) => ({
+        label: group.name,
+        value: group.id,
+      }));
+
+      setGroupOptions(formattedOptions);
+    } catch (err) {
+      console.error("Error fetching groups list: ", err);
+    }
+  };
+
+
+  useEffect(() => {
+    getAllGroups()
+  }, [])
+
   // This useEffect will run whenever these dependencies change
   useEffect(() => {
     getAllUsers();
@@ -83,9 +109,7 @@ function UsersList() {
       { Header: "First Name", accessor: "firstName" },
       { Header: "Last Name", accessor: "lastName" },
       { Header: "Phone Number", accessor: "phoneNumber" },
-      { Header: "Country", accessor: "currentCountry" },
       { Header: "BirthDay", accessor: "dateBirth" },
-      { Header: "verification", accessor: "verification" },
       { Header: "action", accessor: "action" },
     ],
     []
@@ -105,9 +129,7 @@ function UsersList() {
         ),
         lastName: user.lastName ?? "null",
         phoneNumber: user.phoneNumber ?? "null",
-        currentCountry: user.currentCountry ? user.currentCountry : "no country",
         dateBirth: user.dateBirth ? new Date(user.dateBirth).toLocaleDateString() : "N/A",
-        verification: user.verification ? theTrue : theFalse,
         action: <ActionCell id={user.id} item={user} refetch={getAllUsers} />,
       })),
     [users]
@@ -146,6 +168,55 @@ function UsersList() {
                 <AddUser refetch={getAllUsers} />
               </Suspense>
             </Stack>
+          </SoftBox>
+          <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3} gap="10px" sx={{ flexWrap: 'wrap' }}>
+            {/* Обертка с flex-grow и фиксированной шириной */}
+            <SoftBox sx={{ flexGrow: 1, minWidth: "200px", maxWidth: "300px" }}>
+              <SoftInput
+                placeholder="First Name"
+                value={firstName}
+                fullWidth
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </SoftBox>
+
+            <SoftBox sx={{ flexGrow: 1, minWidth: "200px", maxWidth: "300px" }}>
+              <SoftInput
+                placeholder="Last Name"
+                value={lastName}
+                fullWidth
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </SoftBox>
+
+            <SoftBox sx={{ flexGrow: 1, minWidth: "200px", maxWidth: "300px" }}>
+              <SoftInput
+                placeholder="Phonenumber"
+                value={phoneNumber}
+                fullWidth
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
+            </SoftBox>
+
+            <SoftBox sx={{ flexGrow: 1, minWidth: "200px", maxWidth: "300px" }}>
+              <SoftSelect
+                placeholder="Select Group"
+                value={groupID}
+                onChange={(selectedOption) => setGroupID(selectedOption)}
+                options={groupOptions}
+                styles={{
+                  menu: (provided) => ({
+                    ...provided,
+                    position: "absolute",
+                    zIndex: 9999,
+                  }),
+                  container: (provided) => ({
+                    ...provided,
+                    width: "100%",
+                  }),
+                }}
+              />
+            </SoftBox>
           </SoftBox>
           <Suspense fallback={<div>Loading...</div>}>
             {loading ? (
@@ -191,9 +262,9 @@ function UsersList() {
             )}
           </Suspense>
         </Card>
-      </SoftBox>
+      </SoftBox >
       <Footer />
-    </DashboardLayout>
+    </DashboardLayout >
   );
 }
 

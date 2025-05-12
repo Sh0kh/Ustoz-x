@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { Group } from "yaponuz/data/controllers/group";
 import Swal from "sweetalert2";
 import { Assembly } from "yaponuz/data/api";
+import SoftDatePicker from "components/SoftDatePicker";
 
 
 export default function AddAssembly({ refetch }) {
@@ -63,7 +64,14 @@ export default function AddAssembly({ refetch }) {
                     Swal.showLoading();
                 },
             });
-            const data = { title, date, time, link, selectedGroup, info };
+
+
+            let formattedDate = date;
+            if (Array.isArray(date)) {
+                formattedDate = date[0]; // Take the first element from the array
+            }
+
+            const data = { title, date: formattedDate, time, link, selectedGroup, info };
             const response = await Assembly?.createAssembly(data);
             loadingSwal.close();
 
@@ -119,14 +127,14 @@ export default function AddAssembly({ refetch }) {
                             </SoftBox>
                             <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" gap={'10px'}>
                                 <SoftBox width={'100%'}>
-                                    <SoftTypography component="label" variant="caption" fontWeight="bold">
+                                    <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
                                         Date
                                     </SoftTypography>
-                                    <SoftInput
-                                        placeholder="Enter the Date (2024-01-01)"
+                                    <SoftDatePicker
+                                        placeholder="Select Date"
                                         value={date}
-                                        style={my}
-                                        onChange={(e) => setDate(e.target.value)}
+                                        fullWidth
+                                        onChange={(newDate) => setDate(newDate)}
                                     />
                                 </SoftBox>
                                 <SoftBox width={'100%'}>

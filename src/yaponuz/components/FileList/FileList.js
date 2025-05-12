@@ -21,6 +21,7 @@ import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import SoftSelect from "components/SoftSelect";
+import FilePreview from "./components/FilePreview";
 
 // Lazy load components
 const DataTable = lazy(() => import("examples/Tables/DataTable"));
@@ -136,6 +137,7 @@ function FileList() {
         deleted: file.deleted ? theTrue : theFalse,
         action: (
           <SoftBox display="flex" alignItems="center" gap="10px">
+            <FilePreview item={file} />
             <SoftTypography
               variant="body1"
               color="secondary"
@@ -147,6 +149,7 @@ function FileList() {
               </Tooltip>
             </SoftTypography>
           </SoftBox>
+
         ),
       })),
     [files]

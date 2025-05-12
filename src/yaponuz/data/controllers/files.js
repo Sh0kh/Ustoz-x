@@ -28,7 +28,7 @@ class File {
   };
 
   static getOnePhoto = async (hashId) => {
-    const url = API_PATH + "file/view/one/photo?hashId=" + hashId;
+    const url = API_PATH + "file/view/one/photo?id=" + hashId;
     const response = await fetch(url, {
       method: "GET",
       headers: headerGet,
