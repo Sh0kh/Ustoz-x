@@ -52,7 +52,22 @@ class FileController {
       method: "PUT",
       headers: {
         ...headerGet,
-        "Content-Type": "application/json", // Убедитесь, что заголовок указан для JSON
+        "Content-Type": "application/json", 
+      },
+      body: JSON.stringify(data), 
+    });
+
+    return response.json();
+  };
+
+  static EditFileType = async (data) => {
+    const url = `${API_PATH}file/update/fileType?fileType=${data?.fileType}&id=${data?.id}`;
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        ...headerGet,
+        "Content-Type": "application/json", 
       },
       body: JSON.stringify(data), 
     });

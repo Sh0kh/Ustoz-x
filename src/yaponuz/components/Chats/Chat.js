@@ -46,18 +46,19 @@ export default function ChatList() {
     { Header: "id", accessor: "id" },
     { Header: "Stundet name", accessor: "firstName" },
     { Header: "Phone number", accessor: "phoneNumber" },
-    { Header: "Message", accessor: "message" },
+    // { Header: "Message", accessor: "message" },
     { Header: "action", accessor: "action" },
   ];
 
   const getAirs = async () => {
     try {
-      const response = await Chat.getAllChatAdmin(page, size);
-      setChats(response.object?.content || []);
+      const id = localStorage.getItem('userId')
+      const response = await Chat.getAllChatAdmin(id);
+      setChats(response.object || []);
       setTotalPages(response?.object?.pageable?.totalPages)
     } catch (error) {
       console.error("Error fetching chats:", error);
-      setChats([]); // fallback to empty array if error
+      setChats([]); 
     }
   };
 
@@ -66,9 +67,9 @@ export default function ChatList() {
     ? chats.map((other) => ({
       id: other.id,
       firstName: `${other?.student?.firstName} ${other?.student?.lastName}`,
-      message: other?.content?.length > 20
-        ? other.content.slice(0, 20) + '...'
-        : other.content,
+      // message: other?.content?.length > 20
+      //   ? other.content.slice(0, 20) + '...'
+      //   : other.content,
       phoneNumber: other?.student?.phoneNumber,
       action: (
         <Tooltip title="Go to chat" key={other.id}>

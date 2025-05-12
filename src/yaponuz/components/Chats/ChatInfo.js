@@ -200,8 +200,11 @@ export default function ChatInfo() {
                 recipientId: parseInt(CreatorID),
                 studentId: parseInt(StundetID),
                 status: "DELIVERED",
-                filesId:[fileInfo.id] 
+                filesId: fileInfo ? [fileInfo.id] : []  // Check if fileInfo is not null/undefined
             };
+
+
+            console.log(newMessageObj)
 
             const response = await Chat.SentMessage(newMessageObj);
 

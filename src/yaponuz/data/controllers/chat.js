@@ -2,8 +2,8 @@ import { API_PATH, header, headerGet } from "../headers";
 
 class Chat {
   // http://ec2-54-238-164-38.ap-northeast-1.compute.amazonaws.com:7714/sos/api/chat/all/chat/admin
-  static getAllChatAdmin = async (page, size) => {
-    const response = await fetch(`${API_PATH}chat/get/all/admin?page=${0}&size=${size}`, {
+  static getAllChatAdmin = async (id) => {
+    const response = await fetch(`${API_PATH}chat/get/all/admin/rooms?recipientId=${id}`, {
       method: "GET",
       headers: headerGet,
     });
