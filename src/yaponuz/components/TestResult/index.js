@@ -293,11 +293,19 @@ export default function TestResult() {
             <div>
                 <SoftInput
                     type="number"
-                    inputProps={{ min: 0, max: 100 }} // Ограничиваем минимальное и максимальное значение
+                    inputProps={{
+                        min: 0,
+                        max: 10, // Set the maximum allowed value in inputProps
+                    }}
                     value={scores[student.id] || ""}
-                    onChange={(e) => handleScoreChange(student.id, e.target.value)}
+                    onChange={(e) => {
+                        // Ensure the value does not exceed 10
+                        const value = Math.min(10, Math.max(0, e.target.value));
+                        handleScoreChange(student.id, value);
+                    }}
                     error={!!errors.scores[student.id]}
                 />
+
                 {errors.scores[student.id] && (
                     <div className="text-xs text-red-500 mt-1">
                         {errors.scores[student.id]}
@@ -344,7 +352,7 @@ export default function TestResult() {
                                         </div>
                                     )}
                                 </div>
-                                <div className="w-full" style={{width: '200px' }}>
+                                <div className="w-full" style={{ width: '200px' }}>
                                     <SoftDatePicker
                                         placeholder="Date of Test"
                                         value={date}

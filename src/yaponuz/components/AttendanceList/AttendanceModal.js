@@ -132,20 +132,22 @@ export default function AttendanceModal({ isOpen, onClose, studentId, selectedDa
                             })
                         }}
                     />
-                    <SoftInput
-                        value={timeOfLate}
-                        onChange={(e) => setTimeOfLate(e.target.value)}
-                        placeholder="Time of late"
-                        type="number"
-                        style={{
-                            marginTop: "16px",
-                            width: "100%",
-                            padding: "8px 12px",
-                            borderRadius: "8px",
-                            borderColor: "#d1d5db",
-                            boxSizing: "border-box",
-                        }}
-                    />
+                    {attendanceStatus === 'LATE_CAME' && (
+                        <SoftInput
+                            value={timeOfLate}
+                            onChange={(e) => setTimeOfLate(e.target.value)}
+                            placeholder="Time of late"
+                            type="number"
+                            style={{
+                                marginTop: "16px",
+                                width: "100%",
+                                padding: "8px 12px",
+                                borderRadius: "8px",
+                                borderColor: "#d1d5db",
+                                boxSizing: "border-box",
+                            }}
+                        />
+                    )}
                     <SoftInput
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
