@@ -169,7 +169,6 @@ const useDataTableData = (
     () => [
       { Header: "id", accessor: "id", Cell: IdCellWrapper },
       { Header: "date", accessor: "createdAt", Cell: DefaultCellWrapper },
-      { Header: "status", accessor: "deleted", Cell: StatusCellWrapper },
       { Header: "name", accessor: "name", Cell: DefaultCellWrapper },
       { Header: "lesson Minute", accessor: "lessonMinute", Cell: LessonMinuteCellWrapper },
       { Header: "module id", accessor: "moduleId", Cell: ModuleIdCellWrapper },

@@ -12,7 +12,6 @@ import Icon from "@mui/material/Icon";
 import SoftInput from "components/SoftInput";
 import Stack from "@mui/material/Stack";
 import { FileController } from "yaponuz/data/api"; // Corrected to use FileController
-
 import SoftBadge from "components/SoftBadge";
 import Tooltip from "@mui/material/Tooltip";
 import Swal from "sweetalert2";
@@ -23,6 +22,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import SoftSelect from "components/SoftSelect";
 import FilePreview from "./components/FilePreview";
 import FileEdit from "./components/FileEdit";
+import { Frown, Loader } from "lucide-react";
 
 // Lazy load components
 const DataTable = lazy(() => import("examples/Tables/DataTable"));
@@ -232,9 +232,27 @@ function FileList() {
               </Dialog>
             </Stack>
           </SoftBox>
-          <Suspense fallback={<div>Loading...</div>}>
-            <DataTable table={mytabledata} isLoading={loading} />
-          </Suspense>
+          {loading ? (
+            <div className="flex items-center pb-[50px] gap-y-4 justify-center flex-col">
+              <Loader className="animate-spin ml-2 size-10" />
+              <p className="text-sm uppercase font-medium">Yuklanmoqda, Iltimos kuting</p>
+            </div>
+          ) : mytabledata?.rows.length !== 0 ? (
+            <>
+              <DataTable table={mytabledata} isLoading={loading} />
+            </>
+          ) : (
+            <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
+              <Frown className="size-20" />
+              <div className="text-center">
+                <p className="uppercase font-semibold">Afuski, hech narsa topilmadi</p>
+                <p className="text-sm text-gray-700">
+                  balki, filtrlarni tozalab ko`rish kerakdir
+                </p>
+              </div>
+            </div>
+          )}
+
         </Card>
       </SoftBox>
     </DashboardLayout>

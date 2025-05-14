@@ -27,6 +27,7 @@ import ActionCell from "./components/ActionCell";
 // import AddOther from "./components/AddChat";
 import SoftBadge from "components/SoftBadge";
 import { IconButton, Tooltip } from "@mui/material";
+import { Frown, Loader } from "lucide-react";
 
 const theFalse = (
   <SoftBadge variant="contained" color="error" size="xs" badgeContent="false" container />
@@ -41,6 +42,7 @@ export default function ChatList() {
   const [size, SetSize] = useState(10)
   const [totalPages, setTotalPages] = useState([])
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(true)
 
   const columns = [
     { Header: "id", accessor: "id" },
@@ -51,6 +53,7 @@ export default function ChatList() {
   ];
 
   const getAirs = async () => {
+    setLoading(true)
     try {
       const id = localStorage.getItem('userId')
       const response = await Chat.getAllChatAdmin(id);
@@ -58,7 +61,9 @@ export default function ChatList() {
       setTotalPages(response?.object?.pageable?.totalPages)
     } catch (error) {
       console.error("Error fetching chats:", error);
-      setChats([]); 
+      setChats([]);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -75,7 +80,7 @@ export default function ChatList() {
         <Tooltip title="Go to chat" key={other.id}>
           <IconButton
             color="#8392AB"
-            onClick={() => navigate(`/chat/${other?.student?.id}/${other?.recipient?.id}`)} 
+            onClick={() => navigate(`/chat/${other?.student?.id}/${other?.recipient?.id}`)}
           >
             <ChatIcon />
           </IconButton>
@@ -110,14 +115,34 @@ export default function ChatList() {
               {/* <AddOther /> */}
             </Stack>
           </SoftBox>
-          <DataTable
-            table={mytabledata}
-            entriesPerPage={{
-              defaultValue: 20,
-              entries: [5, 7, 10, 15, 20],
-            }}
-            canSearch
-          />
+
+          {loading ? (
+            <div className="flex items-center pb-[50px] gap-y-4 justify-center flex-col">
+              <Loader className="animate-spin ml-2 size-10" />
+              <p className="text-sm uppercase font-medium">Yuklanmoqda, Iltimos kuting</p>
+            </div>
+          ) : mytabledata?.rows.length !== 0 ? (
+            <>
+              <DataTable
+                table={mytabledata}
+                entriesPerPage={{
+                  defaultValue: 20,
+                  entries: [5, 7, 10, 15, 20],
+                }}
+                canSearch
+              />            </>
+          ) : (
+            <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
+              <Frown className="size-20" />
+              <div className="text-center">
+                <p className="uppercase font-semibold">Afuski, hech narsa topilmadi</p>
+                <p className="text-sm text-gray-700">
+                  balki, filtrlarni tozalab ko`rish kerakdir
+                </p>
+              </div>
+            </div>
+          )}
+
         </Card>
         <SoftBox style={{ margin: "20px 0px" }}>
           <SoftPagination size="default">

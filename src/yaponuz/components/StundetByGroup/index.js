@@ -43,13 +43,10 @@ export default function StundetByGroup() {
             firstName: item.firstName,
             lastName: item.lastName ?? "null",
             phoneNumber: item.phoneNumber ?? "null",
-            currentCountry: item.currentCountry ? item.currentCountry : "no country",
             dateBirth: new Date(item.dateBirth).toLocaleDateString(),
         };
     });
 
-
-    // mounting
     useEffect(() => {
         getStudent(page, size);
     }, [page, size, ID]);
@@ -60,7 +57,6 @@ export default function StundetByGroup() {
         { Header: "First Name", accessor: "firstName" },
         { Header: "Last Name", accessor: "lastName" },
         { Header: "Phone Number", accessor: "phoneNumber" },
-        { Header: "Country", accessor: "currentCountry" },
         { Header: "BirthDay", accessor: "dateBirth" },
     ];
 
