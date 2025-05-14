@@ -2,7 +2,7 @@ import SoftBox from "components/SoftBox";
 import BasicInfoCard from "./components/BasicInfoCard";
 import PropTypes from "prop-types";
 import Sidenav from "../Sidenav";
-import ChangePassword from "../ChangePassword";
+import ChangePassword from "./components/ChangePassword";
 import Sessions from "./components/Sessions";
 import DeleteAccount from "./components/DeleteAccount";
 

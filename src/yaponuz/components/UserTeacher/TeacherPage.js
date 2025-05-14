@@ -63,9 +63,7 @@ function TeacherPage() {
       { Header: "First Name", accessor: "firstName" },
       { Header: "Last Name", accessor: "lastName" },
       { Header: "Phone Number", accessor: "phoneNumber" },
-      { Header: "Country", accessor: "currentCountry" },
       { Header: "BirthDay", accessor: "dateBirth" },
-      { Header: "verification", accessor: "verification" },
       { Header: "action", accessor: "action" },
     ],
     []
@@ -85,9 +83,7 @@ function TeacherPage() {
         ),
         lastName: user.lastName ?? "null",
         phoneNumber: user.phoneNumber ?? "null",
-        currentCountry: user.currentCountry ? user.currentCountry : "no country",
         dateBirth: new Date(user.dateBirth).toLocaleDateString(),
-        verification: user.verification ? theTrue : theFalse,
         action: <ActionCell id={user.id} item={user} refetch={() => getAllUsers(page, size)} />,
       })),
     [users]

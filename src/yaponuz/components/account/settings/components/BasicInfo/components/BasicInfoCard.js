@@ -147,15 +147,6 @@ function BasicInfoCard({ data }) {
                         />
                     </Grid>
 
-                    {/* Поле для пароля */}
-                    <Grid item xs={12} sm={6}>
-                        <FormField
-                            label="Password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)} // обновляем состояние пароля
-                        />
-                    </Grid>
                 </Grid>
                 <SoftButton
                     onClick={handleSave}

@@ -46,6 +46,7 @@ import StudentPersonality from "yaponuz/components/Personality/StudentPersonalit
 import LessonReport from "yaponuz/components/LessonReport";
 import StudentLessonReport from "yaponuz/components/LessonReport/StudentLessonReport";
 import ChatInfo from "yaponuz/components/Chats/ChatInfo";
+import StundetNotification from "yaponuz/components/Notification/StundetNotification";
 
 const routes = [
   { type: "title", title: "General", key: "general-title" },
@@ -340,6 +341,15 @@ const routes = [
     noCollapse: true,
     route: "/notificatin",
     component: <Notification />,
+  },
+  {
+    show: false,
+    type: "collapse",
+    name: "Notification",
+    key: "notificatin",
+    noCollapse: true,
+    route: "/notificatin/stundet/:ID",
+    component: <StundetNotification />,
   },
   {
     type: "collapse",

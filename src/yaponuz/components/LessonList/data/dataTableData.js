@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
-import IdCell from "layouts/ecommerce/orders/order-list/components/IdCell";
 import DefaultCell from "layouts/ecommerce/orders/order-list/components/DefaultCell";
 import StatusCell from "layouts/ecommerce/orders/order-list/components/StatusCell";
 import { Lesson } from "yaponuz/data/controllers/lesson";
@@ -20,7 +19,9 @@ CellWrapper.propTypes = {
 
 const IdCellWrapper = ({ value }) => (
   <CellWrapper>
-    <IdCell id={value} />
+    <span>
+      {value}
+    </span>
   </CellWrapper>
 );
 IdCellWrapper.propTypes = {
@@ -167,7 +168,7 @@ const useDataTableData = (
 
   const columns = useMemo(
     () => [
-      { Header: "id", accessor: "id", Cell: IdCellWrapper },
+      { Header: "Sort", accessor: "id", Cell: IdCellWrapper },
       { Header: "date", accessor: "createdAt", Cell: DefaultCellWrapper },
       { Header: "name", accessor: "name", Cell: DefaultCellWrapper },
       { Header: "lesson Minute", accessor: "lessonMinute", Cell: LessonMinuteCellWrapper },
@@ -225,7 +226,7 @@ const useDataTableData = (
     () => ({
       columns,
       rows: lessons.map((lesson) => ({
-        id: `#${lesson.id}`,
+        id: `${lesson?.sort}`,
         createdAt: formatDate(lesson.createdAt),
         deleted: lesson.deleted,
         name: lesson.name,
@@ -238,6 +239,7 @@ const useDataTableData = (
   );
 
   return {
+
     dataTableData,
     loading,
     totalPages,

@@ -28,7 +28,7 @@ import FormField from "layouts/pages/account/components/FormField";
 function ChangePassword() {
   const passwordRequirements = [
     "One special characters",
-    "Min 6 characters",
+    "Min 3 characters",
     "One number (2 are recommended)",
     "Change it often",
   ];

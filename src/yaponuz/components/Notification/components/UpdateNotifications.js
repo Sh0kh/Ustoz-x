@@ -14,25 +14,74 @@ import Switch from "@mui/material/Switch";
 import Icon from "@mui/material/Icon";
 import Tooltip from "@mui/material/Tooltip";
 
-import { Notification } from "yaponuz/data/api";
+import { Notification } from "yaponuz/data/controllers/notification";
 
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
+import { useParams } from "react-router-dom";
+import { FileController } from "yaponuz/data/api";
 
 export default function UpdateNotification({ id, item, refetch }) {
   const [open, setOpen] = useState(false);
 
-  // variables
-  const [Notification, setNotification] = useState("");
-  const [life, setLife] = useState(false);
-  const [comment, setComment] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { ID } = useParams()
+  const [fileId, setFileId] = useState(null)
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+
+  const uploadHandle = async (file, category) => {
+    const loadingSwal = Swal.fire({
+      title: "Adding...",
+      text: "Please Wait!",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    try {
+      const response = await FileController.uploadFile(
+        file,
+        category,
+        localStorage.getItem("userId")
+      );
+      loadingSwal.close();
+      if (response.success) {
+        Swal.fire("Added", response.message, "success");
+      } else {
+        Swal.fire("error", response.message || response.error, "error");
+      }
+      return response;
+    } catch (err) {
+      loadingSwal.close();
+      console.error("Error uploading file:", err.response || err);
+      Swal.fire("Upload Failed", err.response?.data?.message || err.message, "error");
+      return false;
+    }
+  };
+
 
   React.useEffect(() => {
-    setNotification(item.Notification);
-    setLife(item.life);
-    setComment(item.comment);
-  }, [id, item]);
+    if (item) {
+      setTitle(item?.title)
+      setDescription(item?.description)
+      setFileId(item?.photoId)
+    }
+  }, [item])
 
+  const upload = async (e) => {
+    const selectedFile = e.target.files[0];
+    if (!selectedFile) {
+      alert("Iltimos, fayl tanlang!");
+      return;
+    }
+    const response = await uploadHandle(selectedFile, "education_icon");
+    setFileId(response?.object?.id)
+  };
   // modal functions
   const handleClickOpen = () => {
     setOpen(true);
@@ -70,8 +119,17 @@ export default function UpdateNotification({ id, item, refetch }) {
           Swal.showLoading();
         },
       });
-      const data = { Notification, id, life, comment };
-      const response = await Notification.updateNotification(id, data);
+
+      const data = {
+        id: id,
+        creatorId: Number(localStorage.getItem("userId")),
+        description: description,
+        photoId: Number(fileId),
+        studentId: Number(ID),
+        title: title,
+      };
+
+      const response = await Notification.updateNotifiction(data);
       loadingSwal.close();
 
       showAlert(response);
@@ -96,51 +154,53 @@ export default function UpdateNotification({ id, item, refetch }) {
           <Icon>edit</Icon>
         </Tooltip>
       </SoftTypography>
-      <Dialog open={open} onClose={handleClose} size="xs" fullWidth>
-        <DialogTitle>Update Notification</DialogTitle>
+      <Dialog open={open} onClose={handleClose} fullWidth>
+        <DialogTitle>Edit Notification</DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              {/* Notification */}
-              <SoftTypography variant="caption">Notification</SoftTypography>
+              {/* Title */}
+              <SoftTypography variant="caption">Title</SoftTypography>
               <SoftInput
-                placeholder="Notification"
-                value={Notification}
+                placeholder="Title"
                 style={my}
-                onChange={(e) => setNotification(e.target.value)}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
-              {/* life */}
-              <SoftTypography variant="caption">Life</SoftTypography>
 
-              <SoftBox display="flex" alignItems="center">
-                <Switch checked={life} onChange={() => setLife(!life)} />
-                <SoftTypography
-                  variant="button"
-                  fontWeight="regular"
-                  onClick={() => setLife(!life)}
-                  sx={{ cursor: "pointer", userSelect: "none" }}
-                >
-                  &nbsp;&nbsp;LIFE - {life ? "TRUE" : "FALSE"}
-                </SoftTypography>
+
+
+              <SoftBox>
+                <SoftTypography variant="caption">Upload file</SoftTypography>
+                <SoftInput
+                  type="file"
+                  onChange={(e) => upload(e)}
+                  style={{
+                    border: "1px solid #e0e0e0",
+                    padding: "10px",
+                    borderRadius: "5px",
+                  }}
+                />
               </SoftBox>
 
-              {/* Comment */}
-              <SoftTypography variant="caption">Comment</SoftTypography>
-
+              {/* Description */}
+              <SoftTypography variant="caption">Description</SoftTypography>
               <SoftInput
-                placeholder="comment"
-                value={comment}
+                placeholder="Description"
                 multiline
                 rows={5}
                 style={my}
-                onChange={(e) => setComment(e.target.value)}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSave}>Update Notification</Button>
+          <Button onClick={handleSave} disabled={loading}>
+            {loading ? "Editing..." : "Edit Notification"}
+          </Button>
         </DialogActions>
       </Dialog>
     </>

@@ -18,7 +18,7 @@ import SoftInput from "components/SoftInput";
 import Stack from "@mui/material/Stack";
 
 // Data
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ActionCell from "./components/ActionCell";
 import SoftBadge from "components/SoftBadge";
 
@@ -76,6 +76,16 @@ export default function ModuleList() {
   ];
 
 
+  const formatDate = useCallback((dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString("default", { month: "short" });
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${day} ${month}, ${hours}:${minutes}`;
+  }, []);
+
+  
   const rows = Array.isArray(modules)
     ? modules?.map((module) => ({
       id: module?.id,
@@ -87,11 +97,13 @@ export default function ModuleList() {
       block: `${module.block === true ? 'Locked' : 'Open'}`,
       hidden: `${module.hidden === true ? 'Hidden' : 'Open'}`,
       questionCount: module?.questionCount,
-      createdAt:
-        new Date(module?.createdAt).toISOString().replace(/T/, " ").replace(/\..+/, "") ?? "null",
+      createdAt: module?.createdAt ? formatDate(module.createdAt) : "null",
       action: <ActionCell id={module?.id} item={module} refetch={() => getAllModules(page, size)} />,
     }))
-    : []; // Возвращает пустой массив, если `modules` не массив
+    : [];
+
+
+
 
   const tabledata = {
     columns,

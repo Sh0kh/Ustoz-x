@@ -2,8 +2,8 @@ import { API_PATH, headerGet, header } from "../headers";
 
 class Notification {
   // get all Notifications
-  static getAllNotification = async (page, size, studentId) => {
-    const url = `${API_PATH}notification/get?page=${page}&size=${size}&studentId=${studentId}`;
+  static getAllNotification = async (data) => {
+    const url = `${API_PATH}notification/get?page=${data?.page}&size=${data?.size}&studentId=${data?.ID}`;
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -32,8 +32,38 @@ class Notification {
     }
   };
 
-  // delete one Referral
-  static deleteReferral = async (id) => {
+  // delete one notofication
+  static deleteNotification = async (data) => {
+    const url = `${API_PATH}notification/delete?notificationId=${data?.id}&userId=${data?.stId}`;
+    try {
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: headerGet,
+      });
+      return response.json();
+    } catch (error) {
+      console.error("Error deleting referral:", error);
+      throw error;
+    }
+  };
+
+  static updateNotifiction = async (data) => {
+    const url = `${API_PATH}notification/edit`;
+    try {
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: header,
+        body: JSON.stringify(data),
+      });
+      return response.json();
+    } catch (error) {
+      console.error("Error updating referral:", error);
+      throw error;
+    }
+  };
+
+
+  static deleteReferral = async (id, ID) => {
     const url = `${API_PATH}referral/check/delete?id=${id}`;
     try {
       const response = await fetch(url, {

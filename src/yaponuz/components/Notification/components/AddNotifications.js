@@ -13,26 +13,22 @@ import PropTypes from "prop-types";
 import SoftSelect from "components/SoftSelect";
 import { Users } from "yaponuz/data/api";
 import { Notification } from "yaponuz/data/controllers/notification";
-
 import SoftTypography from "components/SoftTypography";
+import { useParams } from "react-router-dom";
+import SoftBox from "components/SoftBox";
+import { FileController } from "yaponuz/data/api";
 
-export default function AddNotification() {
+export default function AddNotification({ refetch, selectedStudents }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { ID } = useParams()
 
   // variables
+  const [fileId, setFileId] = useState(null)
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [studentId, setStudentId] = useState("");
-  const [photoId, setPhotoId] = useState(0);
 
 
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(20);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [users, setUsers] = useState([]);
 
   // modal functions
   const handleClickOpen = () => {
@@ -42,30 +38,56 @@ export default function AddNotification() {
   const handleClose = () => {
     setOpen(false);
   };
-  React.useEffect(() => {
-    const getAllUsers = async () => {
-      setLoading(true);
-      try {
-        const response = await Users.getUsers(page, size, firstName, lastName, phoneNumber);
-        setUsers(response.object.content);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    getAllUsers();
-  }, []);
 
-  const usersList = users.map((user) => ({
-    value: user.firstName,
-    label: user.firstName,
-    id: user.id,
-  }));
+
 
   // css variables
   const my = { margin: "5px 0px" };
+
+
+  const uploadHandle = async (file, category) => {
+    const loadingSwal = Swal.fire({
+      title: "Adding...",
+      text: "Please Wait!",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    try {
+      const response = await FileController.uploadFile(
+        file,
+        category,
+        localStorage.getItem("userId")
+      );
+      loadingSwal.close();
+      if (response.success) {
+        Swal.fire("Added", response.message, "success");
+      } else {
+        Swal.fire("error", response.message || response.error, "error");
+      }
+      return response;
+    } catch (err) {
+      loadingSwal.close();
+      console.error("Error uploading file:", err.response || err);
+      Swal.fire("Upload Failed", err.response?.data?.message || err.message, "error");
+      return false;
+    }
+  };
+
+  const upload = async (e) => {
+    const selectedFile = e.target.files[0];
+    if (!selectedFile) {
+      alert("Iltimos, fayl tanlang!");
+      return;
+    }
+    const response = await uploadHandle(selectedFile, "education_icon");
+    setFileId(response?.object?.id)
+  };
 
   // then add new Notification function
   const showAlert = (response) => {
@@ -75,6 +97,8 @@ export default function AddNotification() {
       Swal.fire("error", response.message || response.error, "error").then();
     }
   };
+
+
 
   // add new Notification function
   const handleSave = async () => {
@@ -94,21 +118,20 @@ export default function AddNotification() {
       const data = {
         creatorId: localStorage.getItem("userId"),
         description: description,
-        id: 0,
-        photoId: photoId,
-        studentId: studentId,
+        photoId: fileId,
+        studentIds: ID ? [Number(ID)] : selectedStudents,
         title: title,
       };
 
       const response = await Notification.createNotification(data);
       Swal.close();
       showAlert(response);
-
+      handleClose()
+      refetch()
       // clear the data after success response
       setTitle("");
       setDescription("");
-      setStudentId("");
-
+      setFileId(null)
       // close the modal
       setOpen(false);
     } catch (err) {
@@ -137,22 +160,20 @@ export default function AddNotification() {
                 onChange={(e) => setTitle(e.target.value)}
               />
 
-              {/* Student ID */}
-              <SoftTypography variant="caption">Student ID</SoftTypography>
-              <SoftSelect
-                placeholder="Select Student"
-                options={usersList}
-                onChange={(e) => setStudentId(e.id)}
-              />
 
-              {/* Photo ID */}
-              <SoftTypography variant="caption">Photo ID</SoftTypography>
-              <SoftInput
-                placeholder="Photo ID"
-                style={my}
-                value={photoId}
-                onChange={(e) => setPhotoId(e.target.value)}
-              />
+
+              <SoftBox>
+                <SoftTypography variant="caption">Upload file</SoftTypography>
+                <SoftInput
+                  type="file"
+                  onChange={(e) => upload(e)}
+                  style={{
+                    border: "1px solid #e0e0e0",
+                    padding: "10px",
+                    borderRadius: "5px",
+                  }}
+                />
+              </SoftBox>
 
               {/* Description */}
               <SoftTypography variant="caption">Description</SoftTypography>
@@ -180,4 +201,5 @@ export default function AddNotification() {
 
 AddNotification.propTypes = {
   refetch: PropTypes.func,
+  selectedStudents:PropTypes.array
 };

@@ -35,6 +35,17 @@ class Users {
     return response.json();
   }
 
+
+
+  static async updateUserPassword(data) {
+    const response = await fetch(`${API_PATH}users/edit/password`, {
+      method: "PUT",
+      headers: header,
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  }
+
   // http://ec2-54-238-164-38.ap-northeast-1.compute.amazonaws.com:7714/sos/api/users/10 getOneUser
   static async getOneUser(userId) {
     const response = await fetch(`${API_PATH}users/${userId}`, {

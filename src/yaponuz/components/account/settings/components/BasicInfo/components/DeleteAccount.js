@@ -20,7 +20,7 @@ import Switch from "@mui/material/Switch";
 // Soft UI Dashboard PRO React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
-import SoftButton from "components/SoftButton";
+import DeleteStAccount from "./DeleteStAccount";
 
 function DeleteAccount() {
   return (
@@ -37,29 +37,13 @@ function DeleteAccount() {
         pb={3}
         px={3}
         display="flex"
-        justifyContent="space-between"
+        justifyContent="end"
         alignItems={{ xs: "flex-start", sm: "center" }}
         flexDirection={{ xs: "column", sm: "row" }}
       >
-        <SoftBox display="flex" alignItems="center" mb={{ xs: 3, sm: 0 }}>
-          <Switch />
-          <SoftBox ml={2} lineHeight={0}>
-            <SoftTypography display="block" variant="button" fontWeight="medium">
-              Confirm
-            </SoftTypography>
-            <SoftTypography variant="caption" color="text">
-              I want to delete my account.
-            </SoftTypography>
-          </SoftBox>
-        </SoftBox>
         <SoftBox display="flex" flexDirection={{ xs: "column", sm: "row" }}>
-          <SoftButton variant="outlined" color="secondary">
-            deactivate
-          </SoftButton>
           <SoftBox ml={{ xs: 0, sm: 1 }} mt={{ xs: 1, sm: 0 }}>
-            <SoftButton variant="gradient" color="error" sx={{ height: "100%" }}>
-              delete account
-            </SoftButton>
+            <DeleteStAccount />
           </SoftBox>
         </SoftBox>
       </SoftBox>

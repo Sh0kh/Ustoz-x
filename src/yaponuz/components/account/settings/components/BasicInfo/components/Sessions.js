@@ -22,8 +22,14 @@ import Divider from "@mui/material/Divider";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftBadge from "components/SoftBadge";
+import { device } from "yaponuz/data/controllers/device";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import DeleteSessions from "./DeleteSessions";
 
 function Sessions() {
+  const { ID } = useParams()
+  const [deviceData, setDeviceData] = useState([])
   const actionButtonStyles = {
     "& .material-icons-round": {
       transform: `translateX(0)`,
@@ -34,6 +40,19 @@ function Sessions() {
       transform: `translateX(4px)`,
     },
   };
+
+  const getAllDevice = async () => {
+    try {
+      const response = await device.getDevice(ID)
+      setDeviceData(response?.object)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getAllDevice()
+  }, [])
 
   return (
     <Card id="sessions">
@@ -47,123 +66,33 @@ function Sessions() {
         </SoftTypography>
       </SoftBox>
       <SoftBox pb={3} px={3} sx={{ overflow: "auto" }}>
-        <SoftBox
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          width={{ xs: "max-content", sm: "100%" }}
-        >
-          <SoftBox display="flex" alignItems="center">
-            <SoftBox textAlign="center" color="text" px={{ xs: 0, md: 1.5 }} opacity={0.6}>
-              <Icon fontSize="default">desktop_windows</Icon>
-            </SoftBox>
-            <SoftBox height="100%" ml={2} lineHeight={1.4} mr={2}>
-              <SoftTypography display="block" variant="button" fontWeight="regular" color="text">
-                Bucharest 68.133.163.201
-              </SoftTypography>
-              <SoftTypography variant="caption" color="text">
-                Your current session
-              </SoftTypography>
-            </SoftBox>
-          </SoftBox>
-          <SoftBox display="flex" alignItems="center">
-            <SoftBadge
-              variant="contained"
-              size="xs"
-              badgeContent="active"
-              color="success"
-              container
-            />
-            <SoftBox mx={2} lineHeight={1}>
-              <SoftTypography variant="button" color="secondary" fontWeight="regular">
-                EU
-              </SoftTypography>
-            </SoftBox>
-            <SoftTypography
-              component="a"
-              href="#"
-              variant="button"
-              color="info"
-              fontWeight="regular"
-              sx={actionButtonStyles}
+        {/* <Divider /> */}
+        {deviceData?.map((i, index) => (
+          <>
+            <SoftBox
+              key={index}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              width={{ xs: "max-content", sm: "100%" }}
             >
-              See more&nbsp;
-              <Icon sx={{ fontWeight: "bold", verticalAlign: "middle" }}>arrow_forward</Icon>
-            </SoftTypography>
-          </SoftBox>
-        </SoftBox>
-        <Divider />
-        <SoftBox
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          width={{ xs: "max-content", sm: "100%" }}
-        >
-          <SoftBox display="flex" alignItems="center" mr={2}>
-            <SoftBox textAlign="center" color="text" px={{ xs: 0, md: 1.5 }} opacity={0.6}>
-              <Icon fontSize="default">desktop_windows</Icon>
+              <SoftBox display="flex" alignItems="center" mr={2}>
+                <SoftBox textAlign="center" color="text" px={{ xs: 0, md: 1.5 }} opacity={0.6}>
+                  <Icon fontSize="default">phone_iphone</Icon>
+                </SoftBox>
+                <SoftBox ml={2}>
+                  <SoftTypography display="block" variant="body2" fontWeight="regular" color="text">
+                    {i?.deviceType}
+                  </SoftTypography>
+                </SoftBox>
+              </SoftBox>
+              <SoftBox display="flex" alignItems="center">
+                <DeleteSessions id={i?.id} refetch={getAllDevice}/>
+              </SoftBox>
             </SoftBox>
-            <SoftBox ml={2}>
-              <SoftTypography display="block" variant="body2" fontWeight="regular" color="text">
-                Chrome on macOS
-              </SoftTypography>
-            </SoftBox>
-          </SoftBox>
-          <SoftBox display="flex" alignItems="center">
-            <SoftBox mx={2} lineHeight={1}>
-              <SoftTypography variant="button" color="secondary" fontWeight="regular">
-                US
-              </SoftTypography>
-            </SoftBox>
-            <SoftTypography
-              component="a"
-              href="#"
-              variant="button"
-              color="info"
-              fontWeight="regular"
-              sx={actionButtonStyles}
-            >
-              See more&nbsp;
-              <Icon sx={{ fontWeight: "bold", verticalAlign: "middle" }}>arrow_forward</Icon>
-            </SoftTypography>
-          </SoftBox>
-        </SoftBox>
-        <Divider />
-        <SoftBox
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          width={{ xs: "max-content", sm: "100%" }}
-        >
-          <SoftBox display="flex" alignItems="center" mr={2}>
-            <SoftBox textAlign="center" color="text" px={{ xs: 0, md: 1.5 }} opacity={0.6}>
-              <Icon fontSize="default">phone_iphone</Icon>
-            </SoftBox>
-            <SoftBox ml={2}>
-              <SoftTypography display="block" variant="body2" fontWeight="regular" color="text">
-                Safari on iPhone
-              </SoftTypography>
-            </SoftBox>
-          </SoftBox>
-          <SoftBox display="flex" alignItems="center">
-            <SoftBox mx={2} lineHeight={1}>
-              <SoftTypography variant="button" color="secondary" fontWeight="regular">
-                US
-              </SoftTypography>
-            </SoftBox>
-            <SoftTypography
-              component="a"
-              href="#"
-              variant="button"
-              color="info"
-              fontWeight="regular"
-              sx={actionButtonStyles}
-            >
-              See more&nbsp;
-              <Icon sx={{ fontWeight: "bold", verticalAlign: "middle" }}>arrow_forward</Icon>
-            </SoftTypography>
-          </SoftBox>
-        </SoftBox>
+            <Divider />
+          </>
+        ))}
       </SoftBox>
     </Card>
   );

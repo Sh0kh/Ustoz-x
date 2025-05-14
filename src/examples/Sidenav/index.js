@@ -136,7 +136,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
   const filteredRoutes = routes?.filter(({ name, key }) => {
     if (role === TEACHER_ROLE) {
-      return ['SMS', 'Chats', 'Attendance', 'My groups', 'Test result', 'Report', 'Personality', 'Lesson report'].includes(name);
+      return ['SMS', 'Chats', 'Attendance', 'My groups', 'Test result', 'Report', 'Personality', 'Lesson report', 'Notification'].includes(name);
     } else if (role === STUDENT_ROLE) {
       return ['SMS', 'Chats', 'Users', 'Attendance',].includes(name);
     } else {
