@@ -227,13 +227,17 @@ export default function TestResult() {
                     studentScore[id] = Number(score);
                 }
             });
+            
+            const formattedDate = date instanceof Date && !isNaN(date)
+                ? date.toISOString().split('T')[0]
+                : null;
 
-            // Форматируем данные согласно требуемой структуре
             const data = {
-                date: date.toISOString().split('T')[0], // Формат YYYY-MM-DD
-                studentScore: studentScore, // Оценки студентов в формате {studentId: score}
-                title: title.trim()
+                date: formattedDate,
+                studentScore: studentScore || {}, // по умолчанию пустой объект
+                title: typeof title === 'string' ? title.trim() : ''
             };
+
 
             // Отправляем данные на бэкенд
             const response = await testResult.createTestResult(data);
@@ -299,7 +303,6 @@ export default function TestResult() {
                     }}
                     value={scores[student.id] || ""}
                     onChange={(e) => {
-                        // Ensure the value does not exceed 10
                         const value = Math.min(10, Math.max(0, e.target.value));
                         handleScoreChange(student.id, value);
                     }}

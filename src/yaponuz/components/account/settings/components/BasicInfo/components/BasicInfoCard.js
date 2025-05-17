@@ -19,6 +19,7 @@ import FormField from "layouts/pages/account/components/FormField";
 import selectData from "layouts/pages/account/settings/components/BasicInfo/data/selectData";
 import SoftButton from "components/SoftButton";
 import { Users } from "yaponuz/data/api";
+import SoftDatePicker from "components/SoftDatePicker";
 
 function BasicInfoCard({ data }) {
 
@@ -44,6 +45,7 @@ function BasicInfoCard({ data }) {
         const data = {
             firstName,
             lastName,
+            phoneNumber,
             genderType: genderType.value,
             creatorId: localStorage.getItem("userId"),
             email,
@@ -87,8 +89,8 @@ function BasicInfoCard({ data }) {
                             onChange={(e) => setLastName(e.target.value)} // обновляем состояние
                         />
                     </Grid>
-                    <Grid item xs={12}>
-                        <Grid container spacing={3}>
+                    <Grid item xs={12} >
+                        <Grid display="flex" justifyContent="space-between" alignItems="flex-start" container spacing={3}>
                             <Grid item xs={12} sm={6}>
                                 <SoftBox
                                     display="flex"
@@ -104,20 +106,16 @@ function BasicInfoCard({ data }) {
                                     />
                                 </SoftBox>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <SoftBox
-                                    display="flex"
-                                    flexDirection="column"
-                                    justifyContent="flex-end"
-                                    height="100%"
-                                >
-                                    <FormField
-                                        label="Date of Birth"
-                                        value={dateOfBirth}
-                                        onChange={(e) => setDateOfBirth(e.target.value)} // обновляем состояние
-                                        fullWidth
-                                    />
-                                </SoftBox>
+                            <Grid item xs={12}>
+                                <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                                    Date of Birth
+                                </SoftTypography>
+                                <SoftDatePicker
+                                    placeholder="Date of Birth"
+                                    value={dateOfBirth}
+                                    fullWidth
+                                    onChange={(newDate) => setDateOfBirth(newDate)}
+                                />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -137,16 +135,6 @@ function BasicInfoCard({ data }) {
                             inputProps={{ type: "tel" }} // изменяем тип поля на 'tel'
                         />
                     </Grid>
-
-                    {/* Добавление новых полей для отображения */}
-                    <Grid item xs={12} sm={6}>
-                        <FormField
-                            label="Referral Number"
-                            value={myReferralNumber}
-                            disabled // Отключаем поле, если оно только для отображения
-                        />
-                    </Grid>
-
                 </Grid>
                 <SoftButton
                     onClick={handleSave}

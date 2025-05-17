@@ -17,9 +17,9 @@ import breakpoints from "assets/theme/base/breakpoints";
 import CameraView from "layouts/dashboards/smart-home/components/CameraView";
 
 // Images
-import camera1 from "assets/images/bg-smart-home-1.jpg";
-import camera2 from "assets/images/bg-smart-home-2.jpg";
-import camera3 from "assets/images/home-decor-3.jpg";
+import camera1 from "assets/images/cambrige.jpg";
+import camera2 from "assets/images/oxford.jpg";
+import camera3 from "assets/images/oxford2.jpg";
 
 function Cameras() {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
@@ -76,14 +76,14 @@ function Cameras() {
   return (
     <Card>
       <SoftBox display="flex" justifyContent="space-between" alignItems="center" pt={2} px={2}>
-        <SoftTypography variant="h6">Yaponiya</SoftTypography>
+        <SoftTypography variant="h6">University</SoftTypography>
         <SoftBox display="flex" justifyContent="space-between" alignItems="center" width="60%">
           <SoftBox width="90%">
             <AppBar position="static">
               <Tabs orientation={tabsOrientation} value={camera} onChange={handleSetCamera}>
-                <Tab label="Tokyo" />
-                <Tab label="Yokohama" />
-                <Tab label="Osaka" />
+                <Tab label="Cambridge" />
+                <Tab label="Oxford " />
+                <Tab label="Stanford" />
               </Tabs>
             </AppBar>
           </SoftBox>

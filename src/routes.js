@@ -71,6 +71,15 @@ const routes = [
     route: "/users/students",
     component: <UsersList />,
   },
+  {
+    type: "collapse",
+    name: "Notification",
+    key: "notificatin",
+    icon: <SettingsIcon size="12px" />,
+    noCollapse: true,
+    route: "/notificatin",
+    component: <Notification />,
+  },
 
 
 
@@ -182,15 +191,6 @@ const routes = [
 
   {
     type: "collapse",
-    name: "Files",
-    key: "files",
-    icon: <CreditCard size="12px" />,
-    noCollapse: true,
-    route: "/files",
-    component: <FileList />,
-  },
-  {
-    type: "collapse",
     name: "Chats",
     key: "chats",
     icon: <CustomerSupport size="12px" />,
@@ -198,8 +198,26 @@ const routes = [
     route: "/chats",
     component: <ChatList />,
   },
+  {
+    type: "collapse",
+    name: "Attendance",
+    key: "attendance",
+    icon: <SettingsIcon size="12px" />,
+    noCollapse: true,
+    route: "/attendance",
+    component: <AttendanceList />,
+  },
 
   { type: "title", title: "Courses", key: "courses-title" },
+  {
+    type: "collapse",
+    name: "Group",
+    key: "group",
+    icon: <CustomerSupport size="12px" />,
+    noCollapse: true,
+    route: "/group",
+    component: <GroupList />,
+  },
   {
     type: "collapse",
     name: "Course",
@@ -237,6 +255,16 @@ const routes = [
     route: "/quizes",
     component: <QuizeList />,
   },
+  { type: "title", title: "Meetings", key: "meetings-title" },
+  {
+    type: "collapse",
+    name: "Assembly",
+    key: "assembly",
+    icon: <CustomerSupport size="12px" />,
+    noCollapse: true,
+    route: "/assembly",
+    component: <Assembly />,
+  },
 
   { type: "title", title: "Advanced", key: "advanced-title" },
 
@@ -258,15 +286,7 @@ const routes = [
     route: "/versions",
     component: <VersionList />,
   },
-  {
-    type: "collapse",
-    name: "Group",
-    key: "group",
-    icon: <CustomerSupport size="12px" />,
-    noCollapse: true,
-    route: "/group",
-    component: <GroupList />,
-  },
+
   {
     type: "collapse",
     name: "My groups",
@@ -277,15 +297,7 @@ const routes = [
     component: <TeacherGroup />,
   },
 
-  {
-    type: "collapse",
-    name: "Assembly",
-    key: "assembly",
-    icon: <CustomerSupport size="12px" />,
-    noCollapse: true,
-    route: "/assembly",
-    component: <Assembly />,
-  },
+
 
   {
     type: "collapse",
@@ -333,15 +345,7 @@ const routes = [
     component: <StudentResult />
   },
 
-  {
-    type: "collapse",
-    name: "Notification",
-    key: "notificatin",
-    icon: <SettingsIcon size="12px" />,
-    noCollapse: true,
-    route: "/notificatin",
-    component: <Notification />,
-  },
+
   {
     show: false,
     type: "collapse",
@@ -369,14 +373,16 @@ const routes = [
     route: "/personality",
     component: <Personality />,
   },
+
+
   {
     type: "collapse",
-    name: "Attendance",
-    key: "attendance",
-    icon: <SettingsIcon size="12px" />,
+    name: "Files",
+    key: "files",
+    icon: <CreditCard size="12px" />,
     noCollapse: true,
-    route: "/attendance",
-    component: <AttendanceList />,
+    route: "/files",
+    component: <FileList />,
   },
 
   {
