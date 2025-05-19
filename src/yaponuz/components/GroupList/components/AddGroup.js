@@ -163,7 +163,7 @@ export default function AddGroup({ refetch }) {
               />
               {/* Teacher Select */}
               <SoftTypography component="label" variant="caption" fontWeight="bold">
-                Select Group
+                Select course
               </SoftTypography>
               <SoftSelect
                 options={courses?.map((cr) => ({

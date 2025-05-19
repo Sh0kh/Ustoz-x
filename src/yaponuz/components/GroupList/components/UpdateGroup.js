@@ -20,6 +20,8 @@ import { Group } from "yaponuz/data/controllers/group";
 
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
+import SoftSelect from "components/SoftSelect";
+import { Course } from "yaponuz/data/controllers/course";
 
 export default function UpdateGroup({ id, item, refetch }) {
   const [open, setOpen] = useState(false);
@@ -27,6 +29,8 @@ export default function UpdateGroup({ id, item, refetch }) {
   const [groupName, setGroupName] = useState("");
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
+  const [courseId, setCourseId] = useState('')
+  const [courses, setCourses] = useState([])
 
   const handleSetStartDate = (newDate) => setStartDate(newDate);
   const handleSetEndDate = (newDate) => setEndDate(newDate);
@@ -39,6 +43,9 @@ export default function UpdateGroup({ id, item, refetch }) {
     if (item.endDate) {
       setEndDate(new Date(item.endDate));
     }
+    if (item.courseId) {
+      setCourseId(item.courseId);
+    }
   }, [id, item]);
 
   // modal functions
@@ -50,10 +57,8 @@ export default function UpdateGroup({ id, item, refetch }) {
     setOpen(false);
   };
 
-  // css variables
   const my = { margin: "5px 0px" };
 
-  // then add new version function
   const showAlert = (response) => {
     function reload() {
       refetch();
@@ -64,6 +69,20 @@ export default function UpdateGroup({ id, item, refetch }) {
       Swal.fire("error", response.message || response.error, "error").then(() => reload());
     }
   };
+
+  const getAllCourses = async () => {
+    try {
+      const response = await Course.getAllCourses(0, 30);
+      setCourses(response.object);
+    } catch (err) {
+      console.log("Error from courses list GET: ", err);
+    }
+  };
+  React.useEffect(() => {
+    if (open) {
+      getAllCourses()
+    }
+  }, [open]);
 
   // add new version function
   const handleSave = async () => {
@@ -78,7 +97,7 @@ export default function UpdateGroup({ id, item, refetch }) {
           Swal.showLoading();
         },
       });
-      const data = { id: item.id, groupName, startDate, endDate };
+      const data = { id: item.id, groupName, startDate, endDate, courseId };
       const response = await Group.updateGroup(data);
       loadingSwal.close();
 
@@ -113,11 +132,29 @@ export default function UpdateGroup({ id, item, refetch }) {
               <SoftTypography component="label" variant="caption" fontWeight="bold">
                 Group Name
               </SoftTypography>
+
               <SoftInput
                 placeholder="Enter the Group Name"
                 value={groupName}
                 style={my}
                 onChange={(e) => setGroupName(e.target.value)}
+              />
+              <SoftTypography component="label" variant="caption" fontWeight="bold">
+                Course
+              </SoftTypography>
+              <SoftSelect
+                options={courses?.map((cr) => ({
+                  value: cr.id,
+                  label: `${cr.name} `,
+                }))}
+                placeholder="Choose a courses"
+                value={courses
+                  ?.map((cr) => ({
+                    value: cr.id,
+                    label: `${cr.name} `,
+                  }))
+                  .find((option) => option.value === courseId)} // Находим выбранный элемент
+                onChange={(selectedOption) => setCourseId(selectedOption?.value)}
               />
               <Grid container spacing={3}>
                 <Grid item xs={6}>

@@ -33,11 +33,11 @@ class Group {
 
     const body = {
       creatorId: userId,
-      courserId:data?.courseId,
+      courserId: data?.courseId,
       endDate: formatDate(data.endDate),
       name: data.groupName,
       startDate: formatDate(data.startDate),
-      teacherId:data?.teacherId
+      teacherId: data?.teacherId
     };
 
     const url = `${API_PATH}group/create`;
@@ -68,6 +68,7 @@ class Group {
       endDate: formatDate(data.endDate),
       name: data.groupName,
       startDate: formatDate(data.startDate),
+      courserId: data?.courseId
     };
 
     const response = await fetch(url, {
