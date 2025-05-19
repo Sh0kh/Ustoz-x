@@ -139,29 +139,29 @@ export default function AttendanceTable({ data, month, year, refresh, lessonID }
             </div>
 
             {/* Attendance Table */}
-            <div className="p-4 pl-0 bg-white shadow-lg rounded-lg mb-12 overflow-x-auto">
-                <table className="w-full border-collapse">
-                    <thead>
+            <div className="p-4 pl-0 bg-white shadow-lg rounded-lg mb-12 overflow-x-auto overflow-y-auto h-[600px]  relative">
+                <table className="w-full h-full border-collapse ">
+                    <thead >
                         <tr>
-                            <th className="sticky left-0 bg-white border-b border-gray-200 text-left font-semibold text-gray-700 p-4">
+                            <th className="sticky left-0 top-[-16px] z-50 bg-white border-b border-gray-200 text-left font-semibold text-gray-700 p-4">
                                 <span className="text-lg">Name</span>
                             </th>
-                            <th className="bg-white border-b border-gray-200 text-gray-700 p-3">
+                            <th className="bg-white sticky top-[-16px]   border-b border-gray-200 text-gray-700 p-3">
                                 <span className="text-sm w-20 block">Came day</span>
                             </th>
-                            <th className="bg-white border-b border-gray-200 text-gray-700 p-3">
+                            <th className="bg-white sticky top-[-16px]  border-b border-gray-200 text-gray-700 p-3">
                                 <span className="text-sm w-20 block">Not came day</span>
                             </th>
-                            <th className="bg-white border-b border-gray-200 text-gray-700 p-3">
+                            <th className="bg-white sticky top-[-16px]  border-b border-gray-200 text-gray-700 p-3">
                                 <span className="text-sm w-20 block">Excused day</span>
                             </th>
-                            <th className="bg-white border-b border-gray-200 text-gray-700 p-3">
+                            <th className="bg-white sticky top-[-16px]  border-b border-gray-200 text-gray-700 p-3">
                                 <span className="text-sm w-20 block">Late came time</span>
                             </th>
                             {daysArray.map((day) => (
                                 <th
                                     key={day}
-                                    className="p-2 text-center border-b border-gray-200 font-mono font-medium text-gray-600"
+                                    className="p-2 text-center sticky top-[-16px]  z-40 bg-white border-b border-gray-200 font-mono font-medium text-gray-600"
                                 >
                                     {day.toString().padStart(2, '0')}
                                 </th>
@@ -187,7 +187,7 @@ export default function AttendanceTable({ data, month, year, refresh, lessonID }
                                 .reduce((sum, record) => sum + record.timeOfLate, 0);
                             return (
                                 <tr key={index} className="hover:bg-gray-50">
-                                    <td className="sticky z-50 left-0 bg-white p-4 text-left text-gray-800 max-w-[200px] truncate">
+                                    <td className="sticky z-30 left-0 bg-white p-4 text-left text-gray-800 max-w-[200px] truncate">
                                         <span className="text-lg text-gray-500 mr-2">
                                             {index + 1}.
                                         </span>

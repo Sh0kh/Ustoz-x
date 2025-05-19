@@ -104,6 +104,7 @@ export default (selectSize, selectError, selectSuccess) => {
       color: dark.main,
     }),
 
+
     placeholder: () => ({
       position: "absolute",
       top: selectSize === "small" ? "52%" : "51%",
@@ -180,8 +181,7 @@ export default (selectSize, selectError, selectSuccess) => {
       transition: "background-color 300ms ease, color 300ms ease",
 
       "&:after": {
-        content: "'Press to select'",
-        display: "block",
+        display: "none",
         fontSize: size.xs,
         position: "absolute",
         right: pxToRem(10),
