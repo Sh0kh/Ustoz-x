@@ -22,15 +22,24 @@ import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftSelect from "components/SoftSelect";
 import { Course } from "yaponuz/data/controllers/course";
+import { Teacher } from "yaponuz/data/api";
 
 export default function UpdateGroup({ id, item, refetch }) {
   const [open, setOpen] = useState(false);
   // variables
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(20);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [groupName, setGroupName] = useState("");
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [courseId, setCourseId] = useState('')
   const [courses, setCourses] = useState([])
+
+  const [teacherId, setTeacherId] = useState(null); // Новый стейт для teacher
+  const [teachers, setTeachers] = useState([]); // Для списка teachers
 
   const handleSetStartDate = (newDate) => setStartDate(newDate);
   const handleSetEndDate = (newDate) => setEndDate(newDate);
@@ -45,6 +54,9 @@ export default function UpdateGroup({ id, item, refetch }) {
     }
     if (item.courseId) {
       setCourseId(item.courseId);
+    }
+    if (item.teacherId) {
+      setTeacherId(item.teacherId);
     }
   }, [id, item]);
 
@@ -70,6 +82,15 @@ export default function UpdateGroup({ id, item, refetch }) {
     }
   };
 
+  const getAllUsers = async () => {
+    try {
+      const response = await Teacher.getUsers(page, size, firstName, lastName, phoneNumber);
+      setTeachers(response.object.content);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
   const getAllCourses = async () => {
     try {
       const response = await Course.getAllCourses(0, 30);
@@ -81,10 +102,10 @@ export default function UpdateGroup({ id, item, refetch }) {
   React.useEffect(() => {
     if (open) {
       getAllCourses()
+      getAllUsers()
     }
   }, [open]);
 
-  // add new version function
   const handleSave = async () => {
     try {
       const loadingSwal = Swal.fire({
@@ -97,7 +118,7 @@ export default function UpdateGroup({ id, item, refetch }) {
           Swal.showLoading();
         },
       });
-      const data = { id: item.id, groupName, startDate, endDate, courseId };
+      const data = { id: item.id, groupName, startDate, endDate, courseId, teacherId };
       const response = await Group.updateGroup(data);
       loadingSwal.close();
 
@@ -155,6 +176,23 @@ export default function UpdateGroup({ id, item, refetch }) {
                   }))
                   .find((option) => option.value === courseId)} // Находим выбранный элемент
                 onChange={(selectedOption) => setCourseId(selectedOption?.value)}
+              />
+              <SoftTypography component="label" variant="caption" fontWeight="bold">
+                Select Teacher
+              </SoftTypography>
+              <SoftSelect
+                options={teachers?.map((teacher) => ({
+                  value: teacher.id,
+                  label: `${teacher.firstName} ${teacher.lastName}`,
+                }))}
+                placeholder="Choose a Teacher"
+                value={teachers
+                  ?.map((teacher) => ({
+                    value: teacher.id,
+                    label: `${teacher.firstName} ${teacher.lastName}`,
+                  }))
+                  .find((option) => option.value === teacherId)} // Находим выбранный элемент
+                onChange={(selectedOption) => setTeacherId(selectedOption?.value)}
               />
               <Grid container spacing={3}>
                 <Grid item xs={6}>

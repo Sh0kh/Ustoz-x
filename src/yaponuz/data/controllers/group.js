@@ -68,7 +68,8 @@ class Group {
       endDate: formatDate(data.endDate),
       name: data.groupName,
       startDate: formatDate(data.startDate),
-      courserId: data?.courseId
+      courserId: data?.courseId,
+      teacherId: data?.teacherId
     };
 
     const response = await fetch(url, {
