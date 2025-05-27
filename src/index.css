@@ -3,10 +3,15 @@
 @tailwind utilities;
 
 .MuiPaper-root {
-    background-color: white !important;
-    opacity: 1 !important;
-  }
-.TableName{
+  background-color: white !important;
+  opacity: 1 !important;
+}
+
+.TableName {
   width: 200px !important;
-  
+
+}
+
+.ql-editor {
+  min-height: 300px !important;
 }

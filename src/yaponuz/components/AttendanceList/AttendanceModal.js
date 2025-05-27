@@ -9,11 +9,18 @@ import React, { useEffect } from "react";
 import Swal from "sweetalert2";
 
 
-export default function AttendanceModal({ isOpen, onClose, studentId, selectedDate, refresh, attendanceData, lessonID }) {
+export default function AttendanceModal({ 
+    isOpen, 
+    onClose, 
+    studentId, 
+    selectedDate, 
+    attendanceData, 
+    lessonID, 
+    onAttendanceUpdate // Новый проп для обновления UI
+}) {
     const [attendanceStatus, setAttendanceStatus] = React.useState("");
     const [timeOfLate, setTimeOfLate] = React.useState("");
     const [comment, setComment] = React.useState("");
-
 
     useEffect(() => {
         if (attendanceData) {
@@ -42,6 +49,35 @@ export default function AttendanceModal({ isOpen, onClose, studentId, selectedDa
     };
 
     const handleSave = async () => {
+        // Сначала обновляем UI оптимистично
+        const newAttendanceData = {
+            id: attendanceData?.id || Date.now(), // Временный id если создаем новую запись
+            status: attendanceStatus,
+            timeOfLate: Number(timeOfLate) || 0,
+            comment: comment,
+            day: selectedDate,
+            studentId: studentId,
+            lessonId: lessonID
+        };
+
+        // Обновляем UI немедленно
+        onAttendanceUpdate(studentId, selectedDate, newAttendanceData, 'save');
+        
+        // Закрываем модал и очищаем поля
+        onClose();
+        setComment('');
+        setTimeOfLate('');
+        setAttendanceStatus('');
+
+        // Показываем анимацию успеха
+        Swal.fire({
+            title: "Saving...",
+            text: "Attendance is being saved",
+            icon: "info",
+            timer: 1000,
+            showConfirmButton: false
+        });
+
         // Используем выбранную дату и добавляем к ней текущее время
         const dateWithTime = getDateWithUzbekistanTime(selectedDate);
 
@@ -49,7 +85,7 @@ export default function AttendanceModal({ isOpen, onClose, studentId, selectedDa
             status: attendanceStatus,
             timeOfLate: Number(timeOfLate) || 0,
             comment: comment,
-            startTime: dateWithTime, // Используем дату с текущим временем
+            startTime: dateWithTime,
             day: selectedDate,
             studentId: studentId,
             lessonId: lessonID,
@@ -58,31 +94,59 @@ export default function AttendanceModal({ isOpen, onClose, studentId, selectedDa
 
         try {
             const response = await Attendance.createAttendance(data);
-            onClose();
-            refresh()
-            setComment('')
-            setTimeOfLate('')
-            setAttendanceStatus('')
-            Swal.fire("Attendance saved", response.message, "success");
+            
+            // Показываем успех
+            Swal.fire({
+                title: "Success!",
+                text: "Attendance saved successfully",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false
+            });
         } catch (error) {
+            // Если ошибка, откатываем изменения
+            onAttendanceUpdate(studentId, selectedDate, attendanceData, 'revert');
+            
             Swal.fire("Error", error.message || "An error occurred", "error");
         }
     };
 
     const handleDelete = async () => {
-        if (!attendanceData?.id) return; // Ensure attendanceId is available
+        if (!attendanceData?.id) return;
+
+        // Сначала обновляем UI оптимистично
+        onAttendanceUpdate(studentId, selectedDate, null, 'delete');
+        
+        // Закрываем модал
+        onClose();
+
+        // Показываем анимацию удаления
+        Swal.fire({
+            title: "Deleting...",
+            text: "Attendance is being deleted",
+            icon: "info",
+            timer: 1000,
+            showConfirmButton: false
+        });
 
         try {
             const response = await Attendance.deleteAttendance(attendanceData?.id);
-            onClose(); // Close the modal after deleting
-            refresh();
-            Swal.fire("Attendance deleted", response.message, "success");
+            
+            // Показываем успех
+            Swal.fire({
+                title: "Deleted!",
+                text: "Attendance deleted successfully",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false
+            });
         } catch (error) {
+            // Если ошибка, откатываем изменения
+            onAttendanceUpdate(studentId, selectedDate, attendanceData, 'revert');
+            
             Swal.fire("Error", error.message || "An error occurred", "error");
         }
     };
-
-
 
     return (
         <Dialog open={isOpen} onClose={onClose}>
@@ -96,7 +160,7 @@ export default function AttendanceModal({ isOpen, onClose, studentId, selectedDa
 
                     <SoftSelect
                         value={attendanceStatus.value}
-                        onChange={(selectedOption) => setAttendanceStatus(selectedOption.value)}  // Fixing value assignment
+                        onChange={(selectedOption) => setAttendanceStatus(selectedOption.value)}
                         placeholder="Select attendance"
                         options={[
                             { value: 'CAME', label: 'Came' },
@@ -182,8 +246,8 @@ AttendanceModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     lessonID: PropTypes.number.isRequired,
-    studentId: PropTypes.string.isRequired, // Prop validation for studentId
-    selectedDate: PropTypes.string.isRequired, // Prop validation for selectedDate
-    refresh: PropTypes.func, // Add this line for the 'refresh' prop
-    attendanceData: PropTypes.array,
+    studentId: PropTypes.string.isRequired,
+    selectedDate: PropTypes.string.isRequired,
+    attendanceData: PropTypes.object,
+    onAttendanceUpdate: PropTypes.func.isRequired, // Новый проп
 };

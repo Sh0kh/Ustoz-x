@@ -4,7 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import Grid from "@mui/material/Grid"; // Grid komponentini import qilamiz
+import Grid from "@mui/material/Grid";
 import SoftButton from "components/SoftButton";
 import { useState } from "react";
 import SoftInput from "components/SoftInput";
@@ -14,21 +14,59 @@ import Switch from "@mui/material/Switch";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import { FileController } from "yaponuz/data/api";
-
 import { Course } from "yaponuz/data/controllers/course";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 export default function AddCourse({ refetch }) {
   const [file, setFile] = useState(null);
+  const [homeIconFile, setHomeIconFile] = useState(null);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     block: true,
     hidden: true,
-    iconId: 0,
+    iconId: '',
+    iconFromHome: '',
     name: "",
     sort: 0,
     teacherName: "",
+    isPopular: true,
+    isDiscounted: true,
+    discounted: '',
+    description: ''
   });
-  const [errors, setErrors] = useState({}); // Error state for validation
+  const [errors, setErrors] = useState({});
+
+  // Конфигурация для ReactQuill
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      [{ 'font': [] }],
+      [{ 'size': ['small', false, 'large', 'huge'] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'script': 'sub' }, { 'script': 'super' }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      [{ 'indent': '-1' }, { 'indent': '+1' }],
+      [{ 'direction': 'rtl' }],
+      [{ 'align': [] }],
+      ['link', 'image', 'video'],
+      ['blockquote', 'code-block'],
+      ['clean']
+    ],
+  };
+
+  const quillFormats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike',
+    'color', 'background',
+    'script',
+    'list', 'bullet',
+    'indent',
+    'direction', 'align',
+    'link', 'image', 'video',
+    'blockquote', 'code-block'
+  ];
 
   // modal functions
   const handleClickOpen = () => {
@@ -72,15 +110,28 @@ export default function AddCourse({ refetch }) {
     }
   };
 
-  const upload = async (e) => {
+  const upload = async (e, isHomeIcon = false) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) {
       alert("Iltimos, fayl tanlang!");
       return;
     }
-    setFile(selectedFile);
+
+    if (isHomeIcon) {
+      setHomeIconFile(selectedFile);
+    } else {
+      setFile(selectedFile);
+    }
+
     const response = await uploadHandle(selectedFile, "education_icon");
-    setFormData({ ...formData, iconId: response.object.id })
+
+    if (response && response.success) {
+      if (isHomeIcon) {
+        setFormData({ ...formData, iconFromHome: response.object.id });
+      } else {
+        setFormData({ ...formData, iconId: response.object.id });
+      }
+    }
   };
 
   // Validation function
@@ -91,6 +142,15 @@ export default function AddCourse({ refetch }) {
     }
     if (!formData.teacherName || formData.teacherName.trim() === "") {
       validationErrors.teacherName = "Teacher name is required";
+    }
+    if (!formData.description || formData.description.trim() === "") {
+      validationErrors.description = "Course description is required";
+    }
+    if (!formData.iconId) {
+      validationErrors.iconId = "Course icon is required";
+    }
+    if (!formData.iconFromHome) {
+      validationErrors.iconFromHome = "Home icon is required";
     }
     setErrors(validationErrors);
     return validationErrors;
@@ -138,9 +198,14 @@ export default function AddCourse({ refetch }) {
         block: formData.block,
         hidden: formData.hidden,
         iconId: formData.iconId,
+        iconFromHome: formData.iconFromHome,
         name: formData.name,
         sort: formData.sort,
         teacherName: formData.teacherName,
+        isPopular: formData.isPopular,
+        isDiscounted: formData.isDiscounted,
+        discounted: formData.discounted,
+        description: formData.description
       };
 
       const response = await Course.createCourse(data);
@@ -152,29 +217,38 @@ export default function AddCourse({ refetch }) {
         block: true,
         hidden: true,
         iconId: 0,
+        iconFromHome: 0,
         name: "",
         sort: 0,
         teacherName: "",
+        isPopular: true,
+        isDiscounted: true,
+        discounted: '',
+        description: ''
       });
+      setFile(null);
+      setHomeIconFile(null);
 
       // close the modal
       setOpen(false);
     } catch (err) {
       console.log("Error from handleSave from add Course: ", err);
+      Swal.fire("Error", "Failed to create course", "error");
     }
   };
+
 
   return (
     <>
       <SoftButton variant="gradient" onClick={handleClickOpen} color="dark">
         + add new course
       </SoftButton>
-      <Dialog open={open} onClose={handleClose} size="xs" fullWidth>
+      <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
         <DialogTitle>Add New Course</DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
             {/* Course Name */}
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <SoftBox>
                 <SoftTypography variant="subtitle2">Course Name</SoftTypography>
                 <SoftInput
@@ -192,7 +266,7 @@ export default function AddCourse({ refetch }) {
             </Grid>
 
             {/* Teacher Name */}
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <SoftBox>
                 <SoftTypography variant="subtitle2">Teacher Name</SoftTypography>
                 <SoftInput
@@ -206,6 +280,17 @@ export default function AddCourse({ refetch }) {
                     {errors.teacherName}
                   </SoftTypography>
                 )}
+              </SoftBox>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <SoftBox>
+                <SoftTypography variant="subtitle2">Discounted Price</SoftTypography>
+                <SoftInput
+                  type="text"
+                  value={formData.discounted}
+                  onChange={(e) => setFormData({ ...formData, discounted: e.target.value })}
+                />
               </SoftBox>
             </Grid>
 
@@ -224,17 +309,50 @@ export default function AddCourse({ refetch }) {
             {/* Icon ID */}
             <Grid item xs={12} md={6}>
               <SoftBox>
-                <SoftTypography variant="subtitle2">Icon ID</SoftTypography>
+                <SoftTypography variant="subtitle2">Course Icon</SoftTypography>
                 <SoftInput
                   type="file"
                   accept="image/*"
                   onChange={(e) => upload(e)}
                   style={{
-                    border: "1px solid #e0e0e0",
+                    border: errors.iconId ? "1px solid #f44336" : "1px solid #e0e0e0",
                     padding: "10px",
                     borderRadius: "5px",
                   }}
                 />
+                {errors.iconId && (
+                  <SoftTypography variant="caption" color="error">
+                    {errors.iconId}
+                  </SoftTypography>
+                )}
+                {formData?.iconId && (
+                  <img className="w-[200px] mt-[10px] block rounded" src={`https://ustozx.uz/edu/api/file/view/one/photo?id=${formData?.iconId}`} />
+                )}
+              </SoftBox>
+            </Grid>
+
+            {/* Icon From Home */}
+            <Grid item xs={12} md={6}>
+              <SoftBox>
+                <SoftTypography variant="subtitle2">Home Page Icon</SoftTypography>
+                <SoftInput
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => upload(e, true)}
+                  style={{
+                    border: errors.iconFromHome ? "1px solid #f44336" : "1px solid #e0e0e0",
+                    padding: "10px",
+                    borderRadius: "5px",
+                  }}
+                />
+                {errors.iconFromHome && (
+                  <SoftTypography variant="caption" color="error">
+                    {errors.iconFromHome}
+                  </SoftTypography>
+                )}
+                {formData?.iconFromHome && (
+                  <img className="w-[200px] mt-[10px] block rounded" src={`https://ustozx.uz/edu/api/file/view/one/photo?id=${formData?.iconFromHome}`} />
+                )}
               </SoftBox>
             </Grid>
 
@@ -257,12 +375,61 @@ export default function AddCourse({ refetch }) {
                 />
               </SoftBox>
             </Grid>
+            <Grid item xs={12} md={6}>
+              <SoftBox>
+                <SoftTypography variant="subtitle2">Popular</SoftTypography>
+                <Switch
+                  checked={formData.isPopular}
+                  onChange={(e) => setFormData({ ...formData, isPopular: e.target.checked })}
+                />
+              </SoftBox>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <SoftBox>
+                <SoftTypography variant="subtitle2">Discounted</SoftTypography>
+                <Switch
+                  checked={formData.isDiscounted}
+                  onChange={(e) => setFormData({ ...formData, isDiscounted: e.target.checked })}
+                />
+              </SoftBox>
+            </Grid>
+
+            {/* Rich Text Editor для описания */}
+            <Grid item xs={12}>
+              <SoftBox>
+                <SoftTypography variant="subtitle2" sx={{ mb: 1 }}>
+                  Course Description
+                </SoftTypography>
+                <div style={{
+                  border: errors.description ? '1px solid #f44336' : '1px solid #e0e0e0',
+                  borderRadius: '8px',
+                  overflow: 'hidden'
+                }}>
+                  <ReactQuill
+                    theme="snow"
+                    value={formData.description}
+                    onChange={(value) => setFormData({ ...formData, description: value })}
+                    modules={quillModules}
+                    formats={quillFormats}
+                    style={{
+                      backgroundColor: '#fff',
+                      height: '500px'
+                    }}
+                    placeholder="Введите описание курса..."
+                  />
+                </div>
+                {errors.description && (
+                  <SoftTypography variant="caption" color="error" sx={{ mt: 1, display: 'block' }}>
+                    {errors.description}
+                  </SoftTypography>
+                )}
+              </SoftBox>
+            </Grid>
           </Grid>
         </DialogContent>
-
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSave}>Add Course</Button>
+          <Button onClick={handleSave} variant="contained">Add Course</Button>
         </DialogActions>
       </Dialog>
     </>

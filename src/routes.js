@@ -47,6 +47,8 @@ import LessonReport from "yaponuz/components/LessonReport";
 import StudentLessonReport from "yaponuz/components/LessonReport/StudentLessonReport";
 import ChatInfo from "yaponuz/components/Chats/ChatInfo";
 import StundetNotification from "yaponuz/components/Notification/StundetNotification";
+import CourseDetail from "yaponuz/components/CourseDetail/CourseDetail";
+import Enrollment from "yaponuz/components/Enrollment/Enrollment";
 
 const routes = [
   { type: "title", title: "General", key: "general-title" },
@@ -211,6 +213,15 @@ const routes = [
   { type: "title", title: "Courses", key: "courses-title" },
   {
     type: "collapse",
+    name: "Enrollment",
+    key: "enrollment",
+    icon: <CustomerSupport size="12px" />,
+    noCollapse: true,
+    route: "/enrollment",
+    component: <Enrollment />,
+  },
+  {
+    type: "collapse",
     name: "Group",
     key: "group",
     icon: <CustomerSupport size="12px" />,
@@ -226,6 +237,15 @@ const routes = [
     noCollapse: true,
     route: "/course",
     component: <CourseList />,
+  },
+  {
+    show: false,
+    type: "collapse",
+    name: "CourseDetails",
+    key: "course",
+    noCollapse: true,
+    route: "/cours/detail/:ID",
+    component: <CourseDetail />,
   },
   {
     type: "collapse",

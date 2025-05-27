@@ -101,7 +101,7 @@ export default function DetailReport({ item }) {
                                                 File Preview:
                                             </SoftTypography>
                                             <img
-                                                src={getImageUrl(item.file.uploadPath)}
+                                                src={`https://ustozx.uz/edu/api/file/view/one/photo?id=${item?.file.id}`}
                                                 alt={item.file.orginalName || "File preview"}
                                                 style={{
                                                     width: "100%",

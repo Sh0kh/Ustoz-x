@@ -323,6 +323,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     })
     .filter(Boolean); // Filter out null values (items that should not be shown)
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    window.location.href = '/login/web';
+  };
+
   return (
     <SidenavRoot
       {...rest}
@@ -356,6 +361,23 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         </SoftBox>
       </SoftBox>
       <List>{renderRoutes}</List>
+      <SoftBox p={2} mt="auto">
+        <SoftButton
+          component="button"
+          variant="gradient"
+          color="error"
+          fullWidth
+          onClick={handleLogout}
+          sx={{
+            backgroundColor: '#FF0000',
+            '&:hover': {
+              backgroundColor: '#CC0000',
+            },
+          }}
+        >
+          Logout
+        </SoftButton>
+      </SoftBox>
     </SidenavRoot>
   );
 }

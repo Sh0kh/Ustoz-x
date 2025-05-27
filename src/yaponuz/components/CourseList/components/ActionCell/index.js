@@ -13,6 +13,8 @@ import UpdateVersion from "../UpdateCourse";
 
 import { Course } from "yaponuz/data/controllers/course";
 import UpdateCourse from "../UpdateCourse";
+import CourseDetail from "../CourseDetail";
+import { NavLink } from "react-router-dom";
 
 export default function ActionCell({ id, item, refetch }) {
   const deleteItem = async (id) => {
@@ -67,6 +69,22 @@ export default function ActionCell({ id, item, refetch }) {
 
   return (
     <SoftBox display="flex" alignItems="center">
+      <SoftBox >
+        <NavLink to={`/cours/detail/${id}`}>
+          <SoftTypography
+            variant="body1"
+            color="secondary"
+            sx={{ cursor: "pointer", lineHeight: 0 }}
+          >
+            <Tooltip title="Preview" placement="top">
+              <Icon sx={{ cursor: "pointer" }}>
+                visibility
+              </Icon>
+            </Tooltip>
+          </SoftTypography>
+        </NavLink>
+      </SoftBox>
+
       <SoftBox mx={2}>
         <UpdateCourse id={id} item={item} refetch={refetch} />
       </SoftBox>
@@ -80,6 +98,7 @@ export default function ActionCell({ id, item, refetch }) {
           <Icon>delete</Icon>
         </Tooltip>
       </SoftTypography>
+
     </SoftBox>
   );
 }

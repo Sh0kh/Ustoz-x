@@ -32,12 +32,13 @@ export default function AddModule({ refetch }) {
     "hidden": true,
     "courseId": '',
     "discountedPrice": '',
-    "iconId": '',
     "lessonMinutes": '',
     "name": "",
     "price": '',
     "questionCount": '',
-    "videoCount": ''
+    "videoCount": '',
+    "iconId": "0",
+    'sort':""
   });
 
   const handleSetStartDate = (newDate) => setStartDate(newDate);
@@ -118,7 +119,7 @@ export default function AddModule({ refetch }) {
 
       const response = await FileController.uploadFile(file, 'education_icon', localStorage.getItem("userId"));
       console.log("Yuklash natijasi:", response);
-      setFormData({...formData, iconId: response.object.id})
+      setFormData({ ...formData, iconId: response.object.id })
       loadingSwal.close();
       if (response.success) {
         Swal.fire("Added", response.message, "success");
@@ -360,17 +361,12 @@ export default function AddModule({ refetch }) {
 
               <Grid item xs={12} md={6}>
                 <SoftBox>
-                  <SoftTypography variant="subtitle2">Icon</SoftTypography>
+                  <SoftTypography variant="subtitle2">Sort</SoftTypography>
                   <SoftInput
-                    type="file"
-                    onChange={handleFileChange}
-                    error={!!errors.iconId}
+                    type="number"
+                    value={formData.sort}
+                    onChange={(e) => setFormData({ ...formData, sort: Number(e.target.value) })}
                   />
-                  {errors.iconId && (
-                    <SoftTypography variant="caption" color="error">
-                      {errors.iconId}
-                    </SoftTypography>
-                  )}
                 </SoftBox>
               </Grid>
             </Grid>

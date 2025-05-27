@@ -3,27 +3,87 @@ import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import AttendanceModal from '../AttendanceModal';
 
-export default function AttendanceTable({ data, month, year, refresh, lessonID }) {
+export default function AttendanceTable({ data, month, year, lessonID }) {
     const [AtModal, setAtModal] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [studentId, setStudentId] = useState(null);
     const [selectedAttendance, setSelectedAttendance] = useState({ status: '' });
+    const [localData, setLocalData] = useState(data); // Локальное состояние для UI
+    const [updatingCells, setUpdatingCells] = useState(new Set()); // Отслеживание обновляющихся ячеек
 
     useEffect(() => {
-        if (!data || data.length === 0) {
-            console.log('No attendance data available.');
-        }
+        setLocalData(data);
     }, [data]);
 
-    if (!data || data.length === 0) {
+    useEffect(() => {
+        if (!localData || localData.length === 0) {
+            console.log('No attendance data available.');
+        }
+    }, [localData]);
+
+    if (!localData || localData.length === 0) {
         return <p className="text-center text-gray-500">No attendance data available.</p>;
     }
 
     const daysInMonth = dayjs(`${year}-${month}-1`).daysInMonth();
     const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
+    // Функция для обновления UI без запроса на сервер
+    const handleAttendanceUpdate = (studentId, date, newAttendanceData, action) => {
+        const cellKey = `${studentId}-${date}`;
+        
+        // Добавляем анимацию обновления
+        setUpdatingCells(prev => new Set([...prev, cellKey]));
+        
+        // Убираем анимацию через 2 секунды
+        setTimeout(() => {
+            setUpdatingCells(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(cellKey);
+                return newSet;
+            });
+        }, 2000);
+
+        setLocalData(prevData => {
+            return prevData.map(student => {
+                if (student.user.id === studentId) {
+                    const updatedAttendance = [...student.attendance];
+                    const existingIndex = updatedAttendance.findIndex(
+                        att => dayjs(att.day).format('YYYY-MM-DD') === date
+                    );
+
+                    if (action === 'delete') {
+                        // Удаляем запись посещаемости
+                        if (existingIndex !== -1) {
+                            updatedAttendance.splice(existingIndex, 1);
+                        }
+                    } else if (action === 'save') {
+                        // Добавляем или обновляем запись посещаемости
+                        if (existingIndex !== -1) {
+                            updatedAttendance[existingIndex] = {
+                                ...updatedAttendance[existingIndex],
+                                ...newAttendanceData
+                            };
+                        } else {
+                            updatedAttendance.push(newAttendanceData);
+                        }
+                    } else if (action === 'revert') {
+                        // Откатываем изменения (возвращаем исходные данные)
+                        return data.find(s => s.user.id === studentId) || student;
+                    }
+
+                    return {
+                        ...student,
+                        attendance: updatedAttendance
+                    };
+                }
+                return student;
+            });
+        });
+    };
+
     const handleDayClick = (day, studentId) => {
-        const student = data.find((student) => student.user.id === studentId); // Get student data by ID
+        const student = localData.find((student) => student.user.id === studentId);
         const date = dayjs(`${year}-${month}-${day}`).format('YYYY-MM-DD');
         setSelectedDate(date);
         setStudentId(studentId);
@@ -40,7 +100,7 @@ export default function AttendanceTable({ data, month, year, refresh, lessonID }
         if (attendanceForDay) {
             setSelectedAttendance(attendanceForDay);
         } else {
-            setSelectedAttendance({ status: '', id: null }); // Pass null ID if no attendance
+            setSelectedAttendance({ status: '', id: null });
         }
     };
 
@@ -48,7 +108,7 @@ export default function AttendanceTable({ data, month, year, refresh, lessonID }
         const attendanceForDay = student.attendance.find(
             (attendance) => dayjs(attendance.day).date() === day
         );
-        return attendanceForDay ? attendanceForDay.status : ''; // Return status or empty string if no attendance
+        return attendanceForDay ? attendanceForDay.status : '';
     };
 
     const getStatusIcon = (status) => {
@@ -139,29 +199,29 @@ export default function AttendanceTable({ data, month, year, refresh, lessonID }
             </div>
 
             {/* Attendance Table */}
-            <div className="p-4 pl-0 bg-white shadow-lg rounded-lg mb-12 overflow-x-auto overflow-y-auto h-[600px]  relative">
-                <table className="w-full h-full border-collapse ">
-                    <thead >
+            <div className="p-4 pl-0 bg-white shadow-lg rounded-lg mb-12 overflow-x-auto overflow-y-auto h-[600px] relative">
+                <table className="w-full h-full border-collapse">
+                    <thead>
                         <tr>
                             <th className="sticky left-0 top-[-16px] z-50 bg-white border-b border-gray-200 text-left font-semibold text-gray-700 p-4">
                                 <span className="text-lg">Name</span>
                             </th>
-                            <th className="bg-white sticky top-[-16px]   border-b border-gray-200 text-gray-700 p-3">
+                            <th className="bg-white sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
                                 <span className="text-sm w-20 block">Came day</span>
                             </th>
-                            <th className="bg-white sticky top-[-16px]  border-b border-gray-200 text-gray-700 p-3">
+                            <th className="bg-white sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
                                 <span className="text-sm w-20 block">Not came day</span>
                             </th>
-                            <th className="bg-white sticky top-[-16px]  border-b border-gray-200 text-gray-700 p-3">
+                            <th className="bg-white sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
                                 <span className="text-sm w-20 block">Excused day</span>
                             </th>
-                            <th className="bg-white sticky top-[-16px]  border-b border-gray-200 text-gray-700 p-3">
+                            <th className="bg-white sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
                                 <span className="text-sm w-20 block">Late came time</span>
                             </th>
                             {daysArray.map((day) => (
                                 <th
                                     key={day}
-                                    className="p-2 text-center sticky top-[-16px]  z-40 bg-white border-b border-gray-200 font-mono font-medium text-gray-600"
+                                    className="p-2 text-center sticky top-[-16px] z-40 bg-white border-b border-gray-200 font-mono font-medium text-gray-600"
                                 >
                                     {day.toString().padStart(2, '0')}
                                 </th>
@@ -169,7 +229,7 @@ export default function AttendanceTable({ data, month, year, refresh, lessonID }
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map((student, index) => {
+                        {localData.map((student, index) => {
                             const cameDays = daysArray.filter(
                                 (day) => getAttendanceStatus(student, day) === 'CAME'
                             ).length;
@@ -197,34 +257,37 @@ export default function AttendanceTable({ data, month, year, refresh, lessonID }
                                     </td>
                                     <td className="p-3 text-center font-mono text-gray-700">
                                         <div className="flex justify-center">
-                                            <div className="bg-green-100 text-green-800 w-10 h-10 rounded-full flex items-center justify-center font-semibold shadow-sm">
+                                            <div className="bg-green-100 text-green-800 w-10 h-10 rounded-full flex items-center justify-center font-semibold shadow-sm transition-all duration-300">
                                                 {cameDays}
                                             </div>
                                         </div>
                                     </td>
                                     <td className="p-3 text-center font-mono text-gray-700">
                                         <div className="flex justify-center">
-                                            <div className="bg-red-100 text-red-800 w-10 h-10 rounded-full flex items-center justify-center font-semibold shadow-sm">
+                                            <div className="bg-red-100 text-red-800 w-10 h-10 rounded-full flex items-center justify-center font-semibold shadow-sm transition-all duration-300">
                                                 {notCame}
                                             </div>
                                         </div>
                                     </td>
                                     <td className="p-3 text-center font-mono text-gray-700">
                                         <div className="flex justify-center">
-                                            <div className="bg-yellow-100 text-yellow-800 w-10 h-10 rounded-full flex items-center justify-center font-semibold shadow-sm">
+                                            <div className="bg-yellow-100 text-yellow-800 w-10 h-10 rounded-full flex items-center justify-center font-semibold shadow-sm transition-all duration-300">
                                                 {absentDays}
                                             </div>
                                         </div>
                                     </td>
                                     <td className="p-3 text-center font-mono text-gray-700">
                                         <div className="flex justify-center">
-                                            <div className="bg-orange-100 text-orange-800 w-10 h-10 rounded-full flex items-center justify-center font-semibold shadow-sm">
+                                            <div className="bg-orange-100 text-orange-800 w-10 h-10 rounded-full flex items-center justify-center font-semibold shadow-sm transition-all duration-300">
                                                 {totalLateTime}
                                             </div>
                                         </div>
                                     </td>
                                     {daysArray.map((day) => {
                                         const status = getAttendanceStatus(student, day);
+                                        const cellKey = `${student.user.id}-${dayjs(`${year}-${month}-${day}`).format('YYYY-MM-DD')}`;
+                                        const isUpdating = updatingCells.has(cellKey);
+                                        
                                         return (
                                             <td
                                                 key={day}
@@ -237,13 +300,18 @@ export default function AttendanceTable({ data, month, year, refresh, lessonID }
                                                         rounded-lg 
                                                         w-12 h-12 
                                                         flex items-center justify-center 
-                                                        transition-all duration-200 
+                                                        transition-all duration-500
                                                         hover:shadow-md 
                                                         transform hover:scale-105
                                                         ${status ? `${getStatusBgColor(status)} shadow-sm` : 'border border-gray-300'}
+                                                        ${isUpdating ? 'animate-pulse bg-blue-100 border-blue-300 scale-110' : ''}
                                                     `}
                                                 >
-                                                    {getStatusIcon(status)}
+                                                    {isUpdating ? (
+                                                        <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                                    ) : (
+                                                        getStatusIcon(status)
+                                                    )}
                                                 </div>
                                             </td>
                                         );
@@ -254,13 +322,13 @@ export default function AttendanceTable({ data, month, year, refresh, lessonID }
                     </tbody>
                 </table>
                 <AttendanceModal
-                    refresh={refresh}
                     isOpen={AtModal}
                     onClose={() => setAtModal(false)}
                     selectedDate={selectedDate}
                     studentId={studentId}
                     attendanceData={selectedAttendance}
                     lessonID={lessonID}
+                    onAttendanceUpdate={handleAttendanceUpdate}
                 />
             </div>
         </>
@@ -283,8 +351,7 @@ AttendanceTable.propTypes = {
             ),
         })
     ).isRequired,
-    month: PropTypes.string.isRequired,
+    month: PropTypes.string.isRequired,  
     year: PropTypes.string.isRequired,
     lessonID: PropTypes.number.isRequired,
-    refresh: PropTypes.func,
 };

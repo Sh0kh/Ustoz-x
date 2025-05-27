@@ -10,6 +10,14 @@ class Course {
     });
     return response.json();
   };
+  static getOneCourse = async (id) => {
+    const url = `${API_PATH}course/get/one?courseId=${id}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headerGet,
+    });
+    return response.json();
+  };
 
   // create new course
   static createCourse = async (data) => {
