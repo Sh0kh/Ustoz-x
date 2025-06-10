@@ -2,25 +2,27 @@ import { API_PATH, headerGet, header } from "../headers";
 
 class personality {
 
-    static createPersonality = async (data) => {
-        const body = {
-            score: data?.score,
-            lessonId: data?.lessonId,
-            date: data?.date,
-            studentId: data?.studentId,
-            comment: data?.info
-        }
+    static createPersonality = async (dataArray) => {
+        // dataArray - bu massiv bo'lishi kerak
         const url = `${API_PATH}personality/create`;
         const response = await fetch(url, {
             method: "POST",
             headers: header,
-            body: JSON.stringify(body),
+            body: JSON.stringify(dataArray),
         });
         return response.json();
     }
 
     static getPersonality = async (data) => {
         const url = `${API_PATH}personality/admin/getAll?studentId=${data?.studentId}`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: headerGet,
+        });
+        return response.json();
+    }
+    static getPersonalityByDate = async (data) => {
+        const url = `${API_PATH}personality/getAllByDate?endDate=${data?.endDate}&groupId=${data?.groupId}&page=0&size=20&startDate=${data?.startDate}`;
         const response = await fetch(url, {
             method: "GET",
             headers: headerGet,

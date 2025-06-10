@@ -31,10 +31,10 @@ export default function AttendanceTable({ data, month, year, lessonID }) {
     // Функция для обновления UI без запроса на сервер
     const handleAttendanceUpdate = (studentId, date, newAttendanceData, action) => {
         const cellKey = `${studentId}-${date}`;
-        
+
         // Добавляем анимацию обновления
         setUpdatingCells(prev => new Set([...prev, cellKey]));
-        
+
         // Убираем анимацию через 2 секунды
         setTimeout(() => {
             setUpdatingCells(prev => {
@@ -171,13 +171,13 @@ export default function AttendanceTable({ data, month, year, lessonID }) {
         <>
             {/* Status Legend with SoftBox Design */}
             <div className="p-5 bg-white shadow-lg rounded-lg mb-6 overflow-x-auto">
-                <h3 className="text-lg font-semibold text-gray-700 mb-4">Attendance Status Legend</h3>
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">Davomat statusi belgisi</h3>
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     {[
-                        { status: 'CAME', label: 'Came' },
-                        { status: 'EXCUSED', label: 'Excused' },
-                        { status: 'LATE_CAME', label: 'Late came' },
-                        { status: 'NOT_CAME', label: 'Not came' }
+                        { status: 'CAME', label: 'Keldi' },
+                        { status: 'EXCUSED', label: 'Sababli' },
+                        { status: 'LATE_CAME', label: 'Kechikib keldi' },
+                        { status: 'NOT_CAME', label: 'Kelmagan' }
                     ].map((item) => (
                         <div key={item.status} className="flex-1 min-w-[120px]">
                             <div className={`cursor-pointer rounded-xl shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg transform hover:-translate-y-1`}>
@@ -198,25 +198,26 @@ export default function AttendanceTable({ data, month, year, lessonID }) {
                 </div>
             </div>
 
+
             {/* Attendance Table */}
             <div className="p-4 pl-0 bg-white shadow-lg rounded-lg mb-12 overflow-x-auto overflow-y-auto h-[600px] relative">
                 <table className="w-full h-full border-collapse">
                     <thead>
                         <tr>
                             <th className="sticky left-0 top-[-16px] z-50 bg-white border-b border-gray-200 text-left font-semibold text-gray-700 p-4">
-                                <span className="text-lg">Name</span>
+                                <span className="text-lg">Ism</span>
                             </th>
                             <th className="bg-white sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
-                                <span className="text-sm w-20 block">Came day</span>
+                                <span className="text-sm w-20 block">Kelgan kun</span>
                             </th>
                             <th className="bg-white sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
-                                <span className="text-sm w-20 block">Not came day</span>
+                                <span className="text-sm w-20 block">Kelmagan kun</span>
                             </th>
                             <th className="bg-white sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
-                                <span className="text-sm w-20 block">Excused day</span>
+                                <span className="text-sm w-20 block">Sababli kun</span>
                             </th>
                             <th className="bg-white sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
-                                <span className="text-sm w-20 block">Late came time</span>
+                                <span className="text-sm w-20 block">Kechikkan vaqt</span>
                             </th>
                             {daysArray.map((day) => (
                                 <th
@@ -287,7 +288,7 @@ export default function AttendanceTable({ data, month, year, lessonID }) {
                                         const status = getAttendanceStatus(student, day);
                                         const cellKey = `${student.user.id}-${dayjs(`${year}-${month}-${day}`).format('YYYY-MM-DD')}`;
                                         const isUpdating = updatingCells.has(cellKey);
-                                        
+
                                         return (
                                             <td
                                                 key={day}
@@ -351,7 +352,7 @@ AttendanceTable.propTypes = {
             ),
         })
     ).isRequired,
-    month: PropTypes.string.isRequired,  
+    month: PropTypes.string.isRequired,
     year: PropTypes.string.isRequired,
     lessonID: PropTypes.number.isRequired,
 };

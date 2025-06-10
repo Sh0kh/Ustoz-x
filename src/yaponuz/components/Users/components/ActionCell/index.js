@@ -64,18 +64,18 @@ function ActionCell({ id, item, refetch }) {
 
       newSwal
         .fire({
-          title: "Are you sure?",
-          text: "You won't be able to revert this!",
+          title: "Ishonchingiz komilmi?",
+          text: "Bu amalni qaytarib bo‘lmaydi!",
           showCancelButton: true,
-          confirmButtonText: "Yes, delete it!",
-          cancelButtonText: "No, cancel!",
+          confirmButtonText: "Ha, o‘chirilsin!",
+          cancelButtonText: "Yo‘q, bekor qilish!",
           reverseButtons: true,
         })
         .then(async (result) => {
           if (result.isConfirmed) {
             const loadingSwal = Swal.fire({
-              title: "Deleting...",
-              text: "Please Wait!",
+              title: "O‘chirilmoqda...",
+              text: "Iltimos, kuting!",
               allowOutsideClick: false,
               allowEscapeKey: false,
               showConfirmButton: false,
@@ -87,11 +87,11 @@ function ActionCell({ id, item, refetch }) {
             loadingSwal.close();
 
             if (response.success) {
-              newSwal.fire("Deleted!", response.message, "success").then(() => {
+              newSwal.fire("O‘chirildi!", response.message, "success").then(() => {
                 refetch();
               });
             } else {
-              newSwal.fire("Not Deleted!", response.message, "error").then(() => {
+              newSwal.fire("O‘chirilmadi!", response.message, "error").then(() => {
                 refetch();
               });
             }
@@ -117,7 +117,7 @@ function ActionCell({ id, item, refetch }) {
     <SoftBox display="flex" alignItems="center">
       <SoftBox>
         <SoftTypography variant="body1" color="secondary" sx={{ cursor: "pointer", lineHeight: 0 }}>
-          <PreviewUser id={id} />
+          {/* <PreviewUser id={id} /> */}
         </SoftTypography>
       </SoftBox>
       <SoftBox ml={1}>
@@ -132,7 +132,7 @@ function ActionCell({ id, item, refetch }) {
         color="secondary"
         sx={{ cursor: "pointer", lineHeight: 0 }}
       >
-        <Tooltip title="Delete" placement="top">
+        <Tooltip title="O‘chirish" placement="top">
           <Icon>delete</Icon>
         </Tooltip>
       </SoftTypography>

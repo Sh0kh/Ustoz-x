@@ -34,11 +34,11 @@ export default function SMSList() {
   const [totalPages, setTotalPages] = useState(0);
 
   const columns = [
-    { Header: "id", accessor: "id" },
-    { Header: "createdAt", accessor: "createdAt" },
-    { Header: "phoneNumber", accessor: "phoneNumber" },
-    { Header: "messageText", accessor: "messageText" },
-    // { Header: "action", accessor: "action" },
+    { Header: "ID", accessor: "id" },
+    { Header: "Yaratilgan vaqti", accessor: "createdAt" },
+    { Header: "Telefon raqami", accessor: "phoneNumber" },
+    { Header: "SMS matni", accessor: "messageText" },
+    // { Header: "Amal", accessor: "action" },
   ];
 
   const rows = sms.map((other) => ({
@@ -82,7 +82,7 @@ export default function SMSList() {
           <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
             <SoftBox lineHeight={1}>
               <SoftTypography variant="h5" fontWeight="medium">
-                All SMS
+                Barcha SMSlar
               </SoftTypography>
             </SoftBox>
             <Stack spacing={1} direction="row">

@@ -48,9 +48,9 @@ export default function UpdateUser({ item, refetch }) {
 
   const showAlert = (response) => {
     if (response.success) {
-      Swal.fire("Updated!", response.message, "success").then(() => refetch());
+      Swal.fire("Yangilandi!", response.message, "success").then(() => refetch());
     } else {
-      Swal.fire("Not Updated!", response.message || response.error, "error").then(() => refetch());
+      Swal.fire("Yangilanmadi!", response.message || response.error, "error").then(() => refetch());
     }
   };
 
@@ -84,7 +84,7 @@ export default function UpdateUser({ item, refetch }) {
 
   return (
     <>
-      <Tooltip title="Edit" onClick={handleClickOpen} placement="top">
+      <Tooltip title="Tahrirlash" onClick={handleClickOpen} placement="top">
         <Icon>edit</Icon>
       </Tooltip>
       <Dialog
@@ -93,38 +93,38 @@ export default function UpdateUser({ item, refetch }) {
         fullWidth
         maxWidth="sm"
         PaperProps={{
-          style: { minHeight: "600px" }, // Увеличиваем высоту модального окна
+          style: { minHeight: "600px" },
         }}
       >
-        <DialogTitle>Update User</DialogTitle>
+        <DialogTitle>Yordam markazini yangilash</DialogTitle>
         <DialogContent>
-          {/* Каждый input в отдельном блоке с label */}
+          {/* Har bir input uchun o‘zbekcha label va placeholder */}
           <SoftBox style={my}>
             <SoftTypography variant="caption" fontWeight="bold">
-              First Name
+              Ism
             </SoftTypography>
             <SoftInput
-              placeholder="First Name"
+              placeholder="Ism"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
           </SoftBox>
           <SoftBox style={my}>
             <SoftTypography variant="caption" fontWeight="bold">
-              Last Name
+              Familiya
             </SoftTypography>
             <SoftInput
-              placeholder="Last Name"
+              placeholder="Familiya"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
           </SoftBox>
           <SoftBox style={my}>
             <SoftTypography variant="caption" fontWeight="bold">
-              Phone Number
+              Telefon raqami
             </SoftTypography>
             <SoftInput
-              placeholder="Phone Number"
+              placeholder="Telefon raqami"
               value={phoneNumber}
               disabled
               onChange={(e) => setPhoneNumber(e.target.value)}
@@ -132,10 +132,10 @@ export default function UpdateUser({ item, refetch }) {
           </SoftBox>
           <SoftBox style={my}>
             <SoftTypography variant="caption" fontWeight="bold">
-              Gender
+              Jinsi
             </SoftTypography>
             <SoftSelect
-              placeholder="Select a Gender"
+              placeholder="Jinsini tanlang"
               value={genderType}
               onChange={(selectedOption) => setGenderType(selectedOption)}
               options={[
@@ -146,10 +146,10 @@ export default function UpdateUser({ item, refetch }) {
           </SoftBox>
           <SoftBox style={my}>
             <SoftTypography variant="caption" fontWeight="bold">
-              Birthday
+              Tug‘ilgan sana
             </SoftTypography>
             <SoftInput
-              placeholder="Birthday"
+              placeholder="Tug‘ilgan sana"
               value={dateOfBirth}
               disabled
               onChange={(e) => setDateOfBirth(e.target.value)}
@@ -172,13 +172,13 @@ export default function UpdateUser({ item, refetch }) {
               fontWeight="regular"
               sx={{ cursor: "pointer", userSelect: "none" }}
             >
-              &nbsp;&nbsp;{verification ? "VERIFICATION TRUE" : "VERIFICATION FALSE"}
+              &nbsp;&nbsp;{verification ? "TASDIQLANDI" : "TASDIQLANMAGAN"}
             </SoftTypography>
           </SoftBox>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSave}>Update User</Button>
+          <Button onClick={handleClose}>Bekor qilish</Button>
+          <Button onClick={handleSave}>Yordam markazini yangilash</Button>
         </DialogActions>
       </Dialog>
     </>

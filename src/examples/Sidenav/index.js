@@ -136,22 +136,43 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
   const filteredRoutes = routes?.filter(({ name, key }) => {
     if (role === TEACHER_ROLE) {
-      return ['SMS', 'Chats', 'Attendance', 'My groups', 'Test result', 'Report', 'Personality', 'Lesson report', 'Notification'].includes(name);
+      return [
+        'SMS',
+        'Chatlar',
+        'Davomat',
+        'Mening guruhlarim',
+        'Test natijalari',
+        'Hisobot',
+        'Shaxsiyati',
+        'Dars hisobotlari',
+        'Bildirishnomalar'
+      ].includes(name);
     } else if (role === STUDENT_ROLE) {
-      return ['SMS', 'Chats', 'Users', 'Attendance',].includes(name);
+      return [
+        'SMS',
+        'Chatlar',
+        'Foydalanuvchilar',
+        'Davomat'
+      ].includes(name);
     } else {
-      return true; // For other roles, show all routes except those with show=false
+      return true; // Boshqa rollar uchun, show=false bo‘lganlarni hisobga olmaganda, hammasini ko‘rsatadi
     }
   });
 
   const renderRoutes = filteredRoutes
     ?.filter(({ show }) => show !== false)
     .map(({ type, name, icon, title, collapse, noCollapse, key, href, route }) => {
-      // Skip "My groups" if the user is not a teacher
-      if ((name === 'Test result' || name === "My groups" || name === "Report" || name === 'Personality' || name === 'Lesson report') && role !== TEACHER_ROLE) {
+      // "Mening guruhlarim" va boshqa faqat o‘qituvchiga tegishli bo‘lganlarni o‘qituvchi bo‘lmaganlar uchun yashirish
+      if (
+        (name === 'Test natijalari' ||
+          name === "Mening guruhlarim" ||
+          name === "Hisobot" ||
+          name === 'Shaxsiyati' ||
+          name === 'Dars hisobotlari'
+        ) && role !== TEACHER_ROLE
+      ) {
         return null;
       }
-
 
       let returnValue;
 
@@ -375,7 +396,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             },
           }}
         >
-          Logout
+          Chiqish
         </SoftButton>
       </SoftBox>
     </SidenavRoot>

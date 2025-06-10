@@ -45,11 +45,11 @@ export default function ChatList() {
   const [loading, setLoading] = useState(true)
 
   const columns = [
-    { Header: "id", accessor: "id" },
-    { Header: "Stundet name", accessor: "firstName" },
-    { Header: "Phone number", accessor: "phoneNumber" },
-    // { Header: "Message", accessor: "message" },
-    { Header: "action", accessor: "action" },
+    { Header: "ID", accessor: "id" },
+    { Header: "Talaba ismi", accessor: "firstName" },
+    { Header: "Telefon raqami", accessor: "phoneNumber" },
+    // { Header: "Xabar", accessor: "message" },
+    { Header: "Amal", accessor: "action" },
   ];
 
   const getAirs = async () => {
@@ -108,7 +108,7 @@ export default function ChatList() {
           <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
             <SoftBox lineHeight={1}>
               <SoftTypography variant="h5" fontWeight="medium">
-                All Chats
+                Barcha chatlar
               </SoftTypography>
             </SoftBox>
             <Stack spacing={1} direction="row">
@@ -119,7 +119,7 @@ export default function ChatList() {
           {loading ? (
             <div className="flex items-center pb-[50px] gap-y-4 justify-center flex-col">
               <Loader className="animate-spin ml-2 size-10" />
-              <p className="text-sm uppercase font-medium">Yuklanmoqda, Iltimos kuting</p>
+              <p className="text-sm uppercase font-medium">Yuklanmoqda, iltimos kuting</p>
             </div>
           ) : mytabledata?.rows.length !== 0 ? (
             <>
@@ -130,14 +130,15 @@ export default function ChatList() {
                   entries: [5, 7, 10, 15, 20],
                 }}
                 canSearch
-              />            </>
+              />
+            </>
           ) : (
             <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
               <Frown className="size-20" />
               <div className="text-center">
-                <p className="uppercase font-semibold">Afuski, hech narsa topilmadi</p>
+                <p className="uppercase font-semibold">Afsuski, hech narsa topilmadi</p>
                 <p className="text-sm text-gray-700">
-                  balki, filtrlarni tozalab ko`rish kerakdir
+                  Balki, filtrlardan tozalab ko‘rish kerakdir
                 </p>
               </div>
             </div>

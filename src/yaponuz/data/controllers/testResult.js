@@ -6,7 +6,7 @@ class testResult {
     static createTestResult = async (data) => {
         const body = {
             date: data?.date,
-            studentScore: data?.studentScore, 
+            studentScore: data?.studentScore,
             title: data?.title
         };
 
@@ -19,6 +19,24 @@ class testResult {
         return response.json();
     }
     static getTestResult = async (data) => {
+        const url = `${API_PATH}quiz/test/result/getAll/${data?.studentId}`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: headerGet,
+        });
+        return response.json();
+    }
+    static getTestResultByID = async ({groupId,
+        startDate,
+        endDate}) => {
+        const url = `${API_PATH}quiz/test/result/getAllByDate?endDate=${endDate}&groupId=${groupId}&page=0&size=20&startDate=${startDate}`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: headerGet,
+        });
+        return response.json();
+    }
+    static getTestResultByDate = async (data) => {
         const url = `${API_PATH}quiz/test/result/getAll/${data?.studentId}`;
         const response = await fetch(url, {
             method: "GET",

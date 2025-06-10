@@ -153,7 +153,7 @@ export default function AttendanceModal({
             <div className="p-[20px] w-[500px] bg-white rounded-lg shadow-lg">
                 <div>
                     <h1 className="text-2xl font-semibold text-gray-700">
-                        Attendance
+                        Davomat
                     </h1>
                 </div>
                 <div className="mt-[20px]">
@@ -161,12 +161,12 @@ export default function AttendanceModal({
                     <SoftSelect
                         value={attendanceStatus.value}
                         onChange={(selectedOption) => setAttendanceStatus(selectedOption.value)}
-                        placeholder="Select attendance"
+                        placeholder="Davomatni tanlang"
                         options={[
-                            { value: 'CAME', label: 'Came' },
-                            { value: 'EXCUSED', label: 'Excused' },
-                            { value: 'LATE_CAME', label: 'Late Came' },
-                            { value: 'NOT_CAME', label: 'Not Came' },
+                            { value: 'CAME', label: 'Keldi' },
+                            { value: 'EXCUSED', label: 'Sababli' },
+                            { value: 'LATE_CAME', label: 'Kechikib keldi' },
+                            { value: 'NOT_CAME', label: 'Kelmagan' },
                         ]}
                         styles={{
                             menu: (provided) => ({
@@ -200,7 +200,7 @@ export default function AttendanceModal({
                         <SoftInput
                             value={timeOfLate}
                             onChange={(e) => setTimeOfLate(e.target.value)}
-                            placeholder="Time of late"
+                            placeholder="Kechikkan vaqti (daqiqa)"
                             type="number"
                             style={{
                                 marginTop: "16px",
@@ -215,7 +215,7 @@ export default function AttendanceModal({
                     <SoftInput
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
-                        placeholder="Comment"
+                        placeholder="Izoh"
                         style={{
                             marginTop: "16px",
                             width: "100%",
@@ -229,11 +229,11 @@ export default function AttendanceModal({
                     <DialogActions>
                         {attendanceData?.id !== null && (
                             <Button onClick={handleDelete} className="bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-md">
-                                Delete attendance
+                                Davomatni o‘chirish
                             </Button>
                         )}
                         <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700 text-white rounded-md">
-                            Save
+                            Saqlash
                         </Button>
                     </DialogActions>
                 </div>

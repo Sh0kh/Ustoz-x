@@ -52,11 +52,11 @@ export default function TeacherGroup() {
 
     // table elements
     const columns = [
-        { Header: "id", accessor: "id" },
-        { Header: "name", accessor: "name" },
-        { Header: "startDate", accessor: "startDate" },
-        { Header: "endDate", accessor: "endDate" },
-        { Header: "createdAt", accessor: "createdAt" },
+        { Header: "ID", accessor: "id" },
+        { Header: "Guruh nomi", accessor: "name" },
+        { Header: "Boshlanish sanasi", accessor: "startDate" },
+        { Header: "Tugash sanasi", accessor: "endDate" },
+        { Header: "Yaratilgan vaqti", accessor: "createdAt" },
     ];
 
     const rows = groups?.map((group) => {
@@ -92,7 +92,7 @@ export default function TeacherGroup() {
                     <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
                         <SoftBox lineHeight={1}>
                             <SoftTypography variant="h5" fontWeight="medium">
-                                All Groups
+                                Barcha guruhlar
                             </SoftTypography>
                         </SoftBox>
                     </SoftBox>
@@ -100,7 +100,7 @@ export default function TeacherGroup() {
                     {loading ? (
                         <div className="flex items-center gap-y-4 justify-center flex-col h-[400px]">
                             <Loader className="animate-spin ml-2 size-10" />
-                            <p className="text-sm uppercase font-medium">Yuklanmoqda, Iltimos kuting</p>
+                            <p className="text-sm uppercase font-medium">Yuklanmoqda, iltimos kuting</p>
                         </div>
                     ) : tabledata?.rows?.length !== 0 ? (
                         <DataTable
@@ -115,9 +115,9 @@ export default function TeacherGroup() {
                         <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
                             <Frown className="size-20" />
                             <div className="text-center">
-                                <p className="uppercase font-semibold">Afuski, hech narsa topilmadi</p>
+                                <p className="uppercase font-semibold">Afsuski, hech narsa topilmadi</p>
                                 <p className="text-sm text-gray-700">
-                                    balki, filtrlarni tozalab ko`rish kerakdir
+                                    Balki, filtrlardan tozalab ko‘rish kerakdir
                                 </p>
                             </div>
                         </div>

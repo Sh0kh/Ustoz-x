@@ -123,9 +123,9 @@ export default function LessonReport() {
       width: '56px'
     },
     { Header: "ID", accessor: 'id' },
-    { Header: "Name", accessor: "name" },
-    { Header: "Last Name", accessor: "lastName" },
-    { Header: "Phone number", accessor: "phoneNumber" },
+    { Header: "Ism", accessor: "name" },
+    { Header: "Familiya", accessor: "lastName" },
+    { Header: "Telefon raqami", accessor: "phoneNumber" },
   ];
 
   const studentRows = students.map((student) => ({
@@ -160,16 +160,16 @@ export default function LessonReport() {
         <Card style={{ margin: "10px 0px" }}>
           <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
             <SoftTypography variant="h5" fontWeight="medium">
-              Notification
+              Bildirishnoma
             </SoftTypography>
             <SoftBox display="flex" gap='10px' alignItems="flex-start">
               <SoftSelect
-                placeholder='Select group'
+                placeholder='Guruh tanlang'
                 style={{ flex: 1, minWidth: "150px" }}
                 options={GroupOptions}
                 onChange={(e) => {
                   setGroupID(e.value);
-                  setNoGroupSelected(false); // Скрываем сообщение "Выберите группу"
+                  setNoGroupSelected(false); // "Guruh tanlang" xabarini yashirish
                 }}
               />
               {showAddNotification && (
@@ -181,12 +181,12 @@ export default function LessonReport() {
           {/* Отображение состояния */}
           {noGroupSelected ? (
             <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
-              <p className="uppercase font-semibold">Please select a group</p>
+              <p className="uppercase font-semibold">Iltimos, guruhni tanlang</p>
             </div>
           ) : loading ? (
             <div className="flex items-center gap-y-4 justify-center flex-col h-[400px]">
               <Loader className="animate-spin ml-2 size-10" />
-              <p className="text-sm uppercase font-medium">Loading, please wait</p>
+              <p className="text-sm uppercase font-medium">Yuklanmoqda, iltimos kuting</p>
             </div>
           ) : students.length !== 0 ? (
             <DataTable
@@ -201,8 +201,8 @@ export default function LessonReport() {
             <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
               <Frown className="size-20" />
               <div className="text-center">
-                <p className="uppercase font-semibold">No students found</p>
-                <p className="text-sm text-gray-700">Try selecting a different group</p>
+                <p className="uppercase font-semibold">Talabalar topilmadi</p>
+                <p className="text-sm text-gray-700">Boshqa guruhni tanlab ko‘ring</p>
               </div>
             </div>
           )}

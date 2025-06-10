@@ -132,21 +132,21 @@ export default function AddUser({ refetch }) {
   return (
     <>
       <SoftButton variant="gradient" onClick={handleClickOpen} color="info" size="small">
-        + Add New Student
+        + Yangi talaba qo‘shish
       </SoftButton>
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle sx={{ fontSize: "1.5rem", fontWeight: "bold", textAlign: "center" }}>
-          Add New Student
+          Yangi talaba qo‘shish
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={1}>
-            {/* Group Select */}
+            {/* Guruh tanlash */}
             <Grid item xs={12}>
               <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
-                Group
+                Guruh
               </SoftTypography>
               <SoftSelect
-                placeholder="Select Group"
+                placeholder="Guruh tanlang"
                 value={selectedGroupValue}
                 onChange={(selectedOption) => setSelectedGroupValue(selectedOption)}
                 options={groupOptions}
@@ -164,39 +164,39 @@ export default function AddUser({ refetch }) {
               />
             </Grid>
 
-            {/* First Name */}
+            {/* Ism */}
             <Grid item xs={12}>
               <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
-                First Name
+                Ism
               </SoftTypography>
               <SoftInput
-                placeholder="First Name"
+                placeholder="Ism"
                 value={firstName}
                 fullWidth
                 onChange={(e) => setFirstName(e.target.value)}
               />
             </Grid>
 
-            {/* Last Name */}
+            {/* Familiya */}
             <Grid item xs={12}>
               <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
-                Last Name
+                Familiya
               </SoftTypography>
               <SoftInput
-                placeholder="Last Name"
+                placeholder="Familiya"
                 value={lastName}
                 fullWidth
                 onChange={(e) => setLastName(e.target.value)}
               />
             </Grid>
 
-            {/* Phone Number */}
+            {/* Telefon raqami */}
             <Grid item xs={12}>
               <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
-                Phone Number
+                Telefon raqami
               </SoftTypography>
               <SoftInput
-                // placeholder="Phone Number"
+                // placeholder="Telefon raqami"
                 value={phoneNumber}
                 fullWidth
                 onChange={handleChange}
@@ -216,13 +216,13 @@ export default function AddUser({ refetch }) {
               />
             </Grid>
 
-            {/* Password */}
+            {/* Parol */}
             <Grid item xs={12}>
               <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
-                Password
+                Parol
               </SoftTypography>
               <SoftInput
-                placeholder="Password"
+                placeholder="Parol"
                 value={password}
                 type="password"
                 fullWidth
@@ -230,13 +230,13 @@ export default function AddUser({ refetch }) {
               />
             </Grid>
 
-            {/* Gender Type */}
+            {/* Jinsi */}
             <Grid item xs={12}>
               <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
-                Gender Type
+                Jinsi
               </SoftTypography>
               <SoftSelect
-                placeholder="Select Gender Type"
+                placeholder="Jinsini tanlang"
                 value={genderType}
                 onChange={(selectedOption) => setGenderType(selectedOption)}
                 options={[
@@ -257,13 +257,13 @@ export default function AddUser({ refetch }) {
               />
             </Grid>
 
-            {/* Date of Birth */}
+            {/* Tug‘ilgan sana */}
             <Grid item xs={12}>
               <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
-                Date of Birth
+                Tug‘ilgan sana
               </SoftTypography>
               <SoftDatePicker
-                placeholder="Date of Birth"
+                placeholder="Tug‘ilgan sana"
                 value={dateBirth}
                 fullWidth
                 onChange={(newDate) => setDateBirth(newDate)}
@@ -273,10 +273,10 @@ export default function AddUser({ refetch }) {
         </DialogContent>
         <DialogActions sx={{ padding: "16px 24px" }}>
           <Button onClick={handleClose} color="secondary">
-            Cancel
+            Bekor qilish
           </Button>
           <Button onClick={handleSave} variant="contained" color="white" >
-            Add Student
+            Talaba qo‘shish
           </Button>
         </DialogActions>
       </Dialog>

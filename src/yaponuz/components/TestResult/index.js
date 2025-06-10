@@ -20,6 +20,9 @@ import { Users } from "yaponuz/data/api";
 import SoftDatePicker from "components/SoftDatePicker";
 import { testResult } from "yaponuz/data/controllers/testResult";
 import Swal from "sweetalert2"; // Предполагается, что вы используете sweetalert2 для уведомлений
+import { Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import TestResultHistory from "./component/TestResultHistory";
 
 export default function TestResult() {
     const [students, setStudents] = useState([]); // Состояние для хранения студентов
@@ -32,6 +35,9 @@ export default function TestResult() {
     const [date, setDate] = useState(new Date()); // Дата (по умолчанию сегодняшняя)
     const [scores, setScores] = useState({}); // Состояние для хранения оценок студентов
     const [errors, setErrors] = useState({ title: '', scores: {} }); // Состояние для ошибок валидации
+    const [selectedAction, setSelectedAction] = useState(''); // Состояние для выбранного действия
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
     const getAllGroups = async () => {
         try {
@@ -227,7 +233,7 @@ export default function TestResult() {
                     studentScore[id] = Number(score);
                 }
             });
-            
+
             const formattedDate = date instanceof Date && !isNaN(date)
                 ? date.toISOString().split('T')[0]
                 : null;
@@ -277,12 +283,9 @@ export default function TestResult() {
 
     // Таблица для студентов
     const studentColumns = [
-        { Header: "ID", accessor: "id" },
-        { Header: "Name", accessor: "name" },
-        { Header: "Last Name", accessor: "lastName" },
-        {
-            Header: "Score", accessor: "score",
-        },
+        { Header: "Ism", accessor: "name" },
+        { Header: "Familiya", accessor: "lastName" },
+        { Header: "Ball", accessor: "score" },
     ];
 
     const studentRows = students.map((student) => ({
@@ -323,88 +326,212 @@ export default function TestResult() {
         rows: studentRows,
     };
 
+
+    const getAllTestResults = async ({ groupId, startDate, endDate }) => {
+        try {
+            const response = await testResult.getTestResultByID({
+                groupId,
+                startDate,
+                endDate,
+            });
+
+            if (response.success) {
+                // Обработка полученных результатов тестов
+                console.log("Test results fetched successfully:", response.object);
+            } else {
+                console.error("Failed to fetch test results:", response.message);
+            }
+        } catch (error) {
+            console.error("Error fetching test results: ", error);
+        }
+    }
+
     return (
         <DashboardLayout>
             <DashboardNavbar />
-            <SoftBox my={3}>
-                <Card style={{ margin: "10px 0px" }}>
-                    <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
-                        <SoftSelect
-                            placeholder='Select group'
-                            style={{ flex: 1, minWidth: "150px" }}
-                            options={GroupOptions}
-                            onChange={(e) => {
-                                setGroupID(e.value);
-                                setNoGroupSelected(false); // Скрываем сообщение "Выберите группу"
-                            }}
-                        />
-                        {/* Поля Title и Date отображаются только при наличии студентов или выбранной группы */}
-                        {(students.length > 0 && groupID) && (
-                            <SoftBox display="flex" justifyContent="space-between" gap="10px" alignItems="flex-start">
-                                <div className="w-full" style={{ flex: 1, width: '200px' }}>
+            <SoftBox>
+                <SoftBox>
+                    <Card
+                        variant="outlined"
+                        sx={{
+                            mt: 3,
+                            p: 3,
+                            borderRadius: 2,
+                            background: "#f5f7fa",
+                            overflow: "visible",
+                        }}
+                    >
+                        <Typography variant="h4" fontWeight="bold" mb={3}>
+                            Test natijalari
+                        </Typography>
+                        <Grid container spacing={2} alignItems="center" mb={2}>
+                            <Grid item xs={12} md={5}>
+                                <SoftSelect
+                                    placeholder="Guruh tanlang"
+                                    options={GroupOptions}
+                                    value={GroupOptions.find(opt => opt.value === groupID) || null}
+                                    onChange={e => {
+                                        setGroupID(e.value);
+                                        setNoGroupSelected(false);
+                                    }}
+                                    fullWidth
+                                    menuPortalTarget={document.body}
+                                    styles={{
+                                        menuPortal: base => ({ ...base, zIndex: 9999 }),
+                                        menu: base => ({ ...base, zIndex: 9999 }),
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={5}>
+                                <SoftSelect
+                                    placeholder="Amalni tanlang"
+                                    options={[
+                                        { label: "Tarixni ko‘rish", value: "view-history" },
+                                        { label: "Natijalar qo‘shish", value: "add-results" },
+                                    ]}
+                                    value={[
+                                        { label: "Tarixni ko‘rish", value: "view-history" },
+                                        { label: "Natijalar qo‘shish", value: "add-results" },
+                                    ].find(opt => opt.value === selectedAction) || null}
+                                    onChange={e => setSelectedAction(e.value)}
+                                    fullWidth
+                                    menuPortalTarget={document.body}
+                                    styles={{
+                                        menuPortal: base => ({ ...base, zIndex: 9999 }),
+                                        menu: base => ({ ...base, zIndex: 9999 }),
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Card>
+
+                    {/* Форма для добавления результатов */}
+                    {selectedAction === "add-results" && students.length > 0 && groupID && (
+                        <Card variant="outlined" sx={{ mt: 3, p: 3, borderRadius: 2, background: "#f5f7fa" }}>
+                            <Grid container spacing={2} alignItems="center">
+                                <Grid item xs={12} md={5}>
                                     <SoftInput
-                                        placeholder="Title"
+                                        placeholder="Sarlavha"
                                         value={title}
                                         fullWidth
                                         onChange={handleTitleChange}
                                         error={!!errors.title}
                                     />
                                     {errors.title && (
-                                        <div className="text-xs text-red-500 mt-1">
-                                            {errors.title}
-                                        </div>
+                                        <div className="text-xs text-red-500 mt-1">{errors.title}</div>
                                     )}
-                                </div>
-                                <div className="w-full" style={{ width: '200px' }}>
+                                </Grid>
+                                <Grid item xs={12} md={3}>
                                     <SoftDatePicker
-                                        placeholder="Date of Test"
+                                        placeholder="Test sanasi"
                                         value={date}
                                         fullWidth
-                                        onChange={(newDate) => setDate(newDate)}
+                                        onChange={newDate => setDate(newDate)}
                                     />
-                                </div>
+                                </Grid>
+                                <Grid item xs={12} md={4} display="flex" alignItems="center" justifyContent="flex-end">
+                                    <SoftButton
+                                        fullWidth
+                                        variant="gradient"
+                                        color="info"
+                                        onClick={handleSubmitResults}
+                                        disabled={submitting}
+                                        sx={{ height: 48, fontWeight: "bold", fontSize: 16 }}
+                                    >
+                                        {submitting ? "Saqlanmoqda..." : "+ Yangi natija qo‘shish"}
+                                    </SoftButton>
+                                </Grid>
+                            </Grid>
+                        </Card>
+                    )}
+
+                    {/* Tarixni ko‘rish uchun фильтр и кнопка */}
+                    {selectedAction === "view-history" && (
+                        <SoftBox>
+                            <SoftBox display="flex" gap={2} mt={2} mb={2}>
+                                <SoftBox flex="1" minWidth="200px">
+                                    <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                                        Boshlanish sanasi
+                                    </SoftTypography>
+                                    <SoftDatePicker
+                                        placeholder="Boshlanish sanasi"
+                                        value={startDate}
+                                        fullWidth
+                                        onChange={setStartDate}
+                                    />
+                                </SoftBox>
+                                <SoftBox flex="1" minWidth="200px">
+                                    <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
+                                        Tugash sanasi
+                                    </SoftTypography>
+                                    <SoftDatePicker
+                                        placeholder="Tugash sanasi"
+                                        value={endDate}
+                                        fullWidth
+                                        onChange={setEndDate}
+                                    />
+                                </SoftBox>
+                            </SoftBox>
+                            <SoftBox display="flex" justifyContent="flex-end" mb={2}>
                                 <SoftButton
-                                    style={{ width: '200px' }}
                                     variant="gradient"
-                                    color="dark"
-                                    onClick={handleSubmitResults}
-                                    disabled={submitting}
+                                    color="info"
+                                    onClick={() => getAllTestResults({
+                                        groupId: groupID,
+                                        startDate: startDate ? new Date(startDate).toISOString().split('T')[0] : "",
+                                        endDate: endDate ? new Date(endDate).toISOString().split('T')[0] : "",
+                                    })}
                                 >
-                                    {submitting ? 'Saving...' : '+ add new result'}
+                                    Izlash
                                 </SoftButton>
                             </SoftBox>
-                        )}
-                    </SoftBox>
-
-                    {/* Отображение состояния */}
-                    {noGroupSelected ? (
-                        <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
-                            <p className="uppercase font-semibold">Please select a group</p>
-                        </div>
-                    ) : loading ? (
-                        <div className="flex items-center gap-y-4 justify-center flex-col h-[400px]">
-                            <Loader className="animate-spin ml-2 size-10" />
-                            <p className="text-sm uppercase font-medium">Loading, please wait</p>
-                        </div>
-                    ) : students.length !== 0 ? (
-                        <DataTable
-                            table={studentTableData}
-                            entriesPerPage={{
-                                defaultValue: 10,
-                                entries: [5, 10, 15, 20],
-                            }}
-                            canSearch
-                        />
-                    ) : (
-                        <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
-                            <Frown className="size-20" />
-                            <div className="text-center">
-                                <p className="uppercase font-semibold">No students found</p>
-                                <p className="text-sm text-gray-700">Try selecting a different group</p>
-                            </div>
-                        </div>
+                        </SoftBox>
                     )}
-                </Card>
+
+                    {/* Состояния */}
+                    {noGroupSelected ? (
+                        <SoftBox display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight={200} mt={4}>
+                            <Icon sx={{ fontSize: 60, color: "#bdbdbd" }}>group</Icon>
+                            <Typography variant="h6" color="text.secondary" mt={2}>
+                                Iltimos, guruhni tanlang
+                            </Typography>
+                        </SoftBox>
+                    ) : loading ? (
+                        <SoftBox display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight={200} mt={4}>
+                            <Loader className="animate-spin ml-2 size-10" />
+                            <Typography variant="body1" color="text.secondary" mt={2}>
+                                Yuklanmoqda, iltimos kuting
+                            </Typography>
+                        </SoftBox>
+                    ) : students.length !== 0 && selectedAction === "add-results" ? (
+                        <Card sx={{ mt: 4, borderRadius: 2, boxShadow: 1 }}>
+                            <SoftBox p={2}>
+                                <DataTable
+                                    table={studentTableData}
+                                    entriesPerPage={{
+                                        defaultValue: 10,
+                                        entries: [5, 10, 15, 20],
+                                    }}
+                                    canSearch
+                                />
+                            </SoftBox>
+                        </Card>
+                    ) : students.length !== 0 && selectedAction === "view-history" ? (
+                        <SoftBox display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight={120} mt={4}>
+                            
+                        </SoftBox>
+                    ) : (
+                        <SoftBox display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight={200} mt={4}>
+                            <Frown className="size-20" />
+                            <Typography variant="h6" color="text.secondary" mt={2}>
+                                Talabalar topilmadi
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                Boshqa guruhni tanlab ko‘ring
+                            </Typography>
+                        </SoftBox>
+                    )}
+                </SoftBox>
             </SoftBox>
             <Footer />
         </DashboardLayout>

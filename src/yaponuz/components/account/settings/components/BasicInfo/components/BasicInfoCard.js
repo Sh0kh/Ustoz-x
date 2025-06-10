@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
-import PropTypes from "prop-types"; // Импорт PropTypes
+import PropTypes from "prop-types"; // PropTypes import qilinmoqda
 
-// @mui core components
+// @mui core komponentlari
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 
-// Soft UI Dashboard PRO React components
+// Soft UI Dashboard PRO React komponentlari
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftSelect from "components/SoftSelect";
 import SoftTagInput from "components/SoftTagInput";
 import Swal from "sweetalert2";
 
-// Settings page components
+// Sozlamalar sahifasi komponentlari
 import FormField from "layouts/pages/account/components/FormField";
 
-// Data
+// Ma'lumotlar
 import selectData from "layouts/pages/account/settings/components/BasicInfo/data/selectData";
 import SoftButton from "components/SoftButton";
 import { Users } from "yaponuz/data/api";
@@ -23,7 +23,7 @@ import SoftDatePicker from "components/SoftDatePicker";
 
 function BasicInfoCard({ data }) {
 
-    // Состояния для каждого поля ввода
+    // Har bir kiritish maydoni uchun holatlar
     const [stID, setStID] = useState(data?.id)
     const [firstName, setFirstName] = useState(data.firstName || "");
     const [lastName, setLastName] = useState(data.lastName || "");
@@ -32,12 +32,12 @@ function BasicInfoCard({ data }) {
     const [email, setEmail] = useState(data.email || "Empty@gmail.com");
     const [phoneNumber, setPhoneNumber] = useState(data.phoneNumber || "");
 
-    // Добавление новых состояний
+    // Yangi holatlar qo'shilmoqda
     const [userHashId, setUserHashId] = useState(data.userHashId || "");
     const [deviceId, setDeviceId] = useState(data.deviceId || "");
     const [myReferralNumber, setMyReferralNumber] = useState(data.myReferralNumber || "");
 
-    // Состояние для пароля
+    // Parol uchun holat
     const [password, setPassword] = useState("");
 
     const handleSave = async (e) => {
@@ -50,7 +50,7 @@ function BasicInfoCard({ data }) {
             creatorId: localStorage.getItem("userId"),
             email,
             id: stID,
-            password, // Добавляем пароль в данные
+            password, // Ma'lumotlarga parol qo‘shilmoqda
         };
         try {
             const response = await Users.updateUser(data);
@@ -62,31 +62,31 @@ function BasicInfoCard({ data }) {
 
     const showAlert = (response) => {
         if (response.success) {
-            Swal.fire("Updated!", response.message, "success");
+            Swal.fire("Yangilandi!", response.message, "success");
         } else {
-            Swal.fire("Not Updated!", response.message || response.error, "error");
+            Swal.fire("Yangilanmadi!", response.message || response.error, "error");
         }
     };
 
     return (
         <Card id="basic-info" sx={{ overflow: "visible", }}>
             <SoftBox p={3}>
-                <SoftTypography variant="h5">Basic Info</SoftTypography>
+                <SoftTypography variant="h5">Asosiy Ma`lumotlar</SoftTypography>
             </SoftBox>
             <SoftBox component="form" pb={3} px={3}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={6}>
                         <FormField
-                            label="first name"
+                            label="Ism"
                             value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)} // обновляем состояние
+                            onChange={(e) => setFirstName(e.target.value)} // holatni yangilaymiz
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <FormField
-                            label="last name"
+                            label="Familiya"
                             value={lastName}
-                            onChange={(e) => setLastName(e.target.value)} // обновляем состояние
+                            onChange={(e) => setLastName(e.target.value)} // holatni yangilaymiz
                         />
                     </Grid>
                     <Grid item xs={12} >
@@ -99,19 +99,19 @@ function BasicInfoCard({ data }) {
                                     height="100%"
                                 >
                                     <FormField
-                                        label="Gender"
+                                        label="Jinsi"
                                         value={genderType}
-                                        onChange={(e) => setGender(e.target.value)} // обновляем состояние
+                                        onChange={(e) => setGender(e.target.value)} // holatni yangilaymiz
                                         fullWidth
                                     />
                                 </SoftBox>
                             </Grid>
                             <Grid item xs={12}>
                                 <SoftTypography variant="h6" fontWeight="medium" sx={{ mb: 1 }}>
-                                    Date of Birth
+                                    Tug‘ilgan sana
                                 </SoftTypography>
                                 <SoftDatePicker
-                                    placeholder="Date of Birth"
+                                    placeholder="Tug‘ilgan sana"
                                     value={dateOfBirth}
                                     fullWidth
                                     onChange={(newDate) => setDateOfBirth(newDate)}
@@ -121,28 +121,28 @@ function BasicInfoCard({ data }) {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <FormField
-                            label="email"
+                            label="Email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)} // обновляем состояние
+                            onChange={(e) => setEmail(e.target.value)} // holatni yangilaymiz
                             inputProps={{ type: "email" }}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <FormField
-                            label="phone number"
+                            label="Telefon raqam"
                             value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)} // обновляем состояние
-                            inputProps={{ type: "tel" }} // изменяем тип поля на 'tel'
+                            onChange={(e) => setPhoneNumber(e.target.value)} // holatni yangilaymiz
+                            inputProps={{ type: "tel" }} // input turi 'tel' ga o'zgartirildi
                         />
                     </Grid>
                 </Grid>
                 <SoftButton
                     onClick={handleSave}
-                    type="submit"  // Ensures the form is submitted
+                    type="submit"  // Formani yuborish uchun
                     style={{ width: '100%', marginTop: '30px' }}
                     className="bg-blue-500 border-[2px] text-white hover:bg-blue-700 px-4 py-2 rounded"
                 >
-                    Edit
+                    Tahrirlash
                 </SoftButton>
             </SoftBox>
         </Card>
@@ -151,7 +151,7 @@ function BasicInfoCard({ data }) {
 
 BasicInfoCard.propTypes = {
     data: PropTypes.shape({
-        id: PropTypes.string, // Add this line
+        id: PropTypes.string, // Qo‘shilgan qator
         firstName: PropTypes.string,
         genderType: PropTypes.string,
         lastName: PropTypes.string,
@@ -161,9 +161,9 @@ BasicInfoCard.propTypes = {
         phoneNumber: PropTypes.string,
         language: PropTypes.string,
         dateBirth: PropTypes.string,
-        userHashId: PropTypes.string, // Новое поле
-        deviceId: PropTypes.string, // Новое поле
-        myReferralNumber: PropTypes.string, // Новое поле
+        userHashId: PropTypes.string, // Yangi maydon
+        deviceId: PropTypes.string, // Yangi maydon
+        myReferralNumber: PropTypes.string, // Yangi maydon
     }),
 };
 

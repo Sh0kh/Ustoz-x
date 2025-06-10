@@ -144,17 +144,17 @@ export default function AddNotification({ refetch, selectedStudents }) {
   return (
     <>
       <SoftButton variant="gradient" onClick={handleClickOpen} color="dark">
-        + add new Notification
+        + Yangi bildirishnoma qo‘shish
       </SoftButton>
       <Dialog open={open} onClose={handleClose} fullWidth>
-        <DialogTitle>Add New Notification</DialogTitle>
+        <DialogTitle>Yangi bildirishnoma qo‘shish</DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               {/* Title */}
-              <SoftTypography variant="caption">Title</SoftTypography>
+              <SoftTypography variant="caption">Sarlavha</SoftTypography>
               <SoftInput
-                placeholder="Title"
+                placeholder="Sarlavha"
                 style={my}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -163,7 +163,7 @@ export default function AddNotification({ refetch, selectedStudents }) {
 
 
               <SoftBox>
-                <SoftTypography variant="caption">Upload file</SoftTypography>
+                <SoftTypography variant="caption">Fayl yuklash</SoftTypography>
                 <SoftInput
                   type="file"
                   onChange={(e) => upload(e)}
@@ -176,9 +176,9 @@ export default function AddNotification({ refetch, selectedStudents }) {
               </SoftBox>
 
               {/* Description */}
-              <SoftTypography variant="caption">Description</SoftTypography>
+              <SoftTypography variant="caption">Izoh</SoftTypography>
               <SoftInput
-                placeholder="Description"
+                placeholder="Izoh"
                 multiline
                 rows={5}
                 style={my}
@@ -189,9 +189,9 @@ export default function AddNotification({ refetch, selectedStudents }) {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleClose}>Bekor qilish</Button>
           <Button onClick={handleSave} disabled={loading}>
-            {loading ? "Adding..." : "Add Notification"}
+            {loading ? "Qo‘shilmoqda..." : "Bildirishnoma qo‘shish"}
           </Button>
         </DialogActions>
       </Dialog>

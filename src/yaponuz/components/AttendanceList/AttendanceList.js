@@ -199,7 +199,7 @@ export default function AttendanceList() {
                     setGroupID(e.value);
                     setSelectedCourse(e.courseId);
                   }}
-                  placeholder="Select group"
+                  placeholder="Guruh tanlang"
                   sx={{
                     "& .MuiSelect-select": {
                       width: "100%",
@@ -215,7 +215,7 @@ export default function AttendanceList() {
                 <SoftBox flex="1" minWidth="200px">
                   <SoftSelect
                     fullWidth
-                    placeholder="Select module"
+                    placeholder="Modul tanlang"
                     options={modules}
                     value={selectedModule}
                     onChange={(value) => setSelectedModule(value)}
@@ -245,7 +245,7 @@ export default function AttendanceList() {
                 <SoftBox flex="1" minWidth="200px">
                   <SoftSelect
                     fullWidth
-                    placeholder="Select lesson"
+                    placeholder="Dars tanlang"
                     options={lessons}
                     value={selectedLesson}
                     onChange={(value) => setSelectedLesson(value)}
@@ -266,21 +266,21 @@ export default function AttendanceList() {
                 <SoftSelect
                   fullWidth
                   options={[
-                    { label: "January", value: "01" },
-                    { label: "February", value: "02" },
-                    { label: "March", value: "03" },
-                    { label: "April", value: "04" },
+                    { label: "Yanvar", value: "01" },
+                    { label: "Fevral", value: "02" },
+                    { label: "Mart", value: "03" },
+                    { label: "Aprel", value: "04" },
                     { label: "May", value: "05" },
-                    { label: "June", value: "06" },
-                    { label: "July", value: "07" },
-                    { label: "August", value: "08" },
-                    { label: "September", value: "09" },
-                    { label: "October", value: "10" },
-                    { label: "November", value: "11" },
-                    { label: "December", value: "12" },
+                    { label: "Iyun", value: "06" },
+                    { label: "Iyul", value: "07" },
+                    { label: "Avgust", value: "08" },
+                    { label: "Sentabr", value: "09" },
+                    { label: "Oktabr", value: "10" },
+                    { label: "Noyabr", value: "11" },
+                    { label: "Dekabr", value: "12" },
                   ]}
                   onChange={(e) => setMonth(e.value)}
-                  placeholder="Select month"
+                  placeholder="Oy tanlang"
                   sx={{
                     "& .MuiSelect-select": {
                       width: "100%",
@@ -296,7 +296,7 @@ export default function AttendanceList() {
             {/* Third row: button */}
             <SoftBox display="flex" justifyContent="flex-start" minWidth="200px">
               <SoftButton fullWidth onClick={() => getAttendance(user)} sx={{ height: "40px" }}>
-                Search
+                Qidirish
               </SoftButton>
             </SoftBox>
           </SoftBox>
@@ -306,12 +306,12 @@ export default function AttendanceList() {
       {loading ? (
         <div className="flex items-center h-[300px] pb-[50px] gap-y-4 justify-center flex-col">
           <Loader className="animate-spin ml-2 size-10" />
-          <p className="text-sm uppercase font-medium">Yuklanmoqda, Iltimos kuting</p>
+          <p className="text-sm uppercase font-medium">Yuklanmoqda, iltimos kuting</p>
         </div>
       ) : attendance.length === 0 ? (
         <div className="flex items-center h-[300px] pb-[50px] gap-y-4 justify-center flex-col">
           <Frown className="size-10 text-gray-500" />
-          <p className="text-sm font-medium text-gray-500">No attendance data available</p>
+          <p className="text-sm font-medium text-gray-500">Davomat ma`lumotlari topilmadi</p>
         </div>
       ) : (
         <AttendanceTable

@@ -1,13 +1,13 @@
-// @mui material components
+// @mui material komponentlar
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 
-// Soft UI Dashboard PRO React components
+// Soft UI Dashboard PRO React komponentlar
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftButton from "components/SoftButton";
 
-// Settings page components
+// Sozlamalar sahifasi komponentlari
 import FormField from "layouts/pages/account/components/FormField";
 import { Users } from "yaponuz/data/api";
 import { useParams } from "react-router-dom";
@@ -19,10 +19,10 @@ function ChangePassword() {
   const [password, setPassword] = useState("");
 
   const passwordRequirements = [
-    "One special character",
-    "Min 8 characters",
-    "One number (2 are recommended)",
-    "Change it often",
+    "Bitta maxsus belgi",
+    "Kamida 8 ta belgidan iborat bo‘lsin",
+    "Bitta raqam (2 ta tavsiya etiladi)",
+    "Tez-tez o‘zgartirib turing",
   ];
 
   const handlePasswordChange = (e) => {
@@ -31,9 +31,9 @@ function ChangePassword() {
 
   const showAlert = (response) => {
     if (response.success) {
-      Swal.fire("Updated!", response.message, "success");
+      Swal.fire("Yangilandi!", response.message, "success");
     } else {
-      Swal.fire("Not Updated!", response.message || response.error, "error");
+      Swal.fire("Yangilanmadi!", response.message || response.error, "error");
     }
   };
 
@@ -62,14 +62,14 @@ function ChangePassword() {
   return (
     <Card id="change-password">
       <SoftBox p={3}>
-        <SoftTypography variant="h5">Change Password</SoftTypography>
+        <SoftTypography variant="h5">Parolni o‘zgartirish</SoftTypography>
       </SoftBox>
       <SoftBox component="form" pb={3} px={3}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <FormField
-              label="New Password"
-              placeholder="Enter new password"
+              label="Yangi parol"
+              placeholder="Yangi parolni kiriting"
               inputProps={{ type: "password", autoComplete: "new-password" }}
               value={password}
               onChange={handlePasswordChange}
@@ -77,11 +77,11 @@ function ChangePassword() {
           </Grid>
         </Grid>
         <SoftBox mt={6} mb={1}>
-          <SoftTypography variant="h5">Password requirements</SoftTypography>
+          <SoftTypography variant="h5">Parol talablari</SoftTypography>
         </SoftBox>
         <SoftBox mb={1}>
           <SoftTypography variant="body2" color="text">
-            Please follow this guide for a strong password
+            Kuchli parol uchun ushbu qo‘llanmaga rioya qiling
           </SoftTypography>
         </SoftBox>
         <SoftBox
@@ -95,7 +95,7 @@ function ChangePassword() {
           </SoftBox>
           <SoftBox ml="auto">
             <SoftButton onClick={editPassword} variant="gradient" color="dark" size="small">
-              Update Password
+              Parolni yangilash
             </SoftButton>
           </SoftBox>
         </SoftBox>

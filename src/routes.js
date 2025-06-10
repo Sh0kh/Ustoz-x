@@ -51,10 +51,10 @@ import CourseDetail from "yaponuz/components/CourseDetail/CourseDetail";
 import Enrollment from "yaponuz/components/Enrollment/Enrollment";
 
 const routes = [
-  { type: "title", title: "General", key: "general-title" },
+  { type: "title", title: "Umumiy", key: "general-title" },
   {
     type: "collapse",
-    name: "Dashboards",
+    name: "Bosh sahifa",
     key: "dashboards",
     icon: <Shop size="12px" />,
     noCollapse: true,
@@ -62,11 +62,11 @@ const routes = [
     component: <Default />,
   },
 
-  { type: "title", title: "Users", key: "users-title" },
+  { type: "title", title: "Foydalanuvchilar", key: "users-title" },
 
   {
     type: "collapse",
-    name: "Users",
+    name: "Foydalanuvchilar",
     key: "users",
     icon: <Document size="12px" />,
     noCollapse: true,
@@ -75,7 +75,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Notification",
+    name: "Bildirishnomalar",
     key: "notificatin",
     icon: <SettingsIcon size="12px" />,
     noCollapse: true,
@@ -193,7 +193,7 @@ const routes = [
 
   {
     type: "collapse",
-    name: "Chats",
+    name: "Chatlar",
     key: "chats",
     icon: <CustomerSupport size="12px" />,
     noCollapse: true,
@@ -202,7 +202,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Attendance",
+    name: "Davomat",
     key: "attendance",
     icon: <SettingsIcon size="12px" />,
     noCollapse: true,
@@ -210,10 +210,10 @@ const routes = [
     component: <AttendanceList />,
   },
 
-  { type: "title", title: "Courses", key: "courses-title" },
+  { type: "title", title: "Kurslar", key: "courses-title" },
   {
     type: "collapse",
-    name: "Enrollment",
+    name: "Ro‘yxatdan o‘tish",
     key: "enrollment",
     icon: <CustomerSupport size="12px" />,
     noCollapse: true,
@@ -222,7 +222,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Group",
+    name: "Guruh",
     key: "group",
     icon: <CustomerSupport size="12px" />,
     noCollapse: true,
@@ -231,7 +231,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Course",
+    name: "Kurs",
     key: "course",
     icon: <Shop size="12px" />,
     noCollapse: true,
@@ -249,7 +249,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Module",
+    name: "Modul",
     key: "module",
     icon: <SpaceShip size="12px" />,
     noCollapse: true,
@@ -258,7 +258,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Lessons",
+    name: "Darslar",
     key: "lessons",
     icon: <Document size="12px" />,
     noCollapse: true,
@@ -268,17 +268,17 @@ const routes = [
 
   {
     type: "collapse",
-    name: "Quizes",
+    name: "Testlar",
     key: "quizes",
     icon: <Basket size="12px" />,
     noCollapse: true,
     route: "/quizes",
     component: <QuizeList />,
   },
-  { type: "title", title: "Meetings", key: "meetings-title" },
+  { type: "title", title: "Uchrashuvlar", key: "meetings-title" },
   {
     type: "collapse",
-    name: "Assembly",
+    name: "Yig‘ilish",
     key: "assembly",
     icon: <CustomerSupport size="12px" />,
     noCollapse: true,
@@ -286,11 +286,11 @@ const routes = [
     component: <Assembly />,
   },
 
-  { type: "title", title: "Advanced", key: "advanced-title" },
+  { type: "title", title: "Qo‘shimcha", key: "advanced-title" },
 
   {
     type: "collapse",
-    name: "Edu Theme",
+    name: "Edu Mavzu",
     key: "edu-theme",
     icon: <SettingsIcon size="12px" />,
     noCollapse: true,
@@ -299,7 +299,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Versions",
+    name: "Versiyalar",
     key: "versions",
     icon: <Basket size="12px" />,
     noCollapse: true,
@@ -309,15 +309,13 @@ const routes = [
 
   {
     type: "collapse",
-    name: "My groups",
+    name: "Mening guruhlarim",
     key: "My groups",
     icon: <CustomerSupport size="12px" />,
     noCollapse: true,
     route: "/teacher/group",
     component: <TeacherGroup />,
   },
-
-
 
   {
     type: "collapse",
@@ -330,7 +328,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Test result",
+    name: "Test natijalari",
     key: "TestResult",
     icon: <Document size="12px" />,
     noCollapse: true,
@@ -339,7 +337,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Lesson report",
+    name: "Dars hisobotlari",
     key: "LessonReport",
     icon: <Document size="12px" />,
     noCollapse: true,
@@ -348,7 +346,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Report",
+    name: "Hisobot",
     key: "Report",
     icon: <Document size="12px" />,
     noCollapse: true,
@@ -377,7 +375,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Referral",
+    name: "Referal",
     key: "referral",
     icon: <SpaceShip size="12px" />,
     noCollapse: true,
@@ -386,7 +384,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Personality",
+    name: "Shaxsiyati",
     key: "Personality",
     icon: <SpaceShip size="12px" />,
     noCollapse: true,
@@ -397,7 +395,7 @@ const routes = [
 
   {
     type: "collapse",
-    name: "Files",
+    name: "Fayllar",
     key: "files",
     icon: <CreditCard size="12px" />,
     noCollapse: true,

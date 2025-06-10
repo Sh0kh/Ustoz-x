@@ -59,12 +59,12 @@ function TeacherPage() {
 
   const columns = useMemo(
     () => [
-      { Header: "id", accessor: "id" },
-      { Header: "First Name", accessor: "firstName" },
-      { Header: "Last Name", accessor: "lastName" },
-      { Header: "Phone Number", accessor: "phoneNumber" },
-      { Header: "BirthDay", accessor: "dateBirth" },
-      { Header: "action", accessor: "action" },
+      { Header: "ID", accessor: "id" },
+      { Header: "Ism", accessor: "firstName" },
+      { Header: "Familiya", accessor: "lastName" },
+      { Header: "Telefon raqami", accessor: "phoneNumber" },
+      { Header: "Tug‘ilgan sana", accessor: "dateBirth" },
+      { Header: "Amal", accessor: "action" },
     ],
     []
   );
@@ -109,11 +109,11 @@ function TeacherPage() {
           <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
             <SoftBox lineHeight={1}>
               <SoftTypography variant="h5" fontWeight="medium">
-                All Teachers
+                Barcha o‘qituvchilar
               </SoftTypography>
             </SoftBox>
             <Stack spacing={1} direction="row">
-              <Suspense fallback={<div>Loading...</div>}>
+              <Suspense fallback={<div>Yuklanmoqda...</div>}>
                 <AddUser refetch={() => getAllUsers(page, size)} />
               </Suspense>
             </Stack>
@@ -122,7 +122,7 @@ function TeacherPage() {
             {loading ? (
               <div className="flex items-center pb-[50px] gap-y-4 justify-center flex-col">
                 <Loader className="animate-spin ml-2 size-10" />
-                <p className="text-sm uppercase font-medium">Yuklanmoqda, Iltimos kuting</p>
+                <p className="text-sm uppercase font-medium">Yuklanmoqda, iltimos kuting</p>
               </div>
             ) : mytabledata?.rows.length !== 0 ? (
               <DataTable
@@ -137,9 +137,9 @@ function TeacherPage() {
               <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
                 <Frown className="size-20" />
                 <div className="text-center">
-                  <p className="uppercase font-semibold">Afuski, hech narsa topilmadi</p>
+                  <p className="uppercase font-semibold">Afsuski, hech narsa topilmadi</p>
                   <p className="text-sm text-gray-700">
-                    balki, filtrlarni tozalab ko`rish kerakdir
+                    Balki, filtrlardan tozalab ko‘rish kerakdir
                   </p>
                 </div>
               </div>

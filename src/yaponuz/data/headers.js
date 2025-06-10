@@ -1,7 +1,7 @@
 const API_PATH = "https://ustozx.uz/edu/api/";
 const API_JUST = "https://ustozx.uz/edu/api/";
-// const API_PATH = "https://06d7-84-54-70-125.ngrok-free.app/edu/api/";
-// const API_JUST = "https://06d7-84-54-70-125.ngrok-free.app/edu/api/";
+// const API_PATH = "https://bb06-84-54-73-213.ngrok-free.app/edu/api/";
+// const API_JUST = "https://bb06-84-54-73-213.ngrok-free.app/edu/api/";
 
 
 // http://194.87.151.210:2120/swagger-ui.html#/
