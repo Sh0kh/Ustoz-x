@@ -6,183 +6,90 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import SoftButton from "components/SoftButton";
 import DataTable from "examples/Tables/DataTable";
-import SoftPagination from "components/SoftPagination";
-import Icon from "@mui/material/Icon";
 import SoftInput from "components/SoftInput";
-import Stack from "@mui/material/Stack";
+import SoftSelect from "components/SoftSelect";
+import SoftDatePicker from "components/SoftDatePicker";
 import { useEffect, useState } from "react";
-import SoftBadge from "components/SoftBadge";
 import { Group } from "yaponuz/data/controllers/group";
+import { Users } from "yaponuz/data/api";
+import { personality } from "yaponuz/data/controllers/personality";
 import { Frown, Loader } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import SoftSelect from "components/SoftSelect";
-import { Users } from "yaponuz/data/api";
-import SoftDatePicker from "components/SoftDatePicker";
-import { testResult } from "yaponuz/data/controllers/testResult";
 import Swal from "sweetalert2";
-import { Lesson } from "yaponuz/data/controllers/lesson";
-import { Module } from "yaponuz/data/api";
-import { Grid } from "@mui/material";
-import { lessonReport } from "yaponuz/data/controllers/lessonReport";
-import PropTypes from "prop-types";
-import { personality } from "yaponuz/data/controllers/personality";
+import Box from "@mui/material/Box";
 
 export default function LessonReport() {
-    const [students, setStudents] = useState([]); // Состояние для хранения студентов
-    const [loading, setLoading] = useState(false); // Состояние загрузки
-    const [groupID, setGroupID] = useState(null); // ID выбранной группы
-    const [GroupOptions, setGroupOptions] = useState([]); // Опции для выпадающего списка групп
-    const [noGroupSelected, setNoGroupSelected] = useState(true); // Флаг для отслеживания выбора группы
-    const [studentLesson, setStudentLesson] = useState([])
+    const [students, setStudents] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [groupID, setGroupID] = useState(null);
+    const [GroupOptions, setGroupOptions] = useState([]);
+    const [noGroupSelected, setNoGroupSelected] = useState(true);
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(100);
 
-    const [courses, setCourses] = useState([]);
-    const [selectedCourse, setSelectedCourse] = useState(null);
-    // Module selection states
-    const [modules, setModules] = useState([]);
-    const [selectedModule, setSelectedModule] = useState(null);
-
-    // Lesson selection states
-    const [lessons, setLessons] = useState([]);
-    const [selectedLesson, setSelectedLesson] = useState(null);
-
-    const [lessonID, setLessonID] = useState(null);
-
-    const [selectedAction, setSelectedAction] = useState(""); // "view-history" yoki "grading"
-
+    const [selectedAction, setSelectedAction] = useState("");
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [reportDate, setReportDate] = useState(null);
 
     const [scores, setScores] = useState({});
-    const [historyResults, setHistoryResults] = useState([]); // Новый state для истории
+    const [historyResults, setHistoryResults] = useState([]);
 
-    const getAllGroups = async (page, size) => {
-        try {
-            const response = await Group.getMyGroups(page, size);
-            const groups = response.object || [];
-
-            const formattedOptions = groups?.map((group) => ({
-                label: group.name,
-                value: group.id,
-                courseId: group.courseId, // добавляем courseId
-            }));
-
-            setGroupOptions(formattedOptions);
-        } catch (err) {
-            console.error("Error from groups list GET: ", err);
-        }
-    };
-
-    const getStudents = async () => {
-        if (!groupID) return;
-
-        setLoading(true);
-        setNoGroupSelected(false);
-
-        try {
-            const response = await Users.getUsersAttendance(0, 100, "", "", "", groupID);
-            setStudents(response.object?.content || []);
-
-            const initialScores = response.object?.content.reduce((acc, student) => {
-                acc[student.id] = student.Score || ""; // Устанавливаем начальное значение Score
-                return acc;
-            }, {});
-
-            // Сбрасываем ошибки при загрузке новых данных
-            setErrors({ title: '', scores: {} });
-        } catch (err) {
-            console.log("Error fetching students: ", err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const getModules = async () => {
-        try {
-            const response = await Module.getModuleById(selectedCourse);
-            console.log(selectedCourse);
-
-            // Transform data to match SoftSelect format
-            const formattedModules = response.object?.map((module) => ({
-                value: module.id,
-                label: module.name || module.title,
-            })) || [];
-
-            setModules(formattedModules);
-        } catch (err) {
-            console.error("Error from module list GET: ", err);
-            // setError is not defined in your snippet, so I commented it out
-            // setError("Failed to fetch modules. Please try again later.");
-        }
-    };
-
-    const getModuleLessons = async (moduleId) => {
-        try {
-            const response = await Lesson.getAllLessons(page, size, moduleId.value);
-
-            // Transform data to match SoftSelect format
-            const formattedLessons = (response.object?.content || []).map((lesson) => ({
-                value: lesson.id,
-                label: lesson.name || lesson.title,
-            }));
-
-            setLessons(formattedLessons);
-            setLessonID(moduleId);
-        } catch (err) {
-            console.error("Error from lesson list GET:", err);
-        }
-    };
-
+    // Получение групп
     useEffect(() => {
-        getAllGroups(page, size);
+        (async () => {
+            try {
+                const response = await Group.getMyGroups(page, size);
+                const groups = response.object || [];
+                setGroupOptions(groups.map((group) => ({
+                    label: group.name,
+                    value: group.id,
+                    courseId: group.courseId,
+                })));
+            } catch (err) { }
+        })();
     }, [page, size, groupID]);
 
-    // Вызываем `getStudents` при изменении groupID
+    // Получение студентов
     useEffect(() => {
-        if (groupID) {
-            getStudents();
-        } else {
-            setStudents([]); // Очищаем список студентов, если группа не выбрана
+        if (!groupID) {
+            setStudents([]);
+            return;
         }
+        setLoading(true);
+        setNoGroupSelected(false);
+        Users.getUsersAttendance(0, 100, "", "", "", groupID)
+            .then(response => setStudents(response.object?.content || []))
+            .finally(() => setLoading(false));
     }, [groupID]);
 
-    useEffect(() => {
-        if (selectedCourse) {
-            getModules(selectedCourse);
-            // Reset dependent selections
-            setSelectedModule(null);
-            setSelectedLesson(null);
-            setModules([]);
-            setLessons([]);
-        }
-    }, [selectedCourse]);
+    // Обработка изменения баллов или комментариев
+    const handleScoreChange = (studentId, field, value) => {
+        if (field === "score" && (value > 10 || value < 0)) return;
+        setScores(prev => ({
+            ...prev,
+            [studentId]: {
+                ...prev[studentId],
+                [field]: value,
+            },
+        }));
+    };
 
-    useEffect(() => {
-        if (selectedModule) {
-            getModuleLessons(selectedModule);
-            // Reset lesson selection
-            setSelectedLesson(null);
-            setLessons([]);
-        }
-    }, [selectedModule]);
+    // DataTable columns и rows для ввода
+    const CELL_WIDTH = 250;
+    const IZOH_WIDTH = 600; // ширина для Izoh textarea
 
-
-
-
-    // Studentlar uchun DataTable ustunlari (to‘liq o‘zbek lotin)
     const studentColumns = [
-        { Header: "Ism", accessor: "Ism" },
-        { Header: "Baho", accessor: "score" },
-        { Header: "Izoh", accessor: "info" },
+        { Header: <span style={{ fontSize: 13 }}>Ism</span>, accessor: "Ism", width: CELL_WIDTH },
+        { Header: <span style={{ fontSize: 13 }}>Baho</span>, accessor: "score", width: CELL_WIDTH },
+        { Header: <span style={{ fontSize: 13 }}>Izoh</span>, accessor: "info", width: IZOH_WIDTH },
     ];
 
-    // Har bir o‘quvchi uchun faqat bitta SoftInput va info
+    // Используем textarea для Izoh
     const studentRows = students.map((student) => ({
         Ism: (
             <NavLink className={'text-blue-400'} to={`/student-lesson-report/${groupID}/${student?.id}`}>
-                {student.firstName} {' '} {student.lastName}
+                <span style={{ fontSize: 13 }}>{student.firstName} {student.lastName}</span>
             </NavLink>
         ),
         score: (
@@ -192,16 +99,26 @@ export default function LessonReport() {
                 max={10}
                 value={scores[student.id]?.score ?? ""}
                 onChange={e => handleScoreChange(student.id, "score", Number(e.target.value))}
-                style={{ width: 60, textAlign: "center" }}
-                inputProps={{ max: 10, min: 0 }}
+                style={{ width: CELL_WIDTH - 16, textAlign: "center", fontSize: 13 }}
+                inputProps={{ max: 10, min: 0, style: { fontSize: 13 } }}
             />
         ),
         info: (
             <SoftInput
-                type="text"
+                multiline
+                minRows={3}
+                maxRows={8}
                 value={scores[student.id]?.info ?? ""}
                 onChange={e => handleScoreChange(student.id, "info", e.target.value)}
-                style={{ width: 120 }}
+                style={{
+                    width: IZOH_WIDTH - 16,
+                    fontSize: 13,
+                    resize: "vertical",
+                    minHeight: 38,
+                    maxHeight: 180,
+                    padding: "8px 10px"
+                }}
+                inputProps={{ style: { fontSize: 13 } }}
                 placeholder="Izoh"
             />
         ),
@@ -212,9 +129,56 @@ export default function LessonReport() {
         rows: studentRows,
     };
 
+    // ===== История-матрица =====
+    function getHistoryMatrixTable(historyResults) {
+        const dateSet = new Set();
+        const studentMap = {};
+        historyResults.forEach(item => {
+            dateSet.add(item.date);
+            const sid = item.studentId;
+            if (!studentMap[sid]) {
+                studentMap[sid] = {
+                    fullName: (item.student?.firstName || "") + " " + (item.student?.lastName || ""),
+                    records: {},
+                };
+            }
+            studentMap[sid].records[item.date] = {
+                score: item.score,
+                comment: item.comment,
+            };
+        });
+        const dates = Array.from(dateSet).sort();
+        const columns = [
+            { Header: <span style={{ fontSize: 13 }}>O‘quvchi</span>, accessor: "fullName", sticky: true, width: CELL_WIDTH },
+            ...dates.map(date => ({
+                Header: <span style={{ fontSize: 13 }}>{date}</span>,
+                accessor: date,
+                align: "center",
+                width: CELL_WIDTH,
+            })),
+        ];
+        const rows = Object.entries(studentMap).map(([sid, st]) => {
+            const row = { fullName: st.fullName.trim() ? st.fullName : `ID:${sid}` };
+            dates.forEach(date => {
+                const cell = st.records[date];
+                row[date] = cell
+                    ? (
+                        <Box sx={{ fontSize: 13, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                            <span style={{ fontWeight: 700, color: "#1976d2" }}>{cell.score ?? ""}</span>
+                            <span style={{ color: "#607d8b", fontSize: 12 }}>{cell.comment ?? ""}</span>
+                        </Box>
+                    )
+                    : <Box sx={{ color: "#bdbdbd", fontSize: 13 }}>—</Box>;
+            });
+            return row;
+        });
+        return { columns, rows };
+    }
+    const historyMatrixTable = getHistoryMatrixTable(historyResults);
+
+    // История поиск
     const handleSearchHistory = async () => {
         try {
-            // Преобразование даты к формату 2025-06-01
             const formatDate = (date) => {
                 if (!date) return "";
                 const d = new Date(date);
@@ -223,18 +187,14 @@ export default function LessonReport() {
                 const day = String(d.getDate()).padStart(2, "0");
                 return `${year}-${month}-${day}`;
             };
-
-
             const data = {
                 groupId: groupID,
                 startDate: startDate ? formatDate(startDate) : "",
                 endDate: endDate ? formatDate(endDate) : "",
             };
             const response = await personality.getPersonalityByDate(data);
-            // Сохраняем результаты в state
             setHistoryResults(response.object?.content || []);
         } catch (error) {
-            console.error("Tarixni qidirishda xatolik:", error);
             Swal.fire({
                 icon: 'error',
                 title: 'Xatolik',
@@ -242,9 +202,10 @@ export default function LessonReport() {
             });
         }
     };
+
+    // Отправка отчета
     const CreatePersonality = async () => {
         try {
-            // Sana formatini olish
             const formatDate = (date) => {
                 if (!date) return "";
                 const d = new Date(date);
@@ -253,20 +214,15 @@ export default function LessonReport() {
                 const day = String(d.getDate()).padStart(2, "0");
                 return `${year}-${month}-${day}`;
             };
-
-            // Har bir o‘quvchi uchun bitta obyekt
             const reportArray = students.map(student => {
                 const score = scores[student.id]?.score;
                 const comment = scores[student.id]?.info;
-
-                // Faqat baho kiritilganlarni yuboramiz
                 if (score === undefined || score === null || score === "") return null;
-
                 return {
                     comment: comment || "",
                     date: reportDate ? formatDate(reportDate) : "",
                     id: 0,
-                    lessonId: selectedLesson?.value || 0,
+                    lessonId: 0,
                     score: Number(score),
                     studentId: student.id
                 };
@@ -293,110 +249,50 @@ export default function LessonReport() {
                 Swal.fire({
                     icon: 'error',
                     title: 'Xatolik',
-                    text: response.message || 'Baholarni saqlashda xatolik yuz berdi.',
+                    text: response.message || 'Baholarni saqlашда xatolik yuz berdi.',
                 });
             }
         } catch (error) {
-            console.error("Error creating personality report: ", error);
             Swal.fire({
                 icon: 'error',
                 title: 'Xatolik',
-                text: 'Hisobot yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko‘ring.',
+                text: 'Hisobot yaratishda xatolik yuz berdi. Iltimos, qayта urinib ko‘ring.',
             });
         }
-    }
-
-    // Красивый компонент для истории
-    function HistoryCards({ results }) {
-        if (!results.length) {
-            return (
-                <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
-                    <Frown className="size-20" />
-                    <div className="text-center">
-                        <p className="uppercase font-semibold">No history found</p>
-                        <p className="text-sm text-gray-700">Try different dates</p>
-                    </div>
-                </div>
-            );
-        }
-        return (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 16, justifyContent: "center" }}>
-                {results.map((item) => (
-                    <Card key={item.id} style={{ minWidth: 320, margin: 8, boxShadow: "0 2px 12px #eee" }}>
-                        <SoftBox p={2}>
-                            <SoftTypography variant="h6" fontWeight="bold" mb={1}>
-                                O‘quvchi ID: {item.studentId}
-                            </SoftTypography>
-                            <SoftTypography variant="body2" color="text" mb={1}>
-                                Dars ID: {item.lessonId} | Sana: <b>{item.reportDate}</b>
-                            </SoftTypography>
-                            <SoftBox mt={1}>
-                                {item.score.map((s, idx) => (
-                                    <SoftBox key={idx} display="flex" alignItems="center" mb={0.5}>
-                                        <SoftBadge
-                                            color="info"
-                                            variant="gradient"
-                                            size="sm"
-                                            sx={{ minWidth: 120, mr: 1 }}
-                                        >
-                                            {s.description}
-                                        </SoftBadge>
-                                        <SoftTypography variant="body2" fontWeight="medium">
-                                            {s.score}
-                                        </SoftTypography>
-                                    </SoftBox>
-                                ))}
-                            </SoftBox>
-                        </SoftBox>
-                    </Card>
-                ))}
-            </div>
-        );
-    }
-
-    // Добавьте propTypes для компонента
-    HistoryCards.propTypes = {
-        results: PropTypes.array.isRequired,
     };
 
-    // Формируем данные для DataTable истории
-    const historyTableColumns = [
-        { Header: "O‘quvchi", accessor: "studentName" },
-        { Header: "Baho", accessor: "score" },
-        { Header: "Izoh", accessor: "comment" },
-        { Header: "Sana", accessor: "date" },
-    ];
-
-    const studentMap = students.reduce((acc, s) => {
-        acc[s.id] = `${s.firstName} ${s.lastName}`;
-        return acc;
-    }, {});
-
-    // Har bir natijani jadvalga tayyorlaymiz
-    const historyTableRows = historyResults.map(item => ({
-        studentName: studentMap[item.studentId] || "—",
-        score: item.score,
-        comment: item.comment,
-        date: item.date,
-    }));
-
-    const historyTableData = {
-        columns: historyTableColumns,
-        rows: historyTableRows,
+    // Стили для sticky первой колонки
+    const dataTableSx = {
+        "& th, & td": {
+            fontSize: "13px",
+            padding: "6px 8px",
+        },
+        "& th[data-sticky='true'], & td[data-sticky='true']": {
+            position: "sticky",
+            left: 0,
+            background: "#f5f7fa",
+            zIndex: 2,
+            minWidth: CELL_WIDTH,
+            maxWidth: CELL_WIDTH,
+            whiteSpace: "nowrap",
+        },
+        "& th:nth-of-type(3), & td:nth-of-type(3)": {
+            minWidth: IZOH_WIDTH,
+            maxWidth: IZOH_WIDTH,
+            width: IZOH_WIDTH,
+        },
+        "& td[data-sticky='true']": {
+            background: "#fff",
+            zIndex: 1,
+        },
     };
 
-    // Ballarni o‘zgartirish uchun funksiya
-    const handleScoreChange = (studentId, field, value) => {
-        if (value > 10) value = 10;
-        if (value < 0) value = 0;
-        setScores(prev => ({
-            ...prev,
-            [studentId]: {
-                ...prev[studentId],
-                [field]: value,
-            },
-        }));
-    };
+    const customCellProps = (col, colIndex) =>
+        col.sticky
+            ? { "data-sticky": "true", style: { left: 0, zIndex: 2, background: "#fff", minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH, width: CELL_WIDTH } }
+            : col.accessor === "info"
+                ? { style: { minWidth: IZOH_WIDTH, maxWidth: IZOH_WIDTH, width: IZOH_WIDTH } }
+                : { style: { minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH, width: CELL_WIDTH } };
 
     return (
         <DashboardLayout>
@@ -404,7 +300,6 @@ export default function LessonReport() {
             <SoftBox my={3}>
                 <Card style={{ margin: "10px 0px", overflow: "visible" }}>
                     <SoftBox p={3} style={{ overflow: "visible", width: "100%" }}>
-                        {/* Birinchi qator: 2 select */}
                         <SoftBox
                             display="flex"
                             justifyContent="space-between"
@@ -412,7 +307,6 @@ export default function LessonReport() {
                             flexWrap="wrap"
                             mb={2}
                         >
-                            {/* 1. Amalni tanlash */}
                             <SoftBox flex="1" minWidth="200px">
                                 <SoftSelect
                                     fullWidth
@@ -429,15 +323,10 @@ export default function LessonReport() {
                                     onChange={e => {
                                         setSelectedAction(e.value);
                                         setGroupID(null);
-                                        setSelectedCourse(null);
-                                        setSelectedModule(null);
-                                        setSelectedLesson(null);
                                     }}
                                     placeholder="Amalni tanlang"
                                 />
                             </SoftBox>
-
-                            {/* 2. Guruh tanlash */}
                             {selectedAction && (
                                 <SoftBox flex="1" minWidth="200px">
                                     <SoftSelect
@@ -446,7 +335,6 @@ export default function LessonReport() {
                                         value={GroupOptions.find(opt => opt.value === groupID) || null}
                                         onChange={e => {
                                             setGroupID(e.value);
-                                            setSelectedCourse(e.courseId);
                                         }}
                                         placeholder="Guruhni tanlang"
                                         isDisabled={!selectedAction}
@@ -454,8 +342,6 @@ export default function LessonReport() {
                                 </SoftBox>
                             )}
                         </SoftBox>
-
-                        {/* Sana tanlash faqat tarix uchun */}
                         {selectedAction === "view-history" && (
                             <SoftBox display="flex" gap={2} mt={2} mb={2}>
                                 <SoftBox flex="1" minWidth="200px">
@@ -482,65 +368,17 @@ export default function LessonReport() {
                                 </SoftBox>
                             </SoftBox>
                         )}
-
-                        {/* Modul va dars tanlash faqat "Baholash" uchun */}
                         {selectedAction === "grading" && groupID && (
-                            <>
-                                <SoftBox flex="1" minWidth="200px" mb={2}>
-                                    <SoftSelect
-                                        fullWidth
-                                        placeholder="Modulni tanlang"
-                                        options={modules}
-                                        value={selectedModule}
-                                        onChange={value => setSelectedModule(value)}
-                                        isDisabled={!groupID}
-                                    />
-                                </SoftBox>
-                            </>
+                            <SoftBox flex="1" minWidth="200px" mb={2}>
+                                <SoftDatePicker
+                                    placeholder="Hisobot sanasi"
+                                    value={reportDate}
+                                    fullWidth
+                                    onChange={setReportDate}
+                                />
+                            </SoftBox>
                         )}
 
-                        <SoftBox
-                            display="flex"
-                            justifyContent="space-between"
-                            gap={2}
-                            flexWrap="wrap"
-                            mb={2}
-                        >
-                            {selectedModule && (
-                                <SoftBox flex="1" minWidth="200px">
-                                    <SoftSelect
-                                        fullWidth
-                                        placeholder="Darsni tanlang"
-                                        options={lessons}
-                                        value={selectedLesson}
-                                        onChange={(value) => setSelectedLesson(value)}
-                                        isDisabled={!selectedModule}
-                                        sx={{
-                                            "& .MuiSelect-select": {
-                                                width: "100%",
-                                            },
-                                            "& .MuiOutlinedInput-root": {
-                                                width: "100%",
-                                            },
-                                        }}
-                                    />
-                                </SoftBox>
-                            )}
-                        </SoftBox>
-                        {selectedAction === "grading" && groupID && (
-                            <>
-                                <SoftBox flex="1" minWidth="200px" mb={2}>
-                                    <SoftDatePicker
-                                        placeholder="Hisobot sanasi"
-                                        value={reportDate}
-                                        fullWidth
-                                        onChange={setReportDate}
-                                    />
-                                </SoftBox>
-                            </>
-                        )}
-
-                        {/* Uchunchi qator: tugma */}
                         <SoftBox display="flex" justifyContent="flex-start" minWidth="200px">
                             {selectedAction === "grading" ? (
                                 <SoftButton fullWidth onClick={CreatePersonality} sx={{ height: "40px" }}>
@@ -560,7 +398,6 @@ export default function LessonReport() {
                             Shaxsiyati hisobotlari
                         </SoftTypography>
                     </SoftBox>
-                    {/* Holatlarni chiqarish */}
                     {noGroupSelected ? (
                         <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
                             <p className="uppercase font-semibold">Iltimos, amaldi tanlang</p>
@@ -571,22 +408,35 @@ export default function LessonReport() {
                             <p className="text-sm uppercase font-medium">Yuklanmoqda, iltimos kuting</p>
                         </div>
                     ) : selectedAction === "view-history" && historyResults.length > 0 ? (
-                        <DataTable
-                            table={historyTableData}
-                            entriesPerPage={{
-                                defaultValue: 10,
-                                entries: [5, 10, 15, 20],
+                        <Box
+                            sx={{
+                                overflow: "auto",
+                                width: "100%",
+                                maxHeight: 550,
+                                borderRadius: 2,
                             }}
-                            canSearch
-                        />
+                        >
+                            <DataTable
+                                table={historyMatrixTable}
+                                entriesPerPage={{
+                                    defaultValue: 20,
+                                    entries: [5, 10, 15, 20],
+                                }}
+                                canSearch
+                                sx={dataTableSx}
+                                customCellProps={customCellProps}
+                            />
+                        </Box>
                     ) : students.length !== 0 && selectedAction === "grading" ? (
                         <DataTable
                             table={studentTableData}
                             entriesPerPage={{
-                                defaultValue: 10,
+                                defaultValue: 20,
                                 entries: [5, 10, 15, 20],
                             }}
                             canSearch
+                            sx={dataTableSx}
+                            customCellProps={customCellProps}
                         />
                     ) : (
                         <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
