@@ -359,19 +359,19 @@ export default function TestResultAdd() {
                         </SoftBox>
                     </Card>
                     {noGroupSelected ? (
-                        <SoftBox
-                            display="flex"
-                            flexDirection="column"
-                            alignItems="center"
-                            justifyContent="center"
-                            minHeight={200}
-                            mt={4}
-                        >
-                            <Icon sx={{ fontSize: 60, color: "#bdbdbd" }}>group</Icon>
-                            <Typography variant="h6" color="text.secondary" mt={2}>
-                                Iltimos, guruhni tanlang
-                            </Typography>
-                        </SoftBox>
+                        <Card
+                            variant="outlined"
+                            sx={{
+                                mt: 3,
+                                p: 3,
+                                borderRadius: 2,
+                                background: "#f5f7fa",
+                                overflow: "visible",
+                            }}>
+                            <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
+                                <p className="uppercase font-semibold">Iltimos, guruhni tanlang</p>
+                            </div>
+                        </Card>
                     ) : loading ? (
                         <SoftBox
                             display="flex"

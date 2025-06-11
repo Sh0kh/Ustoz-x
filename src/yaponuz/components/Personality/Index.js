@@ -118,7 +118,7 @@ export default function PersonalityHistoryPage() {
                 endDate: endDate ? formatDate(endDate) : "",
             };
             const response = await personality.getPersonalityByDate(data);
-            setHistoryResults(response.object?.content || []);
+            setHistoryResults(response.object || []);
         } catch (error) {
             Swal.fire({
                 icon: 'error',
@@ -256,7 +256,7 @@ export default function PersonalityHistoryPage() {
                                     defaultValue: 20,
                                     entries: [5, 10, 15, 20],
                                 }}
-                                canSearch
+                                
                                 sx={dataTableSx}
                                 customCellProps={customCellProps}
                             />

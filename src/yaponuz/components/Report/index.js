@@ -81,7 +81,7 @@ export default function LessonReportHistoryPage() {
                 endDate: endDate ? formatDateTime(endDate) : "",
             };
             const response = await report.getReportByID(data);
-            setHistoryResults(response.object?.content || []);
+            setHistoryResults(response.object || []);
         } catch (error) {
             console.error("Tarixni qidirishda xatolik:", error);
             Swal.fire({
@@ -214,7 +214,6 @@ export default function LessonReportHistoryPage() {
                                 defaultValue: 20,
                                 entries: [5, 10, 15, 20],
                             }}
-                            canSearch
                             sx={{
                                 "& th, & td": {
                                     fontSize: "13px",

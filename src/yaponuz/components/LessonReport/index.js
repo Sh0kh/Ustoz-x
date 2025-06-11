@@ -38,7 +38,7 @@ function getHistoryMatrixTable(historyResults) {
   const dates = Array.from(dateSet).sort();
   const columns = [
     {
-      Header: <span style={{ fontSize: 13 }}>O‘quvchi</span>,
+      Header: <span className="static top-0 left-0" style={{ fontSize: 13 }}>O‘quvchi</span>,
       accessor: "fullName",
       sticky: true,
       width: 170,
@@ -134,7 +134,7 @@ export default function LessonReportHistoryPage() {
         endDate: endDate ? formatDate(endDate) : "",
       };
       const response = await lessonReport.getLessonReportByDate(data);
-      setHistoryResults(response.object?.content || []);
+      setHistoryResults(response.object || []);
     } catch (error) {
       console.error("Tarixni qidirishda xatolik:", error);
       Swal.fire({
@@ -281,7 +281,6 @@ export default function LessonReportHistoryPage() {
                   defaultValue: 20,
                   entries: [5, 10, 15, 20],
                 }}
-                canSearch
                 sx={dataTableSx}
                 customCellProps={customCellProps}
               />

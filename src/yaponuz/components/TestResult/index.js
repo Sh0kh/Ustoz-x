@@ -162,7 +162,7 @@ export default function TestResultHistoryPage() {
                 endDate,
             });
             if (response.success) {
-                setTestResultsHistory(response.object?.content || []);
+                setTestResultsHistory(response.object || []);
             } else {
                 setTestResultsHistory([]);
                 console.error("Failed to fetch test results:", response.message);
