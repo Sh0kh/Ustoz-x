@@ -49,6 +49,10 @@ import ChatInfo from "yaponuz/components/Chats/ChatInfo";
 import StundetNotification from "yaponuz/components/Notification/StundetNotification";
 import CourseDetail from "yaponuz/components/CourseDetail/CourseDetail";
 import Enrollment from "yaponuz/components/Enrollment/Enrollment";
+import TestResultAdd from "yaponuz/components/TestResult/component/TestResultAdd";
+import CreateLessonReport from "yaponuz/components/LessonReport/commponent/CreateLessonReport";
+import ReportCreate from "yaponuz/components/Report/commponent/ReportCreate";
+import PersonalityCreate from "yaponuz/components/Personality/commponent/PersonalityCreate";
 
 const routes = [
   { type: "title", title: "Umumiy", key: "general-title" },
@@ -336,6 +340,16 @@ const routes = [
     component: <TestResult />
   },
   {
+    show: false,
+    type: "collapse",
+    name: "Create TestResult",
+    key: "TestResultCreate",
+    icon: <Document size="12px" />,
+    noCollapse: true,
+    route: "/test-result/create",
+    component: <TestResultAdd />
+  },
+  {
     type: "collapse",
     name: "Dars hisobotlari",
     key: "LessonReport",
@@ -345,6 +359,16 @@ const routes = [
     component: <LessonReport />
   },
   {
+    show: false,
+    type: "collapse",
+    name: "Dars hisobotlari yaratish",
+    key: "LessonReportCreate",
+    icon: <Document size="12px" />,
+    noCollapse: true,
+    route: "/lesson-report/create",
+    component: <CreateLessonReport />
+  },
+  {
     type: "collapse",
     name: "Hisobot",
     key: "Report",
@@ -352,6 +376,15 @@ const routes = [
     noCollapse: true,
     route: "/report",
     component: <Report />
+  },
+  {
+    type: "collapse",
+    name: "Hisobot yaratish",
+    key: "Report",
+    icon: <Document size="12px" />,
+    noCollapse: true,
+    route: "/report/create",
+    component: <ReportCreate />
   },
   {
     show: false,
@@ -390,6 +423,16 @@ const routes = [
     noCollapse: true,
     route: "/personality",
     component: <Personality />,
+  },
+  {
+    show: false,
+    type: "collapse",
+    name: "Shaxsiyati yaratish",
+    key: "Personality Create",
+    icon: <SpaceShip size="12px" />,
+    noCollapse: true,
+    route: "/personality/create",
+    component: <PersonalityCreate />,
   },
 
 
