@@ -112,11 +112,6 @@ function LessonList() {
       <DashboardNavbar />
       <SoftBox my={3}>
         <div className="mb-2 flex justify-between items-center">
-          <div className="flex flex-col items-center justify-center gap-2">
-            <SoftButton variant="gradient" color="dark" onClick={navigateNewLesson}>
-              Yangi lesson
-            </SoftButton>
-          </div>
           <div className="flex justify-center items-center">
             <div className="flex gap-x-4">
               <div className="min-w-72">
@@ -152,6 +147,11 @@ function LessonList() {
                 />
               </div>
             </div>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-2">
+            <SoftButton variant="gradient" color="dark" onClick={navigateNewLesson}>
+              Yangi lesson
+            </SoftButton>
           </div>
         </div>
         <Card>

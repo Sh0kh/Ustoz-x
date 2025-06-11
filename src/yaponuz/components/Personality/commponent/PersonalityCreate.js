@@ -222,7 +222,7 @@ export default function PersonalityCreate() {
                             Shaxsiyati hisobotlari yaratish
                         </Typography>
                         <SoftButton style={{ backgroundColor: '#344767', color: '#fff' }} maxWidth={'100px'} onClick={CreatePersonality} sx={{ height: "40px" }}>
-                            Baholash
+                            + Qo`shish
                         </SoftButton>
                     </SoftBox>
                     <SoftBox style={{ overflow: "visible", width: "100%" }}>

@@ -31,8 +31,11 @@ import { Module } from "yaponuz/data/api";
 
 export default function AttendanceList() {
   const [studentList, setStudentList] = useState([]);
-  const [year, setYear] = useState("2025");
-  const [month, setMonth] = useState("01");
+  const currentYear = new Date().getFullYear().toString();
+  const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
+
+  const [year, setYear] = useState(currentYear);
+  const [month, setMonth] = useState(currentMonth);
   const [attendance, setAttendance] = useState([]);
   const [attendanceRows, setAttendanceRows] = useState([]);
   const [page, setPage] = useState(0);
@@ -62,6 +65,27 @@ export default function AttendanceList() {
     { value: "LATE_CAME", label: "LATE_CAME" },
     { value: "NOT_CAME", label: "NOT_CAME" },
   ];
+
+  const monthOptions = [
+    { label: "Yanvar", value: "01" },
+    { label: "Fevral", value: "02" },
+    { label: "Mart", value: "03" },
+    { label: "Aprel", value: "04" },
+    { label: "May", value: "05" },
+    { label: "Iyun", value: "06" },
+    { label: "Iyul", value: "07" },
+    { label: "Avgust", value: "08" },
+    { label: "Sentabr", value: "09" },
+    { label: "Oktabr", value: "10" },
+    { label: "Noyabr", value: "11" },
+    { label: "Dekabr", value: "12" },
+  ];
+
+  // Get current month name for display
+  const getCurrentMonthName = () => {
+    const monthOption = monthOptions.find(option => option.value === currentMonth);
+    return monthOption ? monthOption.label : '';
+  };
 
   // fetching data function
   const getAllGroups = async (page, size) => {
@@ -148,8 +172,6 @@ export default function AttendanceList() {
       setModules(formattedModules);
     } catch (err) {
       console.error("Error from module list GET: ", err);
-      // setError is not defined in your snippet, so I commented it out
-      // setError("Failed to fetch modules. Please try again later.");
     }
   };
 
@@ -167,8 +189,6 @@ export default function AttendanceList() {
       setLessonID(moduleId);
     } catch (err) {
       console.error("Error from lesson list GET:", err);
-      // setError is not defined in your snippet, so I commented it out
-      // setError("Failed to fetch lessons. Please try again later.");
     }
   };
 
@@ -210,7 +230,33 @@ export default function AttendanceList() {
                   }}
                 />
               </SoftBox>
+              <SoftBox flex="1" minWidth="200px">
+                <SoftSelect
+                  fullWidth
+                  options={monthOptions}
+                  onChange={(e) => setMonth(e.value)}
+                  value={monthOptions.find(option => option.value === month)}
+                  placeholder="Oy tanlang"
+                  sx={{
+                    "& .MuiSelect-select": {
+                      width: "100%",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      width: "100%",
+                    },
+                  }}
+                />
+              </SoftBox>
+            </SoftBox>
 
+            {/* Second row: 2 selects */}
+            <SoftBox
+              display="flex"
+              justifyContent="space-between"
+              gap={2}
+              flexWrap="wrap"
+              mb={2}
+            >
               {selectedCourse && (
                 <SoftBox flex="1" minWidth="200px">
                   <SoftSelect
@@ -231,16 +277,6 @@ export default function AttendanceList() {
                   />
                 </SoftBox>
               )}
-            </SoftBox>
-
-            {/* Second row: 2 selects */}
-            <SoftBox
-              display="flex"
-              justifyContent="space-between"
-              gap={2}
-              flexWrap="wrap"
-              mb={2}
-            >
               {selectedModule && (
                 <SoftBox flex="1" minWidth="200px">
                   <SoftSelect
@@ -261,41 +297,10 @@ export default function AttendanceList() {
                   />
                 </SoftBox>
               )}
-
-              <SoftBox flex="1" minWidth="200px">
-                <SoftSelect
-                  fullWidth
-                  options={[
-                    { label: "Yanvar", value: "01" },
-                    { label: "Fevral", value: "02" },
-                    { label: "Mart", value: "03" },
-                    { label: "Aprel", value: "04" },
-                    { label: "May", value: "05" },
-                    { label: "Iyun", value: "06" },
-                    { label: "Iyul", value: "07" },
-                    { label: "Avgust", value: "08" },
-                    { label: "Sentabr", value: "09" },
-                    { label: "Oktabr", value: "10" },
-                    { label: "Noyabr", value: "11" },
-                    { label: "Dekabr", value: "12" },
-                  ]}
-                  onChange={(e) => setMonth(e.value)}
-                  placeholder="Oy tanlang"
-                  sx={{
-                    "& .MuiSelect-select": {
-                      width: "100%",
-                    },
-                    "& .MuiOutlinedInput-root": {
-                      width: "100%",
-                    },
-                  }}
-                />
-              </SoftBox>
             </SoftBox>
 
-            {/* Third row: button */}
             <SoftBox display="flex" justifyContent="flex-start" minWidth="200px">
-              <SoftButton fullWidth onClick={() => getAttendance(user)} sx={{ height: "40px" }}>
+              <SoftButton style={{ backgroundColor: '#344767', color: '#fff' }} fullWidth onClick={() => getAttendance(user)} sx={{ height: "40px" }}>
                 Qidirish
               </SoftButton>
             </SoftBox>

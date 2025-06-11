@@ -338,7 +338,7 @@ export default function CreateLessonReport() {
                         <SoftButton
                             style={{ backgroundColor: '#344767', color: '#fff' }}
                             maxWidth={'200px'} onClick={CreateLessonReport} sx={{ height: "40px" }}>
-                            Baholash
+                            + Qoshish
                         </SoftButton>
                     </SoftBox>
                     <SoftBox mt={2} style={{ overflow: "visible", width: "100%" }}>
@@ -410,11 +410,6 @@ export default function CreateLessonReport() {
                     </SoftBox>
                 </Card>
                 <Card style={{ margin: "10px 0px" }}>
-                    <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
-                        <SoftTypography variant="h5" fontWeight="medium">
-                            Dars hisobotlari
-                        </SoftTypography>
-                    </SoftBox>
                     {noGroupSelected ? (
                         <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
                             <p className="uppercase font-semibold">Iltimos, guruhni tanlang</p>

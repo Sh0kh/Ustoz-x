@@ -184,7 +184,7 @@ export default function ReportCreate() {
                                 Hisobot yaratish
                             </Typography>
                             <SoftButton style={{ backgroundColor: '#344767', color: '#fff' }} maxWidth={'100px'} onClick={CreateReport} sx={{ height: "40px" }}>
-                                Saqlash
+                                + Qo`shish
                             </SoftButton>
                         </SoftBox>
                         <SoftBox
@@ -212,35 +212,33 @@ export default function ReportCreate() {
                                     placeholder="Guruhni tanlang"
                                 />
                             </SoftBox>
-                            {groupID && (<>
-                                <SoftBox flex="1" minWidth="200px" mb={2}>
-                                    <SoftTypography
-                                        variant="h6"
-                                        fontWeight="medium"
-                                        sx={{ mb: 1 }}                                     >
-                                        Turi
-                                    </SoftTypography>
-                                    <SoftSelect
-                                        placeholder="Turi"
-                                        options={Type}
-                                        value={Type.find(opt => opt.value === selectType) || null}
-                                        onChange={value => setselectType(value.value)}
-                                    />
-                                </SoftBox>
-                                <SoftBox flex="1" minWidth="200px" mb={2}>
-                                    <SoftTypography
-                                        variant="h6"
-                                        fontWeight="medium"
-                                        sx={{ mb: 1 }}                                     >
-                                        Sarlavha
-                                    </SoftTypography>
-                                    <SoftInput
-                                        placeholder="Sarlavha"
-                                        value={title}
-                                        onChange={e => setTitle(e.target.value)}
-                                    />
-                                </SoftBox>
-                            </>)}
+                            <SoftBox flex="1" minWidth="200px" mb={2}>
+                                <SoftTypography
+                                    variant="h6"
+                                    fontWeight="medium"
+                                    sx={{ mb: 1 }}                                     >
+                                    Turi
+                                </SoftTypography>
+                                <SoftSelect
+                                    placeholder="Turi"
+                                    options={Type}
+                                    value={Type.find(opt => opt.value === selectType) || null}
+                                    onChange={value => setselectType(value.value)}
+                                />
+                            </SoftBox>
+                            <SoftBox flex="1" minWidth="200px" mb={2}>
+                                <SoftTypography
+                                    variant="h6"
+                                    fontWeight="medium"
+                                    sx={{ mb: 1 }}                                     >
+                                    Sarlavha
+                                </SoftTypography>
+                                <SoftInput
+                                    placeholder="Sarlavha"
+                                    value={title}
+                                    onChange={e => setTitle(e.target.value)}
+                                />
+                            </SoftBox>
                         </SoftBox>
                     </SoftBox>
                 </Card>

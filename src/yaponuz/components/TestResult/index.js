@@ -205,7 +205,7 @@ export default function TestResultHistoryPage() {
                             </NavLink>
                         </SoftBox>
                         <SoftBox display="flex" alignItems='end' justifyContent="space-between" gap={1} mb={2}>
-                            <Grid item xs={12} md={6} minWidth={'400px'}>
+                            <Grid item xs={12} md={6} minWidth={'400px'} fullWidth>
                                 <SoftTypography
                                     variant="h6"
                                     fontWeight="medium"
@@ -229,7 +229,7 @@ export default function TestResultHistoryPage() {
                                     }}
                                 />
                             </Grid>
-                            <SoftBox flex="1" maxWidth="320px" minWidth="200px">
+                            <SoftBox flex="1" minWidth="200px">
                                 <SoftTypography
                                     variant="h6"
                                     fontWeight="medium"
@@ -244,7 +244,7 @@ export default function TestResultHistoryPage() {
                                     onChange={setStartDate}
                                 />
                             </SoftBox>
-                            <SoftBox flex="1" maxWidth="320px" minWidth="200px">
+                            <SoftBox flex="1" minWidth="200px">
                                 <SoftTypography
                                     variant="h6"
                                     fontWeight="medium"
@@ -279,19 +279,20 @@ export default function TestResultHistoryPage() {
                         </SoftBox>
                     </Card>
                     {noGroupSelected ? (
-                        <SoftBox
-                            display="flex"
-                            flexDirection="column"
-                            alignItems="center"
-                            justifyContent="center"
-                            minHeight={200}
-                            mt={4}
-                        >
-                            <Icon sx={{ fontSize: 60, color: "#bdbdbd" }}>group</Icon>
-                            <Typography variant="h6" color="text.secondary" mt={2}>
-                                Iltimos, guruhni tanlang
-                            </Typography>
-                        </SoftBox>
+
+                        <Card
+                            style={{ margin: "10px 0px" }}
+                            variant="outlined"
+                            sx={{
+                                p: 3,
+                                borderRadius: 2,
+                                background: "#f5f7fa",
+                                overflow: "visible",
+                            }}>
+                            <div className="flex flex-col gap-y-4 items-center justify-center min-h-80">
+                                <p className="uppercase font-semibold">Iltimos, guruhni tanlang</p>
+                            </div>
+                        </Card>
                     ) : loading ? (
                         <SoftBox
                             display="flex"
@@ -309,22 +310,33 @@ export default function TestResultHistoryPage() {
                     ) : testResultsHistory.length !== 0 ? (
                         <TestResultHistory results={testResultsHistory} />
                     ) : (
-                        <SoftBox
-                            display="flex"
-                            flexDirection="column"
-                            alignItems="center"
-                            justifyContent="center"
-                            minHeight={200}
-                            mt={4}
+                        <Card
+                            variant="outlined"
+                            sx={{
+                                mt: 3,
+                                p: 3,
+                                borderRadius: 2,
+                                background: "#f5f7fa",
+                                overflow: "visible",
+                            }}
                         >
-                            <Frown className="size-20" />
-                            <Typography variant="h6" color="text.secondary" mt={2}>
-                                Natijalar topilmadi
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Boshqa guruh yoki sanani tanlab ko‘ring
-                            </Typography>
-                        </SoftBox>
+                            <SoftBox
+                                display="flex"
+                                flexDirection="column"
+                                alignItems="center"
+                                justifyContent="center"
+                                minHeight={200}
+                                mt={4}
+                            >
+                                <Frown className="size-20" />
+                                <Typography variant="h6" color="text.secondary" mt={2}>
+                                    Natijalar topilmadi
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    Boshqa guruh yoki sanani tanlab ko‘ring
+                                </Typography>
+                            </SoftBox>
+                        </Card>
                     )}
                 </SoftBox>
             </SoftBox>

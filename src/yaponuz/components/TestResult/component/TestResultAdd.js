@@ -292,7 +292,7 @@ export default function TestResultAdd() {
                         }}
                     >
                         <Typography variant="h4" fontWeight="bold" mb={3}>
-                            Test natijalari qo‘shish
+                            Natijalari qo‘shish
                         </Typography>
                         <SoftBox display="flex" alignItems="center" gap={1} mb={2}>
                             <Grid item xs={12} md={6} minWidth={'400px'}>
@@ -312,52 +312,50 @@ export default function TestResultAdd() {
                                     }}
                                 />
                             </Grid>
-                            {students.length > 0 && groupID && (
-                                <Grid container spacing={1} alignItems="center">
-                                    <Grid item xs={12} md={5}>
-                                        <SoftInput
-                                            placeholder="Sarlavha"
-                                            value={title}
-                                            fullWidth
-                                            onChange={handleTitleChange}
-                                            error={!!errors.title}
-                                        />
-                                        {errors.title && (
-                                            <div className="text-xs text-red-500 mt-1">
-                                                {errors.title}
-                                            </div>
-                                        )}
-                                    </Grid>
-                                    <Grid item xs={12} md={3}>
-                                        <SoftDatePicker
-                                            placeholder="Test sanasi"
-                                            value={date}
-                                            fullWidth
-                                            onChange={(newDate) => setDate(newDate)}
-                                        />
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        md={4}
-                                        display="flex"
-                                        alignItems="center"
-                                        justifyContent="flex-end"
-                                    >
-                                        <SoftButton
-                                            fullWidth
-                                            style={{ backgroundColor: '#344767', color: '#fff' }}
-                                            onClick={handleSubmitResults}
-                                            disabled={submitting}
-                                            sx={{ height: 40, fontWeight: "bold", fontSize: 12 }}
-                                        >
-                                            {submitting
-                                                ? "Saqlanmoqda..."
-                                                : "+ Qo‘shish"}
-                                        </SoftButton>
-                                    </Grid>
+                            <Grid container spacing={1} alignItems="center">
+                                <Grid item xs={12} md={5}>
+                                    <SoftInput
+                                        placeholder="Sarlavha"
+                                        value={title}
+                                        fullWidth
+                                        onChange={handleTitleChange}
+                                        error={!!errors.title}
+                                    />
+                                    {errors.title && (
+                                        <div className="text-xs text-red-500 mt-1">
+                                            {errors.title}
+                                        </div>
+                                    )}
                                 </Grid>
-                            )}
+                                <Grid item xs={12} md={3}>
+                                    <SoftDatePicker
+                                        placeholder="Test sanasi"
+                                        value={date}
+                                        fullWidth
+                                        onChange={(newDate) => setDate(newDate)}
+                                    />
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={12}
+                                    md={4}
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="flex-end"
+                                >
+                                    <SoftButton
+                                        fullWidth
+                                        style={{ backgroundColor: '#344767', color: '#fff' }}
+                                        onClick={handleSubmitResults}
+                                        disabled={submitting}
+                                        sx={{ height: 40, fontWeight: "bold", fontSize: 12 }}
+                                    >
+                                        {submitting
+                                            ? "Saqlanmoqda..."
+                                            : "+ Qo‘shish"}
+                                    </SoftButton>
+                                </Grid>
+                            </Grid>
                         </SoftBox>
                     </Card>
                     {noGroupSelected ? (
@@ -394,7 +392,7 @@ export default function TestResultAdd() {
                                 <DataTable
                                     table={studentTableData}
                                     entriesPerPage={{
-                                        defaultValue: 10,
+                                        defaultValue: 20,
                                         entries: [5, 10, 15, 20],
                                     }}
                                     canSearch

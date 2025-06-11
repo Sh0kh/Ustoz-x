@@ -171,7 +171,7 @@ export default function PersonalityHistoryPage() {
                         </Typography>
                         <NavLink to={"/personality/create"} >
                             <SoftButton style={{ backgroundColor: '#344767', color: '#fff' }}>
-                                Shaxsiyati hisobotlari qoshish
+                                Hisobot qoshish
                             </SoftButton>
                         </NavLink>
                     </SoftBox>
