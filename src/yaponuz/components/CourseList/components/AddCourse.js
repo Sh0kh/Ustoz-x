@@ -32,6 +32,7 @@ export default function AddCourse({ refetch }) {
     teacherName: "",
     isPopular: true,
     isDiscounted: true,
+    price: '',
     discounted: '',
     description: ''
   });
@@ -152,6 +153,9 @@ export default function AddCourse({ refetch }) {
     if (!formData.iconFromHome) {
       validationErrors.iconFromHome = "Home icon is required";
     }
+    if (!formData.price || formData.price.trim() === "") {
+      validationErrors.price = "Course price is required";
+    }
     setErrors(validationErrors);
     return validationErrors;
   };
@@ -204,6 +208,7 @@ export default function AddCourse({ refetch }) {
         teacherName: formData.teacherName,
         isPopular: formData.isPopular,
         isDiscounted: formData.isDiscounted,
+        price: formData.price,
         discounted: formData.discounted,
         description: formData.description
       };
@@ -223,6 +228,7 @@ export default function AddCourse({ refetch }) {
         teacherName: "",
         isPopular: true,
         isDiscounted: true,
+        price: '',
         discounted: '',
         description: ''
       });
@@ -283,6 +289,9 @@ export default function AddCourse({ refetch }) {
               </SoftBox>
             </Grid>
 
+
+
+            {/* Discounted Price */}
             <Grid item xs={12} md={6}>
               <SoftBox>
                 <SoftTypography variant="subtitle2">Discounted Price</SoftTypography>
@@ -290,6 +299,7 @@ export default function AddCourse({ refetch }) {
                   type="text"
                   value={formData.discounted}
                   onChange={(e) => setFormData({ ...formData, discounted: e.target.value })}
+                  placeholder="Enter discounted price (optional)"
                 />
               </SoftBox>
             </Grid>
@@ -303,6 +313,24 @@ export default function AddCourse({ refetch }) {
                   value={formData.sort}
                   onChange={(e) => setFormData({ ...formData, sort: Number(e.target.value) })}
                 />
+              </SoftBox>
+            </Grid>
+            {/* Price */}
+            <Grid item xs={12} md={12}>
+              <SoftBox>
+                <SoftTypography variant="subtitle2">Price</SoftTypography>
+                <SoftInput
+                  type="text"
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                  error={!!errors.price}
+                  placeholder="Enter course price"
+                />
+                {errors.price && (
+                  <SoftTypography variant="caption" color="error">
+                    {errors.price}
+                  </SoftTypography>
+                )}
               </SoftBox>
             </Grid>
 

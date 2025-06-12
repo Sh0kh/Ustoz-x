@@ -144,6 +144,9 @@ export default function UpdateCourse({ id, item, refetch }) {
     if (!formData.description || formData.description.trim() === "") {
       validationErrors.description = "Course description is required";
     }
+    if (!formData.price || formData.price.trim() === "") {
+      validationErrors.price = "Course price is required";
+    }
     setErrors(validationErrors);
     return validationErrors;
   };
@@ -240,6 +243,10 @@ export default function UpdateCourse({ id, item, refetch }) {
               </SoftBox>
             </Grid>
 
+            {/* Price */}
+
+
+            {/* Discounted Price */}
             <Grid item xs={12} md={6}>
               <SoftBox>
                 <SoftTypography variant="subtitle2">Discounted Price</SoftTypography>
@@ -247,6 +254,7 @@ export default function UpdateCourse({ id, item, refetch }) {
                   type="text"
                   value={formData.discounted}
                   onChange={(e) => setFormData({ ...formData, discounted: e.target.value })}
+                  placeholder="Enter discounted price (optional)"
                 />
               </SoftBox>
             </Grid>
@@ -264,6 +272,28 @@ export default function UpdateCourse({ id, item, refetch }) {
                 />
               </SoftBox>
             </Grid>
+            
+            <Grid item xs={12} md={12}>
+              <SoftBox>
+                <SoftTypography variant="subtitle2">Price</SoftTypography>
+                <SoftInput
+                  type="text"
+                  value={formData.price}
+                  onChange={(e) =>
+                    setFormData({ ...formData, price: e.target.value })
+                  }
+                  error={!!errors.price}
+                  placeholder="Enter course price"
+                />
+                {errors.price && (
+                  <SoftTypography variant="caption" color="error">
+                    {errors.price}
+                  </SoftTypography>
+                )}
+              </SoftBox>
+            </Grid>
+
+
 
             {/* Course Icon */}
             <Grid item xs={12} md={6}>
@@ -280,9 +310,9 @@ export default function UpdateCourse({ id, item, refetch }) {
                   }}
                 />
                 {formData?.iconId && (
-                  <img 
-                    className="w-[200px] mt-[10px] block rounded" 
-                    src={`https://ustozx.uz/edu/api/file/view/one/photo?id=${formData?.iconId}`} 
+                  <img
+                    className="w-[200px] mt-[10px] block rounded"
+                    src={`https://ustozx.uz/edu/api/file/view/one/photo?id=${formData?.iconId}`}
                     alt="Course Icon"
                   />
                 )}
@@ -304,9 +334,9 @@ export default function UpdateCourse({ id, item, refetch }) {
                   }}
                 />
                 {formData?.iconFromHome && (
-                  <img 
-                    className="w-[200px] mt-[10px] block rounded" 
-                    src={`https://ustozx.uz/edu/api/file/view/one/photo?id=${formData?.iconFromHome}`} 
+                  <img
+                    className="w-[200px] mt-[10px] block rounded"
+                    src={`https://ustozx.uz/edu/api/file/view/one/photo?id=${formData?.iconFromHome}`}
                     alt="Home Page Icon"
                   />
                 )}
@@ -355,7 +385,7 @@ export default function UpdateCourse({ id, item, refetch }) {
               </SoftBox>
             </Grid>
           </Grid>
-          
+
           {/* Description Editor */}
           <Grid item xs={12}>
             <SoftBox>

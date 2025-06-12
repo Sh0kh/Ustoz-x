@@ -26,10 +26,8 @@ class testResult {
         });
         return response.json();
     }
-    static getTestResultByID = async ({groupId,
-        startDate,
-        endDate}) => {
-        const url = `${API_PATH}quiz/test/result/getAllByDate?endDate=${endDate}&groupId=${groupId}&page=0&size=20&startDate=${startDate}`;
+    static getTestResultByID = async ({ groupId, startDate, endDate }) => {
+        const url = `${API_PATH}quiz/test/result/getAllByDate?endDate=${encodeURIComponent(endDate)}&groupId=${groupId}&startDate=${encodeURIComponent(startDate)}`;
         const response = await fetch(url, {
             method: "GET",
             headers: headerGet,
