@@ -147,6 +147,30 @@ export default function TestResultAdd() {
         validateTitle(value);
     };
 
+    // Исправленная функция для обработки изменения даты
+    const handleDateChange = (newDate) => {
+        // Если newDate равен null или undefined, устанавливаем текущую дату
+        if (!newDate) {
+            setDate(new Date());
+            return;
+        }
+
+        // Проверяем, является ли newDate валидным объектом Date
+        if (newDate instanceof Date && !isNaN(newDate.getTime())) {
+            setDate(newDate);
+        } else {
+            // Пытаемся создать Date из переданного значения
+            const parsedDate = new Date(newDate);
+            if (!isNaN(parsedDate.getTime())) {
+                setDate(parsedDate);
+            } else {
+                // Если не удается распарсить, оставляем текущую дату
+                console.warn('Invalid date received:', newDate);
+                setDate(new Date());
+            }
+        }
+    };
+
     const handleSubmitResults = async () => {
         const isTitleValid = validateTitle(title);
         let areScoresValid = true;
@@ -194,10 +218,16 @@ export default function TestResultAdd() {
                     studentScore[id] = Number(score);
                 }
             });
-            const formattedDate =
-                date instanceof Date && !isNaN(date)
-                    ? date.toISOString().split("T")[0]
-                    : null;
+
+            // Исправленная логика форматирования даты
+            let formattedDate = null;
+            if (date instanceof Date && !isNaN(date.getTime())) {
+                formattedDate = date.toISOString().split("T")[0];
+            } else {
+                // Если дата некорректная, используем текущую дату
+                formattedDate = new Date().toISOString().split("T")[0];
+            }
+
             const data = {
                 date: formattedDate,
                 studentScore: studentScore || {},
@@ -292,7 +322,7 @@ export default function TestResultAdd() {
                         }}
                     >
                         <Typography variant="h4" fontWeight="bold" mb={3}>
-                            Natijalari qo‘shish
+                            Natijalari qo`shish
                         </Typography>
                         <SoftBox display="flex" alignItems="center" gap={1} mb={2}>
                             <Grid item xs={12} md={6} minWidth={'400px'}>
@@ -332,7 +362,7 @@ export default function TestResultAdd() {
                                         placeholder="Test sanasi"
                                         value={date}
                                         fullWidth
-                                        onChange={(newDate) => setDate(newDate)}
+                                        onChange={handleDateChange}
                                     />
                                 </Grid>
                                 <Grid
@@ -352,7 +382,7 @@ export default function TestResultAdd() {
                                     >
                                         {submitting
                                             ? "Saqlanmoqda..."
-                                            : "+ Qo‘shish"}
+                                            : "+ Qo'shish"}
                                     </SoftButton>
                                 </Grid>
                             </Grid>
@@ -413,7 +443,7 @@ export default function TestResultAdd() {
                                 Talabalar topilmadi
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                Boshqa guruhni tanlab ko‘ring
+                                Boshqa guruhni tanlab ko`ring
                             </Typography>
                         </SoftBox>
                     )}
