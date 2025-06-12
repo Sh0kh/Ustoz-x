@@ -175,9 +175,9 @@ export default function AttendanceTable({ data, month, year, lessonID }) {
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     {[
                         { status: 'CAME', label: 'Keldi' },
+                        { status: 'NOT_CAME', label: 'Kelmagan' },
                         { status: 'EXCUSED', label: 'Sababli' },
                         { status: 'LATE_CAME', label: 'Kechikib keldi' },
-                        { status: 'NOT_CAME', label: 'Kelmagan' }
                     ].map((item) => (
                         <div key={item.status} className="flex-1 min-w-[120px]">
                             <div className={`cursor-pointer rounded-xl shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg transform hover:-translate-y-1`}>
@@ -207,17 +207,33 @@ export default function AttendanceTable({ data, month, year, lessonID }) {
                             <th className="sticky left-0 top-[-16px] z-50 bg-white border-b border-gray-200 text-left font-semibold text-gray-700 p-4">
                                 <span className="text-lg">Ism</span>
                             </th>
-                            <th className="bg-white sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
-                                <span className="text-sm w-20 block">Kelgan kun</span>
+                            <th className="bg-white  sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
+                                <span className="text-sm   flex py-[10px] w-[40px] rounded-[50%] items-center justify-center bg-[#DCFCE7] from-green-400 to-green-500 text-green-800">
+                                    <svg className="w-5 h-5 text-green-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </span>
                             </th>
                             <th className="bg-white sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
-                                <span className="text-sm w-20 block">Kelmagan kun</span>
+                                <span className="text-sm flex py-[10px] w-[40px] rounded-[50%] items-center justify-center bg-[#FEE2E2] ">
+                                    <svg className="w-5 h-5 text-red-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </span>
                             </th>
                             <th className="bg-white sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
-                                <span className="text-sm w-20 block">Sababli kun</span>
+                                <span className="text-sm flex py-[10px] w-[40px] rounded-[50%] items-center justify-center bg-[#FEF9C3] ">
+                                    <svg className="w-5 h-5 text-yellow-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12H8m4-4v8" />
+                                    </svg>
+                                </span>
                             </th>
                             <th className="bg-white sticky top-[-16px] border-b border-gray-200 text-gray-700 p-3">
-                                <span className="text-sm w-20 block">Kechikkan vaqt</span>
+                                <span className="text-sm flex py-[10px] w-[40px] rounded-[50%] items-center justify-center bg-[#FFEDD5] ">
+                                    <svg className="w-5 h-5 text-orange-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6l4 2M6 12a6 6 0 1 1 12 0 6 6 0 0 1-12 0" />
+                                    </svg>
+                                </span>
                             </th>
                             {daysArray.map((day) => (
                                 <th
@@ -232,7 +248,8 @@ export default function AttendanceTable({ data, month, year, lessonID }) {
                     <tbody>
                         {localData.map((student, index) => {
                             const cameDays = daysArray.filter(
-                                (day) => getAttendanceStatus(student, day) === 'CAME'
+                                (day) => getAttendanceStatus(student, day) === 'CAME' ||
+                                    getAttendanceStatus(student, day) === 'LATE_CAME'
                             ).length;
                             const lateDays = daysArray.filter(
                                 (day) => getAttendanceStatus(student, day) === 'LATE_CAME'
@@ -248,12 +265,12 @@ export default function AttendanceTable({ data, month, year, lessonID }) {
                                 .reduce((sum, record) => sum + record.timeOfLate, 0);
                             return (
                                 <tr key={index} className="hover:bg-gray-50">
-                                    <td className="sticky z-30 left-0 bg-white p-4 text-left text-gray-800 max-w-[200px] truncate">
+                                    <td className="sticky z-30 left-0 bg-white p-4 text-left text-gray-800 max-w-[250px] truncate">
                                         <span className="text-lg text-gray-500 mr-2">
                                             {index + 1}.
                                         </span>
                                         <span className="text-base font-medium">
-                                            {student.user.firstName}
+                                            {student.user.lastName} {' '} {student.user.firstName}
                                         </span>
                                     </td>
                                     <td className="p-3 text-center font-mono text-gray-700">

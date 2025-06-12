@@ -342,7 +342,6 @@ export default function CreateLessonReport() {
                         </SoftButton>
                     </SoftBox>
                     <SoftBox mt={2} style={{ overflow: "visible", width: "100%" }}>
-
                         <SoftBox
                             display="flex"
                             justifyContent="space-between"
@@ -361,20 +360,18 @@ export default function CreateLessonReport() {
                                     placeholder="Guruhni tanlang"
                                 />
                             </SoftBox>
-                            {groupID && (
-                                <>
-                                    <SoftBox flex="1" minWidth="200px" mb={2}>
-                                        <SoftSelect
-                                            fullWidth
-                                            placeholder="Modulni tanlang"
-                                            options={modules}
-                                            value={selectedModule}
-                                            onChange={value => setSelectedModule(value)}
-                                            isDisabled={!groupID}
-                                        />
-                                    </SoftBox>
-                                </>
-                            )}
+                            <>
+                                <SoftBox flex="1" minWidth="200px" mb={2}>
+                                    <SoftSelect
+                                        fullWidth
+                                        placeholder="Modulni tanlang"
+                                        options={modules}
+                                        value={selectedModule}
+                                        onChange={value => setSelectedModule(value)}
+                                        isDisabled={!groupID}
+                                    />
+                                </SoftBox>
+                            </>
                         </SoftBox>
                         <SoftBox
                             display="flex"
@@ -382,30 +379,26 @@ export default function CreateLessonReport() {
                             gap={2}
                             flexWrap="wrap"
                         >
-                            {selectedModule && (
-                                <SoftBox flex="1" minWidth="200px">
-                                    <SoftSelect
+                            <SoftBox flex="1" minWidth="200px">
+                                <SoftSelect
+                                    fullWidth
+                                    placeholder="Darsni tanlang"
+                                    options={lessons}
+                                    value={selectedLesson}
+                                    onChange={(value) => setSelectedLesson(value)}
+                                    isDisabled={!selectedModule}
+                                />
+                            </SoftBox>
+                            <>
+                                <SoftBox flex="1" minWidth="200px" mb={2}>
+                                    <SoftDatePicker
+                                        placeholder="Hisobot sanasi"
+                                        value={reportDate}
                                         fullWidth
-                                        placeholder="Darsni tanlang"
-                                        options={lessons}
-                                        value={selectedLesson}
-                                        onChange={(value) => setSelectedLesson(value)}
-                                        isDisabled={!selectedModule}
+                                        onChange={setReportDate}
                                     />
                                 </SoftBox>
-                            )}
-                            {groupID && selectedModule && (
-                                <>
-                                    <SoftBox flex="1" minWidth="200px" mb={2}>
-                                        <SoftDatePicker
-                                            placeholder="Hisobot sanasi"
-                                            value={reportDate}
-                                            fullWidth
-                                            onChange={setReportDate}
-                                        />
-                                    </SoftBox>
-                                </>
-                            )}
+                            </>
                         </SoftBox>
                     </SoftBox>
                 </Card>

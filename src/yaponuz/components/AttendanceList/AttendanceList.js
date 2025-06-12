@@ -257,46 +257,42 @@ export default function AttendanceList() {
               flexWrap="wrap"
               mb={2}
             >
-              {selectedCourse && (
-                <SoftBox flex="1" minWidth="200px">
-                  <SoftSelect
-                    fullWidth
-                    placeholder="Modul tanlang"
-                    options={modules}
-                    value={selectedModule}
-                    onChange={(value) => setSelectedModule(value)}
-                    isDisabled={!selectedCourse}
-                    sx={{
-                      "& .MuiSelect-select": {
-                        width: "100%",
-                      },
-                      "& .MuiOutlinedInput-root": {
-                        width: "100%",
-                      },
-                    }}
-                  />
-                </SoftBox>
-              )}
-              {selectedModule && (
-                <SoftBox flex="1" minWidth="200px">
-                  <SoftSelect
-                    fullWidth
-                    placeholder="Dars tanlang"
-                    options={lessons}
-                    value={selectedLesson}
-                    onChange={(value) => setSelectedLesson(value)}
-                    isDisabled={!selectedModule}
-                    sx={{
-                      "& .MuiSelect-select": {
-                        width: "100%",
-                      },
-                      "& .MuiOutlinedInput-root": {
-                        width: "100%",
-                      },
-                    }}
-                  />
-                </SoftBox>
-              )}
+              <SoftBox flex="1" minWidth="200px">
+                <SoftSelect
+                  fullWidth
+                  placeholder="Modul tanlang"
+                  options={modules}
+                  value={selectedModule}
+                  onChange={(value) => setSelectedModule(value)}
+                  isDisabled={!selectedCourse}
+                  sx={{
+                    "& .MuiSelect-select": {
+                      width: "100%",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      width: "100%",
+                    },
+                  }}
+                />
+              </SoftBox>
+              <SoftBox flex="1" minWidth="200px">
+                <SoftSelect
+                  fullWidth
+                  placeholder="Dars tanlang"
+                  options={lessons}
+                  value={selectedLesson}
+                  onChange={(value) => setSelectedLesson(value)}
+                  isDisabled={!selectedModule}
+                  sx={{
+                    "& .MuiSelect-select": {
+                      width: "100%",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      width: "100%",
+                    },
+                  }}
+                />
+              </SoftBox>
             </SoftBox>
 
             <SoftBox display="flex" justifyContent="flex-start" minWidth="200px">
