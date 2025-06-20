@@ -425,7 +425,6 @@ export default function Enrollment() {
                                     }
                                 }}
                             />
-
                             <SoftSelect
                                 className="mt-[10px] w-[400px]"
                                 placeholder="Search and select student"
