@@ -38,10 +38,13 @@ export default function Enrollment() {
         try {
             const response = await Course.getAllCourses(0, 100);
             const groups = response.object || [];
-            const formattedOptions = groups.map((group) => ({
-                label: group.name,
-                value: group.id,
-            }));
+            const formattedOptions = [
+                { label: "All courses", value: " " },  // Add this line for "All" option
+                ...groups.map((group) => ({
+                    label: group.name,
+                    value: group.id,
+                })),
+            ];
             setGroupOptions(formattedOptions);
         } catch (err) {
             console.error("Error fetching groups:", err);
@@ -126,7 +129,6 @@ export default function Enrollment() {
 
     useEffect(() => {
         if (courseId) {
-            // Сбрасываем на первую страницу при изменении фильтров
             setCurrentPage(0);
             getAllEnrollment(0, pageSize);
         } else {
@@ -234,19 +236,21 @@ export default function Enrollment() {
     const studentColumns = [
         { Header: "ID", accessor: "id" },
         {
-            Header: "Name",
-            accessor: "student.firstName",
-            Cell: ({ row }) => row.original.student.firstName,
-        },
-        {
-            Header: "Last Name",
-            accessor: "student.lastName",
-            Cell: ({ row }) => row.original.student.lastName,
+            Header: "Full Name",
+            accessor: "student.fullName",
+            Cell: ({ row }) => {
+                const { firstName, lastName } = row.original.student;
+                return `${firstName} ${lastName}`;
+            },
         },
         {
             Header: "Phone number",
             accessor: "student.phoneNumber",
             Cell: ({ row }) => row.original.student.phoneNumber,
+        },
+        {
+            Header: "Course",
+            Cell: ({ row }) => row.original.course?.name,
         },
         {
             Header: "Completed",
@@ -259,6 +263,7 @@ export default function Enrollment() {
             Cell: AccessAllowedSwitch,
         },
     ];
+
 
     const studentTableData = {
         columns: studentColumns,
@@ -411,10 +416,16 @@ export default function Enrollment() {
                                 style={{ flex: 1, minWidth: "350px" }}
                                 options={groupOptions}
                                 onChange={(e) => {
-                                    setCourseId(e.value);
-                                    setNoGroupSelected(false);
+                                    if (e === null) {
+                                        setCourseId('');
+                                        setNoGroupSelected(true);
+                                    } else {
+                                        setCourseId(e.value);  // This will be empty string for "All" option
+                                        setNoGroupSelected(false);
+                                    }
                                 }}
                             />
+
                             <SoftSelect
                                 className="mt-[10px] w-[400px]"
                                 placeholder="Search and select student"
