@@ -3,7 +3,8 @@ import { API_PATH, header, headerGet } from "../headers";
 class enrollment {
 
     static async getEnrollment(data) {
-        let url = `${API_PATH}course/enrollment/get/all/admin?courseId=${data?.id}&page=${data?.page}&size=${data?.size}`;
+        let url = `${API_PATH}course/enrollment/get/all/admin?courseId=${data?.id}&page=${data?.page}&size=${data?.size}&studentId=${data?.userId}`;
+        // let url = `${API_PATH}course/enrollment/get/all/admin?page=0&size=20`;
         const response = await fetch(url, {
             method: "GET",
             headers: headerGet,

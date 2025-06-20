@@ -9,20 +9,31 @@ import Footer from "examples/Footer";
 import SoftSelect from "components/SoftSelect";
 import DataTable from "examples/Tables/DataTable";
 import { Switch } from "@mui/material";
-import { Loader, Frown } from "lucide-react";
+import { Loader, Frown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import Swal from "sweetalert2";
 import { Course } from "yaponuz/data/controllers/course";
 import { enrollment } from "yaponuz/data/controllers/enrollment";
 import AddEnrollment from "./components/AddEnrollment";
+import SoftButton from "components/SoftButton";
+import { Users } from "yaponuz/data/api";
 
 export default function Enrollment() {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [courseId, setCourseId] = useState(null);
+    const [courseId, setCourseId] = useState('');
     const [groupOptions, setGroupOptions] = useState([]);
     const [noGroupSelected, setNoGroupSelected] = useState(true);
+    const [selectedUserId, setSelectedUserId] = useState('');
+    const [userOptions, setUserOptions] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
 
-    // Получаем курсы для селекта
+    // Состояния для пагинации
+    const [currentPage, setCurrentPage] = useState(0);
+    const [pageSize, setPageSize] = useState(20);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalElements, setTotalElements] = useState(0);
+
     const getAllGroups = async () => {
         try {
             const response = await Course.getAllCourses(0, 100);
@@ -37,19 +48,72 @@ export default function Enrollment() {
         }
     };
 
-    // Получаем список студентов по курсу
-    const getAllEnrollment = async () => {
-        if (!courseId) return;
+    // Поиск пользователей по имени
+    const searchUsers = async (firstName = '') => {
+        if (!firstName.trim() && firstName !== '') return;
 
+        setIsSearching(true);
+        try {
+            const response = await Users.getUsers('', '', firstName, '', '', '');
+            const users = response.object?.content || response.object || [];
+            const formattedUsers = users.map((user) => ({
+                label: `${user.firstName} ${user.lastName} (${user.phoneNumber || 'No phone'})`,
+                value: user.id,
+            }));
+            setUserOptions(formattedUsers);
+        } catch (error) {
+            console.error("Error searching users:", error);
+            setUserOptions([]);
+        } finally {
+            setIsSearching(false);
+        }
+    };
+
+    // Дебаунс для поиска
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchTerm) {
+                searchUsers(searchTerm);
+            } else {
+                setUserOptions([]);
+            }
+        }, 500);
+
+        return () => clearTimeout(timeoutId);
+    }, [searchTerm]);
+
+    // Загружаем пользователей при монтировании компонента (дефолтный запрос)
+    useEffect(() => {
+        searchUsers('');
+    }, []);
+
+    // Получаем список студентов по курсу и пользователю с пагинацией
+    const getAllEnrollment = async (page = currentPage, size = pageSize) => {
         setLoading(true);
         setNoGroupSelected(false);
 
         try {
-            const data = { id: courseId, page: 0, size: 20 };
+            const data = {
+                id: courseId,
+                page: page,
+                size: size,
+                userId: selectedUserId || ''
+            };
+            console.log(selectedUserId);
             const response = await enrollment.getEnrollment(data);
-            setStudents(response.object?.content || []);
+
+            // Обновляем данные пагинации
+            const responseData = response.object || {};
+            setStudents(responseData.content || []);
+            setTotalPages(responseData.totalPages || 0);
+            setTotalElements(responseData.totalElements || 0);
+            setCurrentPage(page);
+
         } catch (err) {
             console.error("Error fetching students:", err);
+            setStudents([]);
+            setTotalPages(0);
+            setTotalElements(0);
         } finally {
             setLoading(false);
         }
@@ -57,16 +121,32 @@ export default function Enrollment() {
 
     useEffect(() => {
         getAllGroups();
+        getAllEnrollment();
     }, []);
 
     useEffect(() => {
         if (courseId) {
-            getAllEnrollment();
+            // Сбрасываем на первую страницу при изменении фильтров
+            setCurrentPage(0);
+            getAllEnrollment(0, pageSize);
         } else {
             setStudents([]);
             setNoGroupSelected(true);
+            setTotalPages(0);
+            setTotalElements(0);
         }
-    }, [courseId]);
+    }, [courseId, selectedUserId]);
+
+    // Обработчики пагинации
+    const handlePageChange = (newPage) => {
+        getAllEnrollment(newPage, pageSize);
+    };
+
+    const handlePageSizeChange = (newSize) => {
+        setPageSize(newSize);
+        setCurrentPage(0);
+        getAllEnrollment(0, newSize);
+    };
 
     // Обработчик изменения switch
     const handleSwitchChange = async (studentId, field, value) => {
@@ -107,6 +187,12 @@ export default function Enrollment() {
             Swal.fire({ icon: "error", title: "Update failed", text: err.message });
             console.error("Error updating enrollment:", err);
         }
+    };
+
+    // Обработчик фильтрации
+    const handleFilter = () => {
+        setCurrentPage(0);
+        getAllEnrollment(0, pageSize);
     };
 
     // Компоненты переключателей с PropTypes для отключения ESLint ошибок
@@ -179,59 +265,203 @@ export default function Enrollment() {
         rows: students,
     };
 
+    // Компонент пагинации
+    const PaginationComponent = () => {
+        const startIndex = currentPage * pageSize + 1;
+        const endIndex = Math.min((currentPage + 1) * pageSize, totalElements);
+
+        return (
+            <SoftBox
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                p={3}
+                borderTop="1px solid #e0e0e0"
+            >
+                <SoftBox display="flex" alignItems="center" gap="10px">
+                    <SoftTypography variant="body2" color="text">
+                        Showing {totalElements > 0 ? startIndex : 0} to {endIndex} of {totalElements} entries
+                    </SoftTypography>
+                </SoftBox>
+
+                <SoftBox display="flex" alignItems="center" gap="5px">
+                    {/* First Page */}
+                    <SoftButton
+                        variant="outlined"
+                        color="dark"
+                        size="small"
+                        disabled={currentPage === 0}
+                        onClick={() => handlePageChange(0)}
+                        style={{ minWidth: "40px", padding: "8px" }}
+                    >
+                        <ChevronsLeft size={16} />
+                    </SoftButton>
+
+                    {/* Previous Page */}
+                    <SoftButton
+                        variant="outlined"
+                        color="dark"
+                        size="small"
+                        disabled={currentPage === 0}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        style={{ minWidth: "40px", padding: "8px" }}
+                    >
+                        <ChevronLeft size={16} />
+                    </SoftButton>
+
+                    {/* Page Numbers */}
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let pageNum;
+                        if (totalPages <= 5) {
+                            pageNum = i;
+                        } else if (currentPage < 3) {
+                            pageNum = i;
+                        } else if (currentPage > totalPages - 4) {
+                            pageNum = totalPages - 5 + i;
+                        } else {
+                            pageNum = currentPage - 2 + i;
+                        }
+
+                        return (
+                            <SoftButton
+                                key={pageNum}
+                                variant={currentPage === pageNum ? "gradient" : "outlined"}
+                                color="dark"
+                                size="small"
+                                onClick={() => handlePageChange(pageNum)}
+                                style={{ minWidth: "40px", padding: "8px" }}
+                            >
+                                {pageNum + 1}
+                            </SoftButton>
+                        );
+                    })}
+
+                    {/* Next Page */}
+                    <SoftButton
+                        variant="outlined"
+                        color="dark"
+                        size="small"
+                        disabled={currentPage >= totalPages - 1}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        style={{ minWidth: "40px", padding: "8px" }}
+                    >
+                        <ChevronRight size={16} />
+                    </SoftButton>
+
+                    {/* Last Page */}
+                    <SoftButton
+                        variant="outlined"
+                        color="dark"
+                        size="small"
+                        disabled={currentPage >= totalPages - 1}
+                        onClick={() => handlePageChange(totalPages - 1)}
+                        style={{ minWidth: "40px", padding: "8px" }}
+                    >
+                        <ChevronsRight size={16} />
+                    </SoftButton>
+                </SoftBox>
+
+                <SoftBox display="flex" alignItems="center" gap="10px">
+                    <SoftTypography variant="body2" color="text">
+                        Rows per page:
+                    </SoftTypography>
+                    <SoftSelect
+                        value={{ label: pageSize.toString(), value: pageSize }}
+                        options={[
+                            { label: "5", value: 5 },
+                            { label: "10", value: 10 },
+                            { label: "15", value: 15 },
+                            { label: "20", value: 20 },
+                            { label: "50", value: 50 }
+                        ]}
+                        onChange={(option) => handlePageSizeChange(option.value)}
+                        style={{ minWidth: "80px" }}
+                    />
+                </SoftBox>
+            </SoftBox>
+        );
+    };
+
     return (
         <DashboardLayout>
             <DashboardNavbar />
-            <SoftBox my={3}>
+            <SoftBox className={'Enrollment'} my={3}>
                 <Card style={{ margin: "10px 0px" }}>
-                    <SoftBox
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="flex-start"
-                        p={3}
-                    >
-                        <SoftTypography variant="h5" fontWeight="medium">
-                            Enrollment
-                        </SoftTypography>
-                        <SoftBox display="flex" alignItems="flex-start" gap="30px">
+                    <SoftBox p={3}>
+                        <SoftBox
+                            display="flex"
+                            justifyContent="space-between"
+                            alignItems="flex-start"
+                        >
+                            <SoftTypography variant="h5" fontWeight="medium">
+                                Enrollment ({totalElements} total)
+                            </SoftTypography>
+                            <SoftBox display="flex" alignItems="flex-start" gap="30px">
+                                {courseId && <AddEnrollment refetch={() => getAllEnrollment(currentPage, pageSize)} courseId={courseId} />}
+                            </SoftBox>
+                        </SoftBox>
+                        <SoftBox
+                            display="flex"
+                            alignItems="flex-end"
+                            gap="10px"
+                        >
                             <SoftSelect
+                                className="mt-[10px] w-[400px]"
                                 placeholder="Select course"
-                                style={{ flex: 1, minWidth: "150px" }}
+                                style={{ flex: 1, minWidth: "350px" }}
                                 options={groupOptions}
                                 onChange={(e) => {
                                     setCourseId(e.value);
                                     setNoGroupSelected(false);
                                 }}
                             />
-                            {courseId && <AddEnrollment refetch={getAllEnrollment} courseId={courseId} />}
+                            <SoftSelect
+                                className="mt-[10px] w-[400px]"
+                                placeholder="Search and select student"
+                                style={{ flex: 1, minWidth: "350px" }}
+                                options={userOptions}
+                                isSearchable={true}
+                                isLoading={isSearching}
+                                onInputChange={(inputValue) => {
+                                    setSearchTerm(inputValue);
+                                }}
+                                onChange={(e) => {
+                                    // Устанавливаем пустую строку если ничего не выбрано
+                                    setSelectedUserId(e ? e.value : '');
+                                }}
+                                isClearable={true}
+                                noOptionsMessage={() =>
+                                    searchTerm ? "No students found" : "Start typing to search students"
+                                }
+                            />
+                            <SoftButton color={'dark'} onClick={handleFilter}>
+                                Filter
+                            </SoftButton>
                         </SoftBox>
                     </SoftBox>
 
-                    {noGroupSelected ? (
-                        <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
-                            <p className="uppercase font-semibold">Please select a course</p>
-                        </div>
-                    ) : loading ? (
+                    {loading ? (
                         <div className="flex items-center gap-y-4 justify-center flex-col h-[400px]">
                             <Loader className="animate-spin ml-2 size-10" />
                             <p className="text-sm uppercase font-medium">Loading, please wait</p>
                         </div>
                     ) : students.length !== 0 ? (
-                        <DataTable
-                            table={studentTableData}
-                            entriesPerPage={{
-                                defaultValue: 10,
-                                entries: [5, 10, 15, 20],
-                            }}
-                            canSearch
-                        />
+                        <>
+                            <DataTable
+                                table={studentTableData}
+                                entriesPerPage={{
+                                    defaultValue: 20,
+                                    entries: [5, 10, 15, 20],
+                                }} />
+                            <PaginationComponent />
+                        </>
                     ) : (
                         <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
                             <Frown className="size-20" />
                             <div className="text-center">
                                 <p className="uppercase font-semibold">No students found</p>
                                 <p className="text-sm text-gray-700">
-                                    Try selecting a different course
+                                    Try selecting a different course or student
                                 </p>
                             </div>
                         </div>
