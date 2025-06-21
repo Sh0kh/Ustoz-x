@@ -18,13 +18,15 @@ import SoftInput from "components/SoftInput";
 import Stack from "@mui/material/Stack";
 
 // Data
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import ActionCell from "./components/ActionCell";
 import SoftBadge from "components/SoftBadge";
 
 import AddModule from "./components/AddModule";
 import { Module } from "yaponuz/data/controllers/module";
 import { Frown, Loader } from "lucide-react";
+import SoftSelect from "components/SoftSelect";
+import { Course } from "yaponuz/data/controllers/course";
 
 const theFalse = (
   <SoftBadge variant="contained" color="error" size="xs" badgeContent="false" container />
@@ -39,26 +41,84 @@ export default function ModuleList() {
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(20);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
+  const [courseId, setCourseId] = useState(null);
+  const [courseOptions, setCourseOptions] = useState([]);
 
-  // fetching data function
-  const getAllModules = async (page, size) => {
-    setLoading(true)
+  // Use refs to track if requests are already made
+  const coursesLoadedRef = useRef(false);
+  const isInitialLoadRef = useRef(true);
+
+  // Fetch modules function
+  const fetchModules = useCallback(async () => {
+    setLoading(true);
     try {
-      const response = await Module.getAllModule(page, size);
-      setModules(response.object);
-      setTotalPages(response.object.totalPages);
-    } catch (err) {
-      console.log("Error from groups list GET: ", err);
-    } finally {
-      setLoading(false)
-    }
-  };
+      let response;
 
-  // mounting
+      // Check if courseId is valid and not empty
+      if (courseId && String(courseId).trim() !== '' && String(courseId).trim() !== ' ') {
+        response = await Module.getModuleById(courseId);
+        setModules(response?.object || []);
+        setTotalPages(1); // Single course result
+      } else {
+        // Otherwise fetch all modules with pagination
+        response = await Module.getAllModule(page, size);
+        setModules(response?.object || []);
+        setTotalPages(response?.object?.totalPages || 0);
+      }
+    } catch (error) {
+      console.log("Error fetching modules:", error);
+      setModules([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [courseId, page, size]);
+
+  // Fetch courses function
+  const fetchCourses = useCallback(async () => {
+    if (coursesLoadedRef.current) return;
+
+    try {
+      const response = await Course.getAllCourses(0, 100);
+      const courses = response.object || [];
+      const formattedOptions = [
+        { label: "All courses", value: null },
+        ...courses.map((course) => ({
+          label: course.name,
+          value: course.id,
+        })),
+      ];
+      setCourseOptions(formattedOptions);
+      coursesLoadedRef.current = true;
+    } catch (err) {
+      console.error("Error fetching courses:", err);
+    }
+  }, []);
+
+  // Load data on mount
   useEffect(() => {
-    getAllModules(page, size);
-  }, [page, size]);
+    const loadInitialData = async () => {
+      await fetchCourses();
+      await fetchModules();
+      isInitialLoadRef.current = false;
+    };
+
+    loadInitialData();
+  }, [fetchCourses, fetchModules]);
+
+  // Fetch modules when courseId changes (skip initial load)
+  useEffect(() => {
+    if (!isInitialLoadRef.current) {
+      fetchModules();
+    }
+  }, [courseId, fetchModules]);
+
+  // Fetch modules when page or size changes for "All courses" only
+  useEffect(() => {
+    if (!isInitialLoadRef.current && !courseId) {
+      fetchModules();
+    }
+  }, [page, size, courseId, fetchModules]);
 
   // table elements
   const columns = [
@@ -75,7 +135,6 @@ export default function ModuleList() {
     { Header: "action", accessor: "action" },
   ];
 
-
   const formatDate = useCallback((dateString) => {
     const date = new Date(dateString);
     const day = date.getDate();
@@ -85,7 +144,6 @@ export default function ModuleList() {
     return `${day} ${month}, ${hours}:${minutes}`;
   }, []);
 
-  
   const rows = Array.isArray(modules)
     ? modules?.map((module) => ({
       id: module?.id,
@@ -98,35 +156,45 @@ export default function ModuleList() {
       hidden: `${module.hidden === true ? 'Hidden' : 'Open'}`,
       questionCount: module?.questionCount,
       createdAt: module?.createdAt ? formatDate(module.createdAt) : "null",
-      action: <ActionCell id={module?.id} item={module} refetch={() => getAllModules(page, size)} />,
+      action: <ActionCell id={module?.id} item={module} refetch={fetchModules} />,
     }))
     : [];
-
-
-
 
   const tabledata = {
     columns,
     rows,
   };
 
-
-  const myx = { margin: "0px 30px" };
+  const handleCourseChange = (selectedOption) => {
+    setCourseId(selectedOption?.value || null);
+    setPage(0); // Reset to first page when filter changes
+  };
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <SoftBox my={3}>
-        <Card style={{ margin: "10px 0px" }}>
-          <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start" p={3}>
+      <SoftBox my={3} className={'Module'}>
+        <Card style={{ margin: "10px 0px", padding: '28px' }}>
+          <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start">
             <SoftBox lineHeight={1}>
               <SoftTypography variant="h5" fontWeight="medium">
                 All Modules
               </SoftTypography>
             </SoftBox>
             <Stack spacing={1} direction="row">
-              <AddModule refetch={() => getAllModules(page, size)} />
+              <AddModule refetch={fetchModules} />
             </Stack>
+          </SoftBox>
+
+          <SoftBox display="flex" justifyContent="space-between" alignItems="flex-start">
+            <SoftSelect
+              className="mt-[10px] w-[400px]"
+              placeholder="Select course"
+              style={{ flex: 1, minWidth: "350px" }}
+              options={courseOptions}
+              onChange={handleCourseChange}
+              value={courseOptions.find(option => option.value === courseId) || null}
+            />
           </SoftBox>
 
           {loading ? (
@@ -140,7 +208,7 @@ export default function ModuleList() {
                 table={tabledata}
                 entriesPerPage={{
                   defaultValue: 20,
-                  entries: [5, 7, 10, 15, 20],
+                  entries: [5, 10, 15, 20],
                 }}
                 canSearch
               />
@@ -157,7 +225,6 @@ export default function ModuleList() {
             </div>
           )}
         </Card>
-
       </SoftBox>
 
       <Footer />
