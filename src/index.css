@@ -23,3 +23,6 @@
 .Module .css-fgimv3 {
   padding: 20px 0px !important;
 }
+.Report textarea{
+  width: 500px !important;
+}

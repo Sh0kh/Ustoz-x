@@ -53,6 +53,8 @@ import TestResultAdd from "yaponuz/components/TestResult/component/TestResultAdd
 import CreateLessonReport from "yaponuz/components/LessonReport/commponent/CreateLessonReport";
 import ReportCreate from "yaponuz/components/Report/commponent/ReportCreate";
 import PersonalityCreate from "yaponuz/components/Personality/commponent/PersonalityCreate";
+import { TagFaces } from "@mui/icons-material";
+import Tag from "yaponuz/components/Tag/Tag";
 
 const routes = [
   { type: "title", title: "Umumiy", key: "general-title" },
@@ -414,6 +416,15 @@ const routes = [
     noCollapse: true,
     route: "/referral",
     component: <Referral />,
+  },
+  {
+    type: "collapse",
+    name: "Taglar",
+    key: "Tag",
+    icon: <TagFaces size="12px" />,
+    noCollapse: true,
+    route: "/tag",
+    component: <Tag />,
   },
   {
     type: "collapse",

@@ -142,7 +142,7 @@ export default function CreateLessonReport() {
 
     // Ввод баллов
     const studentColumns = [
-        { Header: <span style={{ fontSize: 13 }}>Ism</span>, accessor: "Ism" },
+        { Header: <span className="sticky top-0" style={{ fontSize: 13 }}>Ism</span>, accessor: "Ism" },
         ...gradingParams.map(param => ({
             Header: (
                 <MuiBox display="flex" alignItems="center" gap={1}>
@@ -165,6 +165,7 @@ export default function CreateLessonReport() {
                 </Tooltip>
             ),
             accessor: "__add",
+            
             disableSortBy: true,
             Cell: () => null
         }
@@ -257,7 +258,7 @@ export default function CreateLessonReport() {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Diqqat!',
-                    text: 'Hech bir o‘quvchiga baho kiritilmadi.',
+                    text: 'Hech bir o`quvchiga baho kiritilmadi.',
                 });
                 return;
             }
@@ -282,7 +283,7 @@ export default function CreateLessonReport() {
             Swal.fire({
                 icon: 'error',
                 title: 'Xatolik',
-                text: 'Hisobot yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko‘ring.',
+                text: 'Hisobot yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko`ring.',
             });
         }
     };
@@ -299,25 +300,54 @@ export default function CreateLessonReport() {
         setAddParamModal(false);
     };
 
+    // Обновленные стили с закрепленным заголовком
     const dataTableSx = {
-        "& th, & td": {
+        "& .MuiTableContainer-root": {
+            maxHeight: "70vh", // Ограничиваем высоту контейнера таблицы
+            overflowY: "auto",
+        },
+        "& thead": {
+            position: "sticky",
+            top: 0,
+            zIndex: 10,
+            backgroundColor: "#f8f9fa", // Цвет фона для заголовка
+        },
+        "& thead th": {
+            position: "sticky",
+            top: 0,
+            backgroundColor: "#f8f9fa",
+            zIndex: 10,
             fontSize: "13px",
-            padding: "6px 18px",
+            padding: "12px 18px",
+            minWidth: 120,
+            whiteSpace: "nowrap",
+            borderBottom: "2px solid #dee2e6",
+            fontWeight: 600,
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)", // Добавляем тень для лучшей видимости
+        },
+        "& tbody td": {
+            fontSize: "13px",
+            padding: "8px 18px",
             minWidth: 120,
             whiteSpace: "nowrap",
         },
         "& th[data-sticky='true'], & td[data-sticky='true']": {
             position: "sticky",
             left: 0,
-            background: "#f5f7fa",
-            zIndex: 2,
+            backgroundColor: "#fff",
+            zIndex: 11, // Увеличиваем z-index для первой колонки
             minWidth: 170,
             maxWidth: 240,
             whiteSpace: "nowrap",
+            borderRight: "1px solid #dee2e6", // Добавляем границу для разделения
+        },
+        "& thead th[data-sticky='true']": {
+            backgroundColor: "#f8f9fa",
+            zIndex: 12, // Самый высокий z-index для заголовка первой колонки
         },
         "& td[data-sticky='true']": {
-            background: "#fff",
-            zIndex: 1,
+            backgroundColor: "#fff",
+            zIndex: 11,
         },
     };
 
@@ -414,7 +444,12 @@ export default function CreateLessonReport() {
                         </div>
                     ) : students.length !== 0 ? (
                         <>
-                            <Box sx={{ width: "100%", overflowX: "auto" }}>
+                            <Box sx={{
+                                width: "100%",
+                                overflowX: "auto",
+                                maxHeight: "70vh", // Ограничиваем высоту
+                                overflowY: "auto", // Добавляем вертикальную прокрутку
+                            }}>
                                 <DataTable
                                     table={studentTableData}
                                     entriesPerPage={{
@@ -449,7 +484,7 @@ export default function CreateLessonReport() {
                                         gap: 18
                                     }}>
                                         <SoftTypography variant="h6" fontWeight="bold">
-                                            Yangi baholash parametri qo‘shish
+                                            Yangi baholash parametri qo`hish
                                         </SoftTypography>
                                         <SoftInput
                                             placeholder="Parametr nomi (masalan: 'Test natijasi')"
@@ -458,7 +493,7 @@ export default function CreateLessonReport() {
                                             style={{ fontSize: 16, minWidth: 250, width: 300, maxWidth: 400 }}
                                         />
                                         <Box display="flex" gap={2} mt={2}>
-                                            <SoftButton color="info" onClick={handleAddParam}>Qo‘shish</SoftButton>
+                                            <SoftButton color="info" onClick={handleAddParam}>Qo`shish</SoftButton>
                                             <SoftButton color="dark" onClick={() => setAddParamModal(false)}>Bekor qilish</SoftButton>
                                         </Box>
                                     </div>
@@ -469,8 +504,8 @@ export default function CreateLessonReport() {
                         <div className="flex flex-col gap-y-4 items-center justify-center min-h-96">
                             <Frown className="size-20" />
                             <div className="text-center">
-                                <p className="uppercase font-semibold">O‘quvchilar topilmadi</p>
-                                <p className="text-sm text-gray-700">Boshqa guruhni tanlab ko‘ring</p>
+                                <p className="uppercase font-semibold">O`quvchilar topilmadi</p>
+                                <p className="text-sm text-gray-700">Boshqa guruhni tanlab ko`ring</p>
                             </div>
                         </div>
                     )}
